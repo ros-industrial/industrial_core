@@ -1,0 +1,20 @@
+<package>
+  <description brief="simple_message">
+
+     simple_message
+
+  </description>
+  <author>Shaun Edwards</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/simple_message</url>
+  
+  <depend package="roscpp"/>
+
+  <export>
+    <cpp cflags="-I${prefix}/include -DROS=1" lflags="-Wl,-rpath,${prefix}/lib -L${prefix}/lib -lsimple_message"/>
+  </export>
+
+</package>
+
+
