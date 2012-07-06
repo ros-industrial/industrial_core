@@ -29,17 +29,49 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "ros.h"
+#include "ros/ros.h"
+#include "kinematics_msgs/GetPositionIK.h"
+#include "geometry_msgs/PoseStamped.h"
+/*
+# Service Client(s)
+from kinematics_msgs.srv import GetPositionIK
+from kinematics_msgs.msg import PositionIKRequest
+from kinematics_msgs.srv import GetKinematicSolverInfo
+from kinematics_msgs.msg import KinematicSolverInfo
+from arm_navigation_msgs.msg import RobotState, ArmNavigationErrorCodes
+from arm_navigation_msgs.srv import GetRobotState
 
+# Generic message structures
+from geometry_msgs.msg import PoseStamped
+*/
+
+double const PI = 3.14159;
 
 double const trans_min = -2.0;
 double const trans_max = 2.0;
+double const trans_incr = 0.1;
+
 double const x_min = trans_min;
 double const x_max = trans_max;
 double const y_min = trans_min;
 double const y_max = trans_max;
 double const z_min = trans_min;
-double const z_max = trans_max;
+const double z_max = trans_max;
+
+
+const double orient_min = -PI;
+const double orient_max = PI;
+const double orient_incr = 0.1;
+
+const double roll_min = orient_min;
+const double roll_max = orient_max;
+const double pitch_min = orient_min;
+const double pitch_max = orient_max;
+const double yaw_min = orient_min;
+const double yaw_max = orient_max;
+
+using namespace geometry_msgs;
+
 
 void evaluate_workspace()
 {
@@ -53,6 +85,16 @@ void evaluate_workspace()
   ROS_DEBUG("Sending stop command");
   this->robot_->sendAndReceiveMsg(msg, reply);
   ROS_DEBUG("Stop command sent");
+}
+
+void get_ik(PoseStamped & pose)
+{
+
+}
+
+void get_robot_state()
+{
+
 }
 
 int main(int argc, char** argv)
