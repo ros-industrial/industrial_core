@@ -119,51 +119,60 @@ typedef ReplyTypes::ReplyType ReplyType;
 
 
 /**
- * \brief A simple messaging protocol for communicating with industrial robot
- * controllers.
- */
+* \brief This class defines a simple messaging protocol for communicating with an
+* industrial robot controller.  
+*
+* The protocol meets the following requirements:
+*
+* 1. Format should be simple enough that code can be shared between ROS and
+* the controller (for those controllers that support C/C++).  For those controllers
+* that do not support C/C++, the protocol must be simple enough to be decoded with
+* the limited capabilities of the typical robot programming language.  A corollary
+* to this requirement is that the protocol should not be so onerous as to overwhelm
+* the limited resources of the robot controller
+*
+* 2. Format should allow for data streaming (ROS topic like)
+*
+* 3. Format should allow for data reply (ROS service like)
+*
+* 4. The protocol is not intended to encapsulate version information  It is up to
+* individual developers to ensure that code developed for communicating platforms
+* does not have any version conflicts (this includes message type identifiers).
+*
+* Message Structure
+*
+* - <PREFIX> Not considered part of the message
+*   - int LENGTH (HEADER + DATA) in bytes
+*
+*
+*
+* - <HEADER>
+*   - int MSG_TYPE identifies type of message (standard (see StandardMsgTypes::StandardMsgType)
+*     and robot specific values)
+*   - int COMM_TYPE identified communications type (see CommTypes::CommType)
+*   - int REPLY CODE (service reply only) reply code (see ReplyTypes::ReplyType)
+* 
+* - <BODY>
+*   - ByteArray DATA variable length data determined by message
+*     type and and communications type.
+*
+*
+* THIS CLASS IS NOT THREAD-SAFE
+*
+*/
 class SimpleMessage
 {
 
-  //* SimpleMessage
-  /**
-   * This class defines a simple messaging protocol for communicating with an
-   * industrial robot controller.  The protocol meets the following requirements:
-   *
-   * 1. Format should be simple enough that code can be shared between ROS and
-   * the controller (for those controllers that support C/C++).  For those controllers
-   * that do not support C/C++, the protocol must be simple enough to be decoded with
-   * the limited capabilities of the typical robot programming language.  A corollary
-   * to this requirement is that the protocol should not be so onerous as to overwhelm
-   * the limited resources of the robot controller
-   *
-   * 2. Format should allow for data streaming (ROS topic like)
-   *
-   * 3. Format should allow for data reply (ROS service like)
-   *
-   * 4. The protocol is not intended to encapsulate version information  It is up to
-   * individual developers to ensure that code developed for communicating platforms
-   * does not have any version conflicts (this includes message type identifiers).
-   *
-   * Message Structure
-   *
-   * <PREFIX> Not considered part of the message
-   * int LENGTH (HEADER + DATA) in bytes
-   *
-   * <HEADER>
-   * int MSG_TYPE identifies type of message (standard and robot specific values)
-   * int COMM_TYPE identified communications type
-   * int REPLY CODE (service reply only) reply code
-   * <BODY>
-   * ByteArray DATA variable length data determined by message
-   *                    type and and communications type.
-   *
-   *
-   * THIS CLASS IS NOT THREAD-SAFE
-   *
-   */
+  
 public:
+  /**
+   * \brief Constructs an empty message
+   */
 	SimpleMessage();
+
+  /**
+   * \brief Destructs a message
+   */
 	~SimpleMessage(void);
   /**
    * \brief Initializes a fully populated simple message
