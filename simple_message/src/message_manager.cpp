@@ -176,6 +176,10 @@ void MessageManager::spin()
 #endif
   {
     this->spinOnce();
+
+    // Throttle loop speed if waiting for a re-connection
+    if (!this->getConnection()->isConnected())
+      sleep(5);
   }
 }
 
