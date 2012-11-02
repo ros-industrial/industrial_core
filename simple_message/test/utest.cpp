@@ -320,7 +320,7 @@ TEST(DISABLED_MessageManagerSuite, udp)
   pthread_join(udpSrvThrd, NULL);
 }
 
-TEST(MessageManagerSuite, tcp)
+TEST(DISABLED_MessageManagerSuite, tcp)
 {
   const int tcpPort = 11000;
   char ipAddr[] = "127.0.0.1";
