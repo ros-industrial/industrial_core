@@ -320,7 +320,7 @@ TEST(DISABLED_MessageManagerSuite, udp)
   pthread_join(udpSrvThrd, NULL);
 }
 
-TEST(DISABLED_MessageManagerSuite, tcp)
+TEST(MessageManagerSuite, tcp)
 {
   const int tcpPort = 11000;
   char ipAddr[] = "127.0.0.1";
@@ -329,6 +329,10 @@ TEST(DISABLED_MessageManagerSuite, tcp)
   TcpServer tcpServer;
   SimpleMessage pingRequest, pingReply;
   MessageManager tcpManager;
+
+  // MessageManager uses ros::ok, which needs ros spinner
+  ros::AsyncSpinner spinner(0);
+  spinner.start();
 
   ASSERT_TRUE(pingRequest.init(StandardMsgTypes::PING, CommTypes::SERVICE_REQUEST, ReplyTypes::INVALID));
 
@@ -362,12 +366,15 @@ TEST(DISABLED_MessageManagerSuite, tcp)
   delete tcpClient;
   sleep(10); //Allow time for client to destruct and free up port
   tcpClient = new TcpClient();
+
   ASSERT_TRUE(tcpClient->init(&ipAddr[0], tcpPort));
   ASSERT_TRUE(tcpClient->makeConnect());
   ASSERT_TRUE(tcpClient->sendAndReceiveMsg(pingRequest, pingReply));
 
   pthread_cancel(tcpSrvThrd);
   pthread_join(tcpSrvThrd, NULL);
+
+  delete tcpClient;
 }
 
 TEST(JointMessage, init)
@@ -588,6 +595,7 @@ TEST(JointTraj, equal)
 // Run all the tests that were declared with TEST()
 int main(int argc, char **argv)
 {
+  ros::init(argc, argv, "test");  // some tests need ROS framework
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }
