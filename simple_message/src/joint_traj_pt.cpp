@@ -59,69 +59,79 @@ JointTrajPt::~JointTrajPt(void)
 
 void JointTrajPt::init()
 {
-	this->joint_position_.init();
-	this->sequence_ = 0;
-	this->velocity_ = 0.0;
+  this->joint_position_.init();
+  this->sequence_ = 0;
+  this->velocity_ = 0.0;
+  this->duration_ = 0.0;
 }
 
-void JointTrajPt::init(shared_int sequence, JointData & position, shared_real velocity)
+void JointTrajPt::init(shared_int sequence, JointData & position, shared_real velocity, shared_real duration)
 {
-	this->setJointPosition(position);
-	this->setSequence(sequence);
-	this->setVelocity(velocity);
+  this->setJointPosition(position);
+  this->setSequence(sequence);
+  this->setVelocity(velocity);
+  this->setDuration(duration);
 }
-
 
 void JointTrajPt::copyFrom(JointTrajPt &src)
 {
   this->setSequence(src.getSequence());
   src.getJointPosition(this->joint_position_);
   this->setVelocity(src.getVelocity());
+  this->setDuration(src.getDuration());
 }
 
 bool JointTrajPt::operator==(JointTrajPt &rhs)
 {
-  return this->joint_position_ == rhs.joint_position_ &&
-		  this->sequence_ == rhs.sequence_ &&
-		  this->velocity_ == rhs.velocity_;
+  return this->joint_position_ == rhs.joint_position_ && this->sequence_ == rhs.sequence_
+      && this->velocity_ == rhs.velocity_ && this->duration_ == rhs.duration_;
 
 }
 
 bool JointTrajPt::load(industrial::byte_array::ByteArray *buffer)
 {
-	bool rtn = false;
+  bool rtn = false;
 
-	LOG_COMM("Executing joint trajectory point load");
+  LOG_COMM("Executing joint trajectory point load");
 
-	if (buffer->load(this->sequence_))
-	{
-		if (this->joint_position_.load(buffer))
-		{
-			if (buffer->load(this->velocity_))
-			{
-				LOG_COMM("Trajectory point successfully loaded");
-				rtn = true;
-			}
-			else
-			{
-				rtn = false;
-				LOG_ERROR("Failed to load joint traj pt. velocity");
-			}
+  if (buffer->load(this->sequence_))
+  {
+    if (this->joint_position_.load(buffer))
+    {
+      if (buffer->load(this->velocity_))
+      {
+        if (buffer->load(this->duration_))
+        {
+          LOG_COMM("Trajectory point successfully loaded");
+          rtn = true;
+        }
+        else
+        {
+          rtn = false;
+          LOG_ERROR("Failed to load joint traj pt. duration");
+        }
+        rtn = true;
+      }
+      else
+      {
+        rtn = false;
+        LOG_ERROR("Failed to load joint traj pt. velocity");
+      }
 
-		}
-		else
-		{
-			rtn = false;
-			LOG_ERROR("Failed to load joint traj. pt.  position data");
-		}
-	}
-	else
-	{
-		rtn = false;
-		LOG_ERROR("Failed to load joint traj. pt. sequence number");
-	}
+    }
+    else
+    {
+      rtn = false;
+      LOG_ERROR("Failed to load joint traj. pt.  position data");
+    }
+  }
+  else
+  {
+    rtn = false;
+    LOG_ERROR("Failed to load joint traj. pt. sequence number");
+  }
 
-	return rtn;
+  return rtn;
 }
 
 bool JointTrajPt::unload(industrial::byte_array::ByteArray *buffer)
@@ -129,32 +139,40 @@ bool JointTrajPt::unload(industrial::byte_array::ByteArray *buffer)
   bool rtn = false;
 
   LOG_COMM("Executing joint traj. pt. unload");
-  if (buffer->unload(this->velocity_))
+  if (buffer->unload(this->duration_))
   {
-	  if(this->joint_position_.unload(buffer))
-	  {
-		  if (buffer->unload(this->sequence_))
-		  {
-			  rtn = true;
-			  LOG_COMM("Joint traj. pt successfully unloaded");
-		  }
-		  else
-		  {
-				LOG_ERROR("Failed to unload joint traj. pt. sequence number");
-				rtn = false;
-		  }
-	  }
-	  else
-	  {
-		  LOG_ERROR("Failed to unload joint traj. pt.  position data");
-		  rtn = false;
-	  }
+    if (buffer->unload(this->velocity_))
+    {
+      if (this->joint_position_.unload(buffer))
+      {
+        if (buffer->unload(this->sequence_))
+        {
+          rtn = true;
+          LOG_COMM("Joint traj. pt successfully unloaded");
+        }
+        else
+        {
+          LOG_ERROR("Failed to unload joint traj. pt. sequence number");
+          rtn = false;
+        }
+      }
+      else
+      {
+        LOG_ERROR("Failed to unload joint traj. pt.  position data");
+        rtn = false;
+      }
 
+    }
+    else
+    {
+      LOG_ERROR("Failed to unload joint traj. pt. velocity");
+      rtn = false;
+    }
   }
   else
   {
-	  LOG_ERROR("Failed to unload joint traj. pt. velocity");
-	  rtn = false;
+    LOG_ERROR("Failed to unload joint traj. pt. duration");
+    rtn = false;
   }
 
   return rtn;

@@ -1,7 +1,7 @@
 <package>
   <description brief="simple_message">
 
-     simple_message defines a simple messaging connection and protocol for communicating with an industrial robot controller.  Additional handler and manager classes are included for handling connection limited systems.
+     simple_message defines a simple messaging connection and protocol for communicating with an industrial robot controller.  Additional handler and manager classes are included for handling connection limited systems.  This package is part of the [[Industrial|ROS-Industrial Program]]
 
   </description>
   <author>Shaun Edwards</author>
