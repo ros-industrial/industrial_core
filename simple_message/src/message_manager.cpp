@@ -156,7 +156,7 @@ void MessageManager::spinOnce()
         this->getConnection()->sendMsg(fail);
         LOG_WARN("Unhandled message type encounters, sending failure reply");
       }
-      LOG_ERROR("Message callback for message type: %d, not exectued", msg.getMessageType());
+      LOG_ERROR("Message callback for message type: %d, not executed", msg.getMessageType());
     }
   }
   else
