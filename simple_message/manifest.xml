@@ -12,7 +12,7 @@
   <depend package="roscpp"/>
 
   <export>
-    <cpp cflags="-I${prefix}/include -DROS=1" lflags="-Wl,-rpath,${prefix}/lib -L${prefix}/lib -lsimple_message"/>
+    <cpp cflags="-I${prefix}/include -DROS=1" lflags="-Wl,-rpath,${prefix}/lib -L${prefix}/lib" />
   </export>
 
 </package>

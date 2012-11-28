@@ -55,6 +55,9 @@ using namespace industrial::byte_array;
 ByteArray::ByteArray(void)
 {
   this->init();
+#ifdef BYTE_SWAPPING
+  LOG_COMM("Byte swapping enabled");
+#endif
 }
 
 ByteArray::~ByteArray(void)
@@ -99,6 +102,33 @@ void ByteArray::copyFrom(ByteArray & buffer)
   }
 }
 
+
+#ifdef BYTE_SWAPPING
+void ByteArray::swap(void *value, shared_int byteSize)
+{
+  LOG_COMM("Executing byte swapping");
+
+  LOG_COMM("Value (swapping-input): %u", (unsigned int)(*(unsigned int*)value));
+  for (unsigned int i = 0; i < byteSize / 2; i++)
+  {
+    unsigned int endIndex = byteSize - i - 1;
+    char endByte = ((char*)value)[endIndex];
+    unsigned int endInt = endByte;
+
+    unsigned int beginIndex = i;
+    char beginByte = ((char*)value)[beginIndex];
+    unsigned int beginInt = beginByte;
+
+    LOG_COMM("Swap beginIndex i: %u, endIndex: %u, begin[]: %u, end[]: %u",
+             beginIndex, endIndex, beginInt, endInt);
+    ((char*)value)[endIndex] = beginByte;
+    ((char*)value)[beginIndex] = endByte;
+  }
+  LOG_COMM("Value (swapping-output): %u", (unsigned int)(*(unsigned int*)value));
+
+}
+#endif
+
 char* ByteArray::getRawDataPtr()
 {
   return &this->buffer_[0];
@@ -117,11 +147,23 @@ bool ByteArray::load(shared_bool value)
 
 bool ByteArray::load(shared_real value)
 {
+#ifdef BYTE_SWAPPING
+  LOG_COMM("Value (loading-input): %f", value);
+  this->swap(&value, sizeof(shared_real));
+  LOG_COMM("Value (loading-output): %f", value);
+#endif
+
   return this->load(&value, sizeof(shared_real));
 }
 
 bool ByteArray::load(shared_int value)
 {
+#ifdef BYTE_SWAPPING
+  LOG_COMM("Value (loading-input): %d", value);
+  this->swap(&value, sizeof(shared_int));
+  LOG_COMM("Value (loading-output): %d", value);
+#endif
+
   return this->load(&value, sizeof(shared_int));
 }
 
@@ -178,17 +220,34 @@ bool ByteArray::load(void* value, const shared_int byte_size)
  */
 bool ByteArray::unload(shared_bool & value)
 {
-  return this->unload(&value, sizeof(shared_bool));
+  shared_bool rtn = this->unload(&value, sizeof(shared_bool));
+  return rtn;
+
 }
 
 bool ByteArray::unload(shared_real &value)
 {
-  return this->unload(&value, sizeof(shared_real));
+  bool rtn = this->unload(&value, sizeof(shared_real));
+
+#ifdef BYTE_SWAPPING
+  LOG_COMM("Value (unloading-input): %f", value);
+  this->swap(&value, sizeof(shared_real));
+  LOG_COMM("Value (unloading-output): %f", value);
+#endif
+
+  return rtn;
 }
 
 bool ByteArray::unload(shared_int &value)
 {
-  return this->unload(&value, sizeof(shared_int));
+  bool rtn = this->unload(&value, sizeof(shared_int));
+
+#ifdef BYTE_SWAPPING
+  LOG_COMM("Value (unloading-input): %d", value);
+  this->swap(&value, sizeof(shared_int));
+  LOG_COMM("Value (unloading-output): %d", value);
+#endif
+  return rtn;
 }
 
 bool ByteArray::unload(simple_serialize::SimpleSerialize &value)
@@ -264,6 +323,39 @@ bool ByteArray::unload(void* value, shared_int byteSize)
   return rtn;
 }
 
+
+
+/****************************************************************
+ // unloadFront(*)
+ //
+ // Methods for unloading various data types.  Unloading data shortens
+ // the internal buffer and requires a memmove.  These functions should
+ // be used sparingly, as they are expensive.
+ //
+ */
+bool ByteArray::unloadFront(industrial::shared_types::shared_real &value)
+{
+  bool rtn = this->unloadFront(&value, sizeof(shared_real));
+
+#ifdef BYTE_SWAPPING
+  LOG_COMM("Value (unloading-input): %f", value);
+  this->swap(&value, sizeof(shared_real));
+  LOG_COMM("Value (unloading-output): %f", value);
+#endif
+  return rtn;
+}
+
+bool ByteArray::unloadFront(industrial::shared_types::shared_int &value)
+{
+  bool rtn = this->unloadFront(&value, sizeof(shared_int));
+
+#ifdef BYTE_SWAPPING
+  LOG_COMM("Value (unloading-input): %d", value);
+  this->swap(&value, sizeof(shared_int));
+  LOG_COMM("Value (unloading-output): %d", value);
+#endif
+  return rtn;
+}
 bool ByteArray::unloadFront(void* value, const industrial::shared_types::shared_int byteSize)
 {
   bool rtn;
@@ -318,6 +410,15 @@ unsigned int ByteArray::getBufferSize()
 unsigned int ByteArray::getMaxBufferSize()
 {
   return this->MAX_SIZE;
+}
+
+
+bool ByteArray::isByteSwapEnabled()
+{
+#ifdef BYTE_SWAPPING
+  return true;
+#endif
+  return false;
 }
 
 bool ByteArray::setBufferSize(shared_int size)
@@ -389,7 +490,7 @@ char* ByteArray::getUnloadPtr(shared_int byteSize)
   else
   {
     LOG_ERROR("Get unload pointer failed, buffer size: %d, smaller than byte size: %d",
-      this->getBufferSize(), byteSize);
+              this->getBufferSize(), byteSize);
     rtn = NULL;
   }
 

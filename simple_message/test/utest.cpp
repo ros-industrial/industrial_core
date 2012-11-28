@@ -144,11 +144,66 @@ TEST(ByteArraySuite, loading)
   EXPECT_EQ(empty.getBufferSize(), sizeof(shared_real));
   EXPECT_TRUE(empty.load(iIN));
   EXPECT_EQ(empty.getBufferSize(), sizeof(shared_real)+sizeof(shared_int));
-  EXPECT_TRUE(empty.unloadFront((void*)&rOUT, sizeof(shared_real)));
+  EXPECT_TRUE(empty.unloadFront(rOUT));
   EXPECT_EQ(rOUT, rIN);
   EXPECT_TRUE(empty.unload(iOUT));
   EXPECT_EQ((int)empty.getBufferSize(), 0);
   EXPECT_EQ(iOUT, iIN);
+}
+
+TEST(ByteArraySuite, byteSwapping)
+{
+  if(ByteArray::isByteSwapEnabled())
+  {
+    ASSERT_TRUE(ByteArray::isByteSwapEnabled());
+
+    ByteArray swapped;
+    unsigned char buffer[] = {
+            0x00, 0x00, 0x00, 0x38,   // be: 56
+            0x00, 0x00, 0x00, 0x0a,   // be: 10
+            0x00, 0x00, 0x00, 0x01,   // be:  1
+
+            0x3e, 0x81, 0x32, 0x64,   // be:  0.25233757495880127
+            0x3f, 0x30, 0x4b, 0x75,   // be:  0.68865138292312622
+            0x3f, 0xa8, 0x9d, 0xd2,   // be:  1.3173162937164307
+            0x3f, 0x85, 0x93, 0xdd,   // be:  1.0435749292373657
+            0xbf, 0xf4, 0x8c, 0xc5,   // be: -1.9105459451675415
+
+    };
+    const unsigned int bufferLength = 32;
+    shared_int tempInt;
+    shared_real tempReal;
+
+    swapped.init((const char*) buffer, bufferLength);
+    ASSERT_EQ(swapped.getBufferSize(), bufferLength);
+
+    ASSERT_TRUE(swapped.unload(tempReal));
+    EXPECT_FLOAT_EQ(tempReal, -1.9105459451675415);
+
+    ASSERT_TRUE(swapped.unload(tempReal));
+    EXPECT_FLOAT_EQ(tempReal, 1.0435749292373657);
+
+    ASSERT_TRUE(swapped.unload(tempReal));
+    EXPECT_FLOAT_EQ(tempReal, 1.3173162937164307);
+
+    ASSERT_TRUE(swapped.unload(tempReal));
+    EXPECT_FLOAT_EQ(tempReal, 0.68865138292312622);
+
+    ASSERT_TRUE(swapped.unload(tempReal));
+    EXPECT_FLOAT_EQ(tempReal, 0.25233757495880127);
+
+    ASSERT_TRUE(swapped.unload(tempInt));
+    EXPECT_EQ(tempInt, 1);
+
+    ASSERT_TRUE(swapped.unload(tempInt));
+    EXPECT_EQ(tempInt, 10);
+
+    ASSERT_TRUE(swapped.unload(tempInt));
+    EXPECT_EQ(tempInt, 56);
+
+    ASSERT_EQ(swapped.getBufferSize(), 0);
+  }
+
 }
 
 TEST(ByteArraySuite, copy)
@@ -503,10 +558,10 @@ TEST(JointTrajPt, equal)
   ASSERT_TRUE(joint.setJoint(8, 9.0));
   ASSERT_TRUE(joint.setJoint(9, 10.0));
 
-  rhs.init(1.0, joint, 50.0);
+  rhs.init(1.0, joint, 50.0, 100);
   EXPECT_FALSE(lhs==rhs);
 
-  lhs.init(0, joint, 0);
+  lhs.init(0, joint, 0, 0);
   EXPECT_FALSE(lhs==rhs);
 
   lhs.copyFrom(rhs);
@@ -548,7 +603,7 @@ TEST(JointTrajPt, Comms)
 	data.setJoint(7,8.0);
 	data.setJoint(8,9.0);
 	data.setJoint(9,10.0);
-	posSend.init(1, data, 99);
+	posSend.init(1, data, 99, 100);
 
   jointSend.init(posSend);
 
@@ -576,7 +631,7 @@ TEST(JointTraj, equal)
   ASSERT_TRUE(joint.setJoint(8, 9.0));
   ASSERT_TRUE(joint.setJoint(9, 10.0));
 
-  point.init(1.0, joint, 50.0);
+  point.init(1.0, joint, 50.0, 100);
   rhs.addPoint(point);
   EXPECT_FALSE(lhs==rhs);
 
