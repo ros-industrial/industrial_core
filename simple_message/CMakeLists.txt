@@ -9,6 +9,10 @@ include($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
 #  MinSizeRel     : w/o debug symbols, w/ optimization, stripped binaries
 #set(ROS_BUILD_TYPE RelWithDebInfo)
 
+# Build static libs, to reduce dependency-chaining for industrial_robot_client
+set(ROS_BUILD_STATIC_LIBS true)
+set(ROS_BUILD_SHARED_LIBS false)
+
 rosbuild_init()
 
 # The simple_message library is designed to cross compile on Ubuntu
@@ -67,11 +71,15 @@ set(SRC_FILES src/byte_array.cpp
 
 # DEFAULT LIBRARY (SAME ENDIAN)
 rosbuild_add_library(simple_message ${SRC_FILES})
+rosbuild_add_compile_flags(simple_message "-fPIC") # for use in shared-libs
+
 rosbuild_add_gtest(utest test/utest.cpp)
 target_link_libraries(utest simple_message)
 
 # ALTERNATIVE LIBRARY (DIFFERENT ENDIAN)
 rosbuild_add_library(simple_message_bswap ${SRC_FILES})
+set_target_properties(simple_message_bswap PROPERTIES COMPILE_DEFINITIONS "BYTE_SWAPPING")
+rosbuild_add_compile_flags(simple_message_bswap "-fPIC") # for use in shared-libs
+
 rosbuild_add_gtest(utest_byte_swapping test/utest.cpp)
 target_link_libraries(utest_byte_swapping simple_message_bswap)
-set_target_properties(simple_message_bswap PROPERTIES COMPILE_FLAGS "-DBYTE_SWAPPING")
