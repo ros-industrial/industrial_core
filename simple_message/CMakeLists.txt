@@ -50,11 +50,16 @@ set(SRC_FILES src/byte_array.cpp
 					src/joint_data.cpp
 					src/joint_traj_pt.cpp
 					src/joint_traj.cpp
-
+					src/robot_status.cpp
+					
 					src/messages/joint_message.cpp
 					src/messages/joint_traj_pt_message.cpp
+					src/messages/robot_status_message.cpp
 					
 					src/simple_comms_fault_handler.cpp)
+					
+set(UTEST_SRC_FILES test/utest.cpp
+						test/utest_message.cpp)
 
 # The simple message make file builds two libraries: simple_message and
 # simple_message_byte_swapping.
@@ -65,7 +70,7 @@ set(SRC_FILES src/byte_array.cpp
 #
 # simple_message_byte_swapping - is an alternative library that can be used
 # when the target for simple message is a DIFFERENT endian AND when the target
-# targe cannot perform byte swapping (as is the case for some industrial
+# target cannot perform byte swapping (as is the case for some industrial
 # controllers).  This library performs byte swapping at the lowest load/unload
 # levels.
 
@@ -73,7 +78,7 @@ set(SRC_FILES src/byte_array.cpp
 rosbuild_add_library(simple_message ${SRC_FILES})
 rosbuild_add_compile_flags(simple_message "-fPIC") # for use in shared-libs
 
-rosbuild_add_gtest(utest test/utest.cpp)
+rosbuild_add_gtest(utest ${UTEST_SRC_FILES})
 target_link_libraries(utest simple_message)
 
 # ALTERNATIVE LIBRARY (DIFFERENT ENDIAN)
@@ -81,5 +86,5 @@ rosbuild_add_library(simple_message_bswap ${SRC_FILES})
 set_target_properties(simple_message_bswap PROPERTIES COMPILE_DEFINITIONS "BYTE_SWAPPING")
 rosbuild_add_compile_flags(simple_message_bswap "-fPIC") # for use in shared-libs
 
-rosbuild_add_gtest(utest_byte_swapping test/utest.cpp)
+rosbuild_add_gtest(utest_byte_swapping ${UTEST_SRC_FILES})
 target_link_libraries(utest_byte_swapping simple_message_bswap)
