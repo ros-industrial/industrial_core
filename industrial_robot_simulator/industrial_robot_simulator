@@ -1,0 +1,177 @@
+#!/usr/bin/python
+
+import roslib; roslib.load_manifest('industrial_robot_simulator')
+import rospy
+import copy
+import thread
+
+# Publish
+from sensor_msgs.msg import JointState
+from control_msgs.msg import FollowJointTrajectoryFeedback 
+
+# Subscribe
+from trajectory_msgs.msg import JointTrajectory
+
+"""
+IndustrialRobotSimulator
+
+This class simulates an industrial robot controller.  The simulator
+adheres to the ROS-Industrial robot driver specification: 
+
+http://www.ros.org/wiki/Industrial/Industrial_Robot_Driver_Spec
+
+TODO: Currently the simulator only supports the bare minimum motion
+interface.
+
+TODO: Interfaces to add:
+Robot status
+Joint streaming
+All services
+
+"""
+class IndustrialRobotSimulator():
+
+
+    """
+    Constructor of industrial robot simulator
+    """
+    def __init__(self):
+        rospy.init_node('industrial_robot_simulator')
+
+        # Class lock
+        self.lock = thread.allocate_lock()
+        
+        # Publish rate (hz)
+        self.pub_rate = rospy.get_param('pub_rate', 10)
+        rospy.loginfo("Setting publish rate(hz) based on parameter: %d", self.pub_rate)
+        
+        # Joint names
+        def_joint_names = ["joint_1", "joint_2", "joint_3", "joint_4", "joint_5", "joint_6"] 
+        self.joint_names = rospy.get_param('controller_joint_names', def_joint_names)
+        if len(self.joint_names) == 0:
+            rospy.logwarn("Joint list is empty, did you set controller_joint_name?")
+        rospy.loginfo("Setting joint names based on parameter: %s", str(self.joint_names))
+        
+        # Initialize joint position
+        self.joint_positions = [0]*len(self.joint_names)
+
+        # The sequence number is attached to every published joint state.
+        # Not sure there is any value/use in doing this but it seemed important.
+        self.seq = 0
+
+        # Published to joint states
+        rospy.loginfo("Creating joint state publisher")
+        self.joint_state_pub = rospy.Publisher('joint_states', JointState)
+        
+        # Published to joint feedback
+        rospy.loginfo("Creating joint feedback publisher")
+        self.joint_feedback_pub = rospy.Publisher('feedback_states', FollowJointTrajectoryFeedback)
+
+        # Subscribe to a joint trajectory
+        rospy.loginfo("Creating joint trajectory subscriber")
+        self.joint_path_sub = rospy.Subscriber('joint_path_command', JointTrajectory, self.trajectory_callback)
+
+        # Timed task
+        rospy.Timer(1.0/self.pub_rate, self.publish_worker())
+
+
+
+
+    """
+    The publish worker is executed at a fixed rate.  The publishes the various
+    state and status information for the robot.
+    """
+    def publish_worker(self):
+        while not rospy.is_shutdown():
+            r = rospy.Rate(self.pub_rate)
+            self.joint_state_publisher()            
+            r.sleep()
+            
+    """
+    The joint state publisher publishes the current joint state and the current
+    feedback state (as these are closely releated)
+    """       
+    def joint_state_publisher(self):
+    
+        joint_state_msg = JointState()
+        joint_fb_msg = FollowJointTrajectoryFeedback()
+        time = rospy.Time.now()
+        
+        self.lock.acquire()
+        
+        #Joint states
+            
+        joint_state_msg.header.seq = self.seq
+        joint_state_msg.header.stamp = time
+        joint_state_msg.name = self.joint_names
+        joint_state_msg.position = self.joint_positions
+        
+        self.joint_state_pub.publish(joint_state_msg)
+        
+        #Joint feedback
+        joint_fb_msg.header.seq = self.seq
+        joint_fb_msg.header.stamp = time
+        joint_fb_msg.joint_names = self.joint_names
+        joint_fb_msg.actual.positions = self.joint_positions
+        
+        self.joint_feedback_pub.publish(joint_fb_msg)
+  
+        
+        #Increment sequence
+        self.seq = self.seq + 1
+        
+        self.lock.release()
+            
+            
+    """
+    Trajectory subscription callback (gets called whenever a joint trajectory
+    is received).
+
+    @param msg_in: joint trajectory message
+    @type  msg_in: JointTrajectory
+    """
+    def trajectory_callback(self, msg_in):
+
+        last_time = rospy.Duration(0)
+        try:
+            for point in msg_in.points:
+                rospy.sleep(point.time_from_start - last_time)
+                self.set_joint_positions(point.positions, msg_in.joint_names)
+                last_time = point.time_from_start
+                
+       
+        except Exception as e:
+            rospy.logerr('Unexpected exception: %s', e)
+
+        finally:
+            pass
+
+    """
+    Sets the internal robot joint positions based on a values and order
+    lists
+
+    @param keys:   keys defining joint value order
+    @type  keys:   list
+    @param values: list of joint values
+    @type  values: list
+    """
+    def set_joint_positions(self, keys, values):
+    
+        mapping = dict(zip(values, keys))
+        with self.lock:
+            for i in range(len(self.joint_names)):
+                self.joint_positions[i] = mapping[self.joint_names[i]]
+            
+            
+            
+        
+
+
+if __name__ == '__main__':
+    try:
+        rospy.loginfo('Executing joint_controller_simulator')
+        controller = IndustrialRobotSimulator()
+        rospy.spin()
+    except rospy.ROSInterruptException: pass
+
+
