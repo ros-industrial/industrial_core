@@ -82,7 +82,7 @@ bool JointTrajectoryInterface::init(SmplMsgConnection* connection, const std::ve
   this->joint_vel_limits_ = velocity_limits;
   connection_->makeConnect();
 
-  this->sub_joint_trajectory_ = this->node_.subscribe("command", 0, &JointTrajectoryInterface::jointTrajectoryCB, this);
+  this->sub_joint_trajectory_ = this->node_.subscribe("joint_path_command", 0, &JointTrajectoryInterface::jointTrajectoryCB, this);
 
   return true;
 }
