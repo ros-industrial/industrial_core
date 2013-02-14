@@ -82,6 +82,7 @@ bool JointTrajectoryInterface::init(SmplMsgConnection* connection, const std::ve
   this->joint_vel_limits_ = velocity_limits;
   connection_->makeConnect();
 
+  this->srv_stop_motion_ = this->node_.advertiseService("stop_motion", &JointTrajectoryInterface::stopMotionCB, this);
   this->sub_joint_trajectory_ = this->node_.subscribe("joint_path_command", 0, &JointTrajectoryInterface::jointTrajectoryCB, this);
 
   return true;
@@ -284,6 +285,17 @@ void JointTrajectoryInterface::trajectoryStop()
   jMsg.toRequest(msg);
   ROS_DEBUG("Sending stop command");
   this->connection_->sendAndReceiveMsg(msg, reply);
+}
+
+bool JointTrajectoryInterface::stopMotionCB(industrial_msgs::StopMotion::Request &req,
+		                                    industrial_msgs::StopMotion::Response &res)
+{
+  trajectoryStop();
+
+  // no success/fail result from trajectoryStop.  Assume success.
+  res.code.val = industrial_msgs::ServiceReturnCode::SUCCESS;
+
+  return true;  // always return true.  To distinguish between call-failed and service-unavailable.
 }
 
 } //joint_trajectory_interface
