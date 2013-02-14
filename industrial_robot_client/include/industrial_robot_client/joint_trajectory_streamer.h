@@ -81,15 +81,17 @@ public:
   /**
    * \brief Class initializer
    *
-   * \param connection simple message connection that will be used to send commands to robot.
+   * \param connection simple message connection that will be used to send commands to robot (ALREADY INITIALIZED)
    * \param joint_names list of expected joint-names.
    *   - Count and order should match data sent to robot connection.
    *   - Use blank-name to insert a placeholder joint position (typ. 0.0).
    *   - Joints in the incoming JointTrajectory stream that are NOT listed here will be ignored.
-   *
+   * \param velocity_limits map of maximum velocities for each joint
+   *   - leave empty to lookup from URDF
    * \return true on success, false otherwise (an invalid message type)
    */
-  bool init(SmplMsgConnection* connection, const std::vector<std::string> &joint_names);
+  virtual bool init(SmplMsgConnection* connection, const std::vector<std::string> &joint_names,
+                    const std::map<std::string, double> &velocity_limits = std::map<std::string, double>());
 
   ~JointTrajectoryStreamer();
 
