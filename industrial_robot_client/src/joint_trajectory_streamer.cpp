@@ -135,6 +135,7 @@ void JointTrajectoryStreamer::streamingThread()
 {
   JointTrajPtMessage jtpMsg;
   SimpleMessage msg, reply;
+  int connectRetryCount = 1;
 
   ROS_INFO("Starting joint trajectory streamer thread");
   while (ros::ok())
@@ -142,10 +143,19 @@ void JointTrajectoryStreamer::streamingThread()
     ros::Duration(0.005).sleep();
 
     // automatically re-establish connection, if required
-    if (!this->connection_->isConnected())
+    if (connectRetryCount-- > 0)
     {
       ROS_INFO("Connecting to robot motion server");
       this->connection_->makeConnect();
+      ros::Duration(0.250).sleep();  // wait for connection
+
+      if (this->connection_->isConnected())
+        connectRetryCount = 0;
+      else if (connectRetryCount <= 0)
+      {
+        ROS_ERROR("Timeout connecting to robot controller.  Send new motion command to retry.");
+        this->state_ = TransferStates::IDLE;
+      }
       continue;
     }
 
@@ -162,6 +172,13 @@ void JointTrajectoryStreamer::streamingThread()
         {
           ROS_INFO("Trajectory streaming complete, setting state to IDLE");
           this->state_ = TransferStates::IDLE;
+          break;
+        }
+
+        if (!this->connection_->isConnected())
+        {
+          ROS_DEBUG("Robot disconnected.  Attempting reconnect...");
+          connectRetryCount = 5;
           break;
         }
 
