@@ -271,17 +271,17 @@ TEST(JointTraj, equal)
 TEST(RobotStatus, enumerations)
 {
   // Verifying the disabled state and aliases match
-  EXPECT_EQ(TriStates::DISABLED, TriStates::FALSE);
-  EXPECT_EQ(TriStates::DISABLED, TriStates::LOW);
-  EXPECT_EQ(TriStates::DISABLED, TriStates::OFF);
+  EXPECT_EQ(TriStates::TS_DISABLED, TriStates::TS_FALSE);
+  EXPECT_EQ(TriStates::TS_DISABLED, TriStates::TS_LOW);
+  EXPECT_EQ(TriStates::TS_DISABLED, TriStates::TS_OFF);
 
   // Verifying the enabled state and aliases values match
-  EXPECT_EQ(TriStates::ENABLED, TriStates::TRUE);
-  EXPECT_EQ(TriStates::ENABLED, TriStates::HIGH);
-  EXPECT_EQ(TriStates::ENABLED, TriStates::ON);
+  EXPECT_EQ(TriStates::TS_ENABLED, TriStates::TS_TRUE);
+  EXPECT_EQ(TriStates::TS_ENABLED, TriStates::TS_HIGH);
+  EXPECT_EQ(TriStates::TS_ENABLED, TriStates::TS_ON);
 
   // Verifying the unknown values match (this isn't reqd, but makes sense)
-  EXPECT_EQ(TriStates::UNKNOWN, RobotModes::UNKNOWN);
+  EXPECT_EQ(TriStates::TS_UNKNOWN, RobotModes::UNKNOWN);
 }
 
 TEST(RobotStatus, init)
@@ -291,13 +291,13 @@ TEST(RobotStatus, init)
   status.init();
   // An empty (non-initted) status should be initialized in the constructor.
   EXPECT_TRUE(status==empty);
-  EXPECT_EQ(status.getDrivesPowered(), TriStates::UNKNOWN);
-  EXPECT_EQ(status.getEStopped(), TriStates::UNKNOWN);
+  EXPECT_EQ(status.getDrivesPowered(), TriStates::TS_UNKNOWN);
+  EXPECT_EQ(status.getEStopped(), TriStates::TS_UNKNOWN);
   EXPECT_EQ(status.getErrorCode(), 0);
-  EXPECT_EQ(status.getInError(), TriStates::UNKNOWN);
-  EXPECT_EQ(status.getInMotion(), TriStates::UNKNOWN);
+  EXPECT_EQ(status.getInError(), TriStates::TS_UNKNOWN);
+  EXPECT_EQ(status.getInMotion(), TriStates::TS_UNKNOWN);
   EXPECT_EQ(status.getMode(), RobotModes::UNKNOWN);
-  EXPECT_EQ(status.getMotionPossible(), TriStates::UNKNOWN);
+  EXPECT_EQ(status.getMotionPossible(), TriStates::TS_UNKNOWN);
 }
 
 TEST(RobotStatus, equal)
@@ -305,14 +305,14 @@ TEST(RobotStatus, equal)
   RobotStatus lhs, rhs;
 
   EXPECT_TRUE(lhs==rhs);
-  lhs.setDrivesPowered(TriStates::ENABLED);
+  lhs.setDrivesPowered(TriStates::TS_ENABLED);
   EXPECT_FALSE(lhs==rhs);
-  rhs.setDrivesPowered(TriStates::ENABLED);
+  rhs.setDrivesPowered(TriStates::TS_ENABLED);
   EXPECT_TRUE(lhs==rhs);
 
-  lhs.setEStopped(TriStates::ENABLED);
+  lhs.setEStopped(TriStates::TS_ENABLED);
   EXPECT_FALSE(lhs==rhs);
-  rhs.setEStopped(TriStates::ENABLED);
+  rhs.setEStopped(TriStates::TS_ENABLED);
   EXPECT_TRUE(lhs==rhs);
 
   lhs.setErrorCode(99);
@@ -320,14 +320,14 @@ TEST(RobotStatus, equal)
   rhs.setErrorCode(99);
   EXPECT_TRUE(lhs==rhs);
 
-  lhs.setInError(TriStates::ENABLED);
+  lhs.setInError(TriStates::TS_ENABLED);
   EXPECT_FALSE(lhs==rhs);
-  rhs.setInError(TriStates::ENABLED);
+  rhs.setInError(TriStates::TS_ENABLED);
   EXPECT_TRUE(lhs==rhs);
 
-  lhs.setInMotion(TriStates::ENABLED);
+  lhs.setInMotion(TriStates::TS_ENABLED);
   EXPECT_FALSE(lhs==rhs);
-  rhs.setInMotion(TriStates::ENABLED);
+  rhs.setInMotion(TriStates::TS_ENABLED);
   EXPECT_TRUE(lhs==rhs);
 
   lhs.setMode(RobotModes::AUTO);
@@ -335,9 +335,9 @@ TEST(RobotStatus, equal)
   rhs.setMode(RobotModes::AUTO);
   EXPECT_TRUE(lhs==rhs);
 
-  lhs.setMotionPossible(TriStates::ENABLED);
+  lhs.setMotionPossible(TriStates::TS_ENABLED);
   EXPECT_FALSE(lhs==rhs);
-  rhs.setMotionPossible(TriStates::ENABLED);
+  rhs.setMotionPossible(TriStates::TS_ENABLED);
   EXPECT_TRUE(lhs==rhs);
 
 }
@@ -347,8 +347,8 @@ TEST(RobotStatus, toMessage)
   RobotStatus toMessage, fromMessage;
   RobotStatusMessage msg;
 
-  toMessage.init(TriStates::ENABLED, TriStates::FALSE, 99, TriStates::TRUE, TriStates::TRUE, RobotModes::MANUAL,
-                 TriStates::DISABLED);
+  toMessage.init(TriStates::TS_ENABLED, TriStates::TS_FALSE, 99, TriStates::TS_TRUE, TriStates::TS_TRUE, RobotModes::MANUAL,
+                 TriStates::TS_DISABLED);
   msg.init(toMessage);
 
   fromMessage.copyFrom(msg.status_);
@@ -362,8 +362,8 @@ TEST(RobotStatus, Comms)
   RobotStatusMessage statusMsgSend, statusMsgRecv;
   RobotStatus statusSend, statusRecv;
 
-  statusSend.init(TriStates::ENABLED, TriStates::FALSE, 99, TriStates::TRUE, TriStates::TRUE, RobotModes::MANUAL,
-                   TriStates::DISABLED);
+  statusSend.init(TriStates::TS_ENABLED, TriStates::TS_FALSE, 99, TriStates::TS_TRUE, TriStates::TS_TRUE, RobotModes::MANUAL,
+                   TriStates::TS_DISABLED);
 
   statusMsgSend.init(statusSend);
 
