@@ -83,6 +83,7 @@ bool JointTrajectoryInterface::init(SmplMsgConnection* connection, const std::ve
   connection_->makeConnect();
 
   this->srv_stop_motion_ = this->node_.advertiseService("stop_motion", &JointTrajectoryInterface::stopMotionCB, this);
+  this->srv_joint_trajectory_ = this->node_.advertiseService("joint_path_command", &JointTrajectoryInterface::jointTrajectoryCB, this);
   this->sub_joint_trajectory_ = this->node_.subscribe("joint_path_command", 0, &JointTrajectoryInterface::jointTrajectoryCB, this);
 
   return true;
@@ -92,6 +93,19 @@ JointTrajectoryInterface::~JointTrajectoryInterface()
 {  
   trajectoryStop();
   this->sub_joint_trajectory_.shutdown();
+}
+
+bool JointTrajectoryInterface::jointTrajectoryCB(industrial_msgs::CmdJointTrajectory::Request &req,
+                                                 industrial_msgs::CmdJointTrajectory::Response &res)
+{
+  trajectory_msgs::JointTrajectoryPtr traj_ptr(new trajectory_msgs::JointTrajectory);
+  *traj_ptr = req.trajectory;  // copy message data
+  this->jointTrajectoryCB(traj_ptr);
+
+  // no success/fail result from jointTrajectoryCB.  Assume success.
+  res.code.val = industrial_msgs::ServiceReturnCode::SUCCESS;
+
+  return true;  // always return true.  To distinguish between call-failed and service-unavailable.
 }
 
 void JointTrajectoryInterface::jointTrajectoryCB(const trajectory_msgs::JointTrajectoryConstPtr &msg)

@@ -37,6 +37,7 @@
 #include <string>
 
 #include "ros/ros.h"
+#include "industrial_msgs/CmdJointTrajectory.h"
 #include "industrial_msgs/StopMotion.h"
 #include "simple_message/smpl_msg_connection.h"
 #include "simple_message/socket/tcp_client.h"
@@ -100,25 +101,6 @@ public:
                     const std::map<std::string, double> &velocity_limits = std::map<std::string, double>());
 
   virtual ~JointTrajectoryInterface();
-
-  /**
-   * \brief Callback function registered to ROS topic-subscribe.
-   *   Transform message into SimpleMessage objects and send commands to robot.
-   *
-   * \param msg JointTrajectory message from ROS trajectory-planner
-   */
-  virtual void jointTrajectoryCB(const trajectory_msgs::JointTrajectoryConstPtr &msg);
-
-  /**
-   * \brief Callback function registered to ROS stopMotion service
-   *   Sends stop-motion command to robot.
-   *
-   * \param req StopMotion request from service call
-   * \param res StopMotion response to service call
-   * \return true always.  Look at res.code.val to see if call actually succeeded.
-   */
-  virtual bool stopMotionCB(industrial_msgs::StopMotion::Request &req,
-		                    industrial_msgs::StopMotion::Response &res);
 
   /**
    * \brief Begin processing messages and publishing topics.
@@ -216,11 +198,31 @@ protected:
    */
   virtual bool send_to_robot(const std::vector<JointTrajPtMessage>& messages)=0;
 
+  /**
+   * \brief Callback function registered to ROS topic-subscribe.
+   *   Transform message into SimpleMessage objects and send commands to robot.
+   *
+   * \param msg JointTrajectory message from ROS trajectory-planner
+   */
+  virtual void jointTrajectoryCB(const trajectory_msgs::JointTrajectoryConstPtr &msg);
+
+  /**
+   * \brief Callback function registered to ROS stopMotion service
+   *   Sends stop-motion command to robot.
+   *
+   * \param req StopMotion request from service call
+   * \param res StopMotion response to service call
+   * \return true always.  Look at res.code.val to see if call actually succeeded.
+   */
+  virtual bool stopMotionCB(industrial_msgs::StopMotion::Request &req,
+                                    industrial_msgs::StopMotion::Response &res);
+
   TcpClient default_tcp_connection_;
 
   ros::NodeHandle node_;
   SmplMsgConnection* connection_;
   ros::Subscriber sub_joint_trajectory_; // handle for joint-trajectory topic subscription
+  ros::ServiceServer srv_joint_trajectory_;  // handle for joint-trajectory service
   ros::ServiceServer srv_stop_motion_;   // handle for stop_motion service
   std::vector<std::string> all_joint_names_;
   double default_joint_pos_;  // default position to use for "dummy joints", if none specified
@@ -230,6 +232,17 @@ protected:
 
 private:
   static JointTrajPtMessage create_message(int seq, std::vector<double> joint_pos, double velocity, double duration);
+
+  /**
+   * \brief Callback function registered to ROS CmdJointTrajectory service
+   *   Duplicates message-topic functionality, but in service form.
+   *
+   * \param req CmdJointTrajectory request from service call
+   * \param res CmdJointTrajectory response to service call
+   * \return true always.  Look at res.code.val to see if call actually succeeded
+   */
+  bool jointTrajectoryCB(industrial_msgs::CmdJointTrajectory::Request &req,
+                         industrial_msgs::CmdJointTrajectory::Response &res);
 };
 
 } //joint_trajectory_interface
