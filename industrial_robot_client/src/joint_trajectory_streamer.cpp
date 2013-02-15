@@ -120,11 +120,11 @@ bool JointTrajectoryStreamer::trajectory_to_msgs(const trajectory_msgs::JointTra
     return false;
 
   // pad trajectory as required for minimum streaming buffer size
-  if (current_traj_.size() < (size_t)min_buffer_size_)
+  if (!msgs->empty() && (msgs->size() < (size_t)min_buffer_size_))
   {
-    ROS_DEBUG("Padding trajectory: current(%d) => minimum(%d)", (int)current_traj_.size(), min_buffer_size_);
-    while (current_traj_.size() < (size_t)min_buffer_size_)
-      current_traj_.push_back(current_traj_.back());
+    ROS_DEBUG("Padding trajectory: current(%d) => minimum(%d)", (int)msgs->size(), min_buffer_size_);
+    while (msgs->size() < (size_t)min_buffer_size_)
+      msgs->push_back(msgs->back());
   }
 
   return true;
