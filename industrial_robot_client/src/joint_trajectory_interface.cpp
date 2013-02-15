@@ -168,9 +168,17 @@ bool JointTrajectoryInterface::select(const std::vector<std::string>& ros_joint_
     }
 
     if (is_empty)
-      rbt_pt->positions.push_back(default_joint_pos_);
+    {
+      if (!ros_pt.positions.empty()) rbt_pt->positions.push_back(default_joint_pos_);
+      if (!ros_pt.velocities.empty()) rbt_pt->velocities.push_back(-1);
+      if (!ros_pt.accelerations.empty()) rbt_pt->accelerations.push_back(-1);
+    }
     else
-      rbt_pt->positions.push_back(ros_pt.positions[ros_idx]);
+    {
+      if (!ros_pt.positions.empty()) rbt_pt->positions.push_back(ros_pt.positions[ros_idx]);
+      if (!ros_pt.velocities.empty()) rbt_pt->velocities.push_back(ros_pt.velocities[ros_idx]);
+      if (!ros_pt.accelerations.empty()) rbt_pt->accelerations.push_back(ros_pt.accelerations[ros_idx]);
+    }
   }
   return true;
 }
