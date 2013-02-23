@@ -103,54 +103,66 @@ void JointTrajectoryAction::watchdog(const ros::TimerEvent &e)
       }
 
       abortGoal();
-      
+
     }
   }
-  
+
   // Reset the trajectory state received flag
   trajectory_state_recvd_ = false;
 }
 
 void JointTrajectoryAction::goalCB(JointTractoryActionServer::GoalHandle & gh)
 {
+  ROS_INFO("Received new goal");
 
-  if (industrial_utils::isSimilar(joint_names_, gh.getGoal()->trajectory.joint_names))
+  if (!gh.getGoal()->trajectory.points.empty())
   {
-
-    // Cancels the currently active goal.
-    if (has_active_goal_)
-    {
-      ROS_DEBUG("Received new goal, canceling current goal");
-      abortGoal();
-    }
-
-    // Sends the trajectory along to the controller
-    if (withinGoalConstraints(last_trajectory_state_, gh.getGoal()->trajectory))
+    if (industrial_utils::isSimilar(joint_names_, gh.getGoal()->trajectory.joint_names))
     {
 
-      ROS_INFO_STREAM("Already within goal constraints, setting goal succeeded");
-      gh.setAccepted();
-      gh.setSucceeded();
-      has_active_goal_ = false;
-      
+      // Cancels the currently active goal.
+      if (has_active_goal_)
+      {
+        ROS_WARN("Received new goal, canceling current goal");
+        abortGoal();
+      }
+
+      // Sends the trajectory along to the controller
+      if (withinGoalConstraints(last_trajectory_state_, gh.getGoal()->trajectory))
+      {
+
+        ROS_INFO_STREAM("Already within goal constraints, setting goal succeeded");
+        gh.setAccepted();
+        gh.setSucceeded();
+        has_active_goal_ = false;
+
+      }
+      else
+      {
+        gh.setAccepted();
+        active_goal_ = gh;
+        has_active_goal_ = true;
+
+        ROS_INFO("Publishing trajectory");
+
+        current_traj_ = active_goal_.getGoal()->trajectory;
+        pub_trajectory_command_.publish(current_traj_);
+      }
     }
     else
     {
-      gh.setAccepted();
-      active_goal_ = gh;
-      has_active_goal_ = true;
-
-      ROS_INFO("Publishing trajectory");
-
-      current_traj_ = active_goal_.getGoal()->trajectory;
-      pub_trajectory_command_.publish(current_traj_);
+      ROS_ERROR("Joint trajectory action failing on invalid joints");
+      control_msgs::FollowJointTrajectoryResult rslt;
+      rslt.error_code = control_msgs::FollowJointTrajectoryResult::INVALID_JOINTS;
+      gh.setRejected(rslt, "Joint names do not match");
     }
   }
   else
   {
+    ROS_ERROR("Joint trajectory action failed on empty trajectory");
     control_msgs::FollowJointTrajectoryResult rslt;
-    rslt.error_code = control_msgs::FollowJointTrajectoryResult::INVALID_JOINTS;
-    gh.setRejected(rslt, "Joint names do not match");
+    rslt.error_code = control_msgs::FollowJointTrajectoryResult::INVALID_GOAL;
+    gh.setRejected(rslt, "Empty trajectory");
   }
 
   // Adding some informational log messages to indicate unsupported goal constraints
@@ -267,17 +279,25 @@ bool JointTrajectoryAction::withinGoalConstraints(const control_msgs::FollowJoin
                                                   const trajectory_msgs::JointTrajectory & traj)
 {
   bool rtn = false;
-  int last_point = traj.points.size() - 1;
-
-  if (industrial_robot_client::utils::isWithinRange(last_trajectory_state_->joint_names,
-                                                    last_trajectory_state_->actual.positions, traj.joint_names,
-                                                    traj.points[last_point].positions, goal_threshold_))
+  if (traj.points.empty())
   {
-    rtn = true;
+    ROS_WARN("Empty joint trajectory passed to check goal constraints, return false");
+    rtn = false;
   }
   else
   {
-    rtn = false;
+    int last_point = traj.points.size() - 1;
+
+    if (industrial_robot_client::utils::isWithinRange(last_trajectory_state_->joint_names,
+                                                      last_trajectory_state_->actual.positions, traj.joint_names,
+                                                      traj.points[last_point].positions, goal_threshold_))
+    {
+      rtn = true;
+    }
+    else
+    {
+      rtn = false;
+    }
   }
   return rtn;
 }
