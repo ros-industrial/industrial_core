@@ -10,8 +10,6 @@
   <url>http://ros.org/wiki/industrial_msg</url>
 
   <depend package="std_msgs"/>
-  <depend package="actionlib"/>
-  <depend package="geometry_msgs"/>
   <depend package="trajectory_msgs"/>
 
 </package>
