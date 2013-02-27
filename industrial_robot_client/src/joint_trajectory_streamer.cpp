@@ -192,6 +192,7 @@ void JointTrajectoryStreamer::streamingThread()
         else
           ROS_WARN("Failed sent joint point, will try again");
 
+        break;
       default:
         ROS_ERROR("Joint trajectory streamer: unknown state");
         this->state_ = TransferStates::IDLE;
