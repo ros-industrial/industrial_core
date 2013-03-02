@@ -11,6 +11,7 @@
   
   <depend package="rosgraph_msgs" />
   <depend package="rospy" />
+  <depend package="planning_environment" />
 
 </package>
 
