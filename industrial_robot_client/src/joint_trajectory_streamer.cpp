@@ -134,7 +134,6 @@ bool JointTrajectoryStreamer::trajectory_to_msgs(const trajectory_msgs::JointTra
 void JointTrajectoryStreamer::streamingThread()
 {
   JointTrajPtMessage jtpMsg;
-  SimpleMessage msg, reply;
   int connectRetryCount = 1;
 
   ROS_INFO("Starting joint trajectory streamer thread");
@@ -161,6 +160,8 @@ void JointTrajectoryStreamer::streamingThread()
 
     this->mutex_.lock();
 
+    SimpleMessage msg, reply;
+        
     switch (this->state_)
     {
       case TransferStates::IDLE:
