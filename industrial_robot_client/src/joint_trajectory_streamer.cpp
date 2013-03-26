@@ -78,7 +78,9 @@ void JointTrajectoryStreamer::jointTrajectoryCB(const trajectory_msgs::JointTraj
     else
       ROS_ERROR("Trajectory splicing not yet implemented, stopping current motion.");
 
+	this->mutex_.lock();
     trajectoryStop();
+	this->mutex_.unlock();
     return;
   }
 
