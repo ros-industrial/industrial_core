@@ -16,6 +16,7 @@ from trajectory_msgs.msg import JointTrajectoryPoint
 
 # Reference
 from industrial_msgs.msg import TriState
+import trajectory_msgs
 
 
 
@@ -95,6 +96,14 @@ class MotionControllerSimulator():
             self._clear_buffer()
             self.sig_stop = True
         
+    """
+    """
+    def interpolate(self, last_pt, current_pt, alpha):
+        intermediate_pt = JointTrajectoryPoint()
+        for last_joint, current_joint in zip(last_pt.positions, current_pt.positions):
+            intermediate_pt.positions.append(last_joint + alpha*(current_joint-last_joint))
+        intermediate_pt.time_from_start = last_pt.time_from_start + rospy.Duration(alpha*(current_pt.time_from_start.to_sec() - last_pt.time_from_start.to_sec()))
+        return intermediate_pt
         
     """
     """
@@ -122,6 +131,8 @@ class MotionControllerSimulator():
     
         rospy.loginfo('Starting motion worker in motion controller simulator')
         move_duration = rospy.Duration()
+        if self.update_rate <> 0.:
+            update_duration = rospy.Duration(1./self.update_rate)
         last_goal_point = JointTrajectoryPoint()
         
         with self.lock:
@@ -138,7 +149,15 @@ class MotionControllerSimulator():
                     move_duration = current_goal_point.time_from_start
                 # Else it's an existing trajectory and subtract the two
                 else:
+                    # If current move duration is greater than update_duration, move arm to interpolated joint position
+                    # Provide an exception to this rule: if update rate is <=0, do not add interpolated points
                     move_duration = current_goal_point.time_from_start - last_goal_point.time_from_start
+                    if self.update_rate > 0:
+                        while update_duration < move_duration:
+                            intermediate_goal_point = self.interpolate(last_goal_point, current_goal_point, update_duration.to_sec()/move_duration.to_sec())
+                            self._move_to(intermediate_goal_point, update_duration.to_sec()) #TODO should this use min(update_duration, 0.5*move_duration) to smooth timing?
+                            last_goal_point = copy.deepcopy(intermediate_goal_point)
+                            move_duration = current_goal_point.time_from_start - intermediate_goal_point.time_from_start
 
                 self._move_to(current_goal_point, move_duration)
                     
@@ -194,7 +213,8 @@ class IndustrialRobotSimulatorNode():
         rospy.loginfo("Setting joint names based on parameter: %s", str(self.joint_names))
         
         # Initialize joint position
-        self.motion_ctrl = MotionControllerSimulator(len(self.joint_names))
+        motion_update_rate = rospy.get_param('motion_update_rate', 100.);  #set param to 0 to ignore interpolated motion
+        self.motion_ctrl = MotionControllerSimulator(len(self.joint_names), update_rate = motion_update_rate)
 
         # Published to joint states
         rospy.loginfo("Creating joint state publisher")
