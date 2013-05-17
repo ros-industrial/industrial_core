@@ -81,7 +81,7 @@ bool JointData::setJoint(shared_int index, shared_real value)
   return rtn;
 }
 
-bool JointData::getJoint(shared_int index, shared_real & value)
+bool JointData::getJoint(shared_int index, shared_real & value) const
 {
   bool rtn = false;
 
@@ -98,7 +98,7 @@ bool JointData::getJoint(shared_int index, shared_real & value)
   return rtn;
 }
 
-shared_real JointData::getJoint(shared_int index)
+shared_real JointData::getJoint(shared_int index) const
 {
   shared_real rtn = 0.0;
   this->getJoint(index, rtn);

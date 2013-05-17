@@ -111,7 +111,7 @@ public:
    *
    * \return true if value valid, otherwise false (index greater than max)
    */
-  bool getJoint(industrial::shared_types::shared_int index, industrial::shared_types::shared_real & value);
+  bool getJoint(industrial::shared_types::shared_int index, industrial::shared_types::shared_real & value) const;
 
   /**
    * \brief Gets a joint value within the buffer (Only use this form if you are
@@ -121,7 +121,7 @@ public:
    *
    * \return joint value (returns 0.0 if index is out of bounds)
    */
-  industrial::shared_types::shared_real getJoint(industrial::shared_types::shared_int index);
+  industrial::shared_types::shared_real getJoint(industrial::shared_types::shared_int index) const;
 
   /**
    * \brief Copies the passed in value
