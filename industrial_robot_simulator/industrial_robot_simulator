@@ -305,7 +305,7 @@ class IndustrialRobotSimulatorNode():
         
                 for point in msg_in.points:
                     
-                    self._to_controller_order(msg_in.joint_names, point)
+                    point = self._to_controller_order(msg_in.joint_names, point)
                     self.motion_ctrl.add_motion_waypoint(point)
                     
         except Exception as e:
@@ -332,6 +332,7 @@ class IndustrialRobotSimulatorNode():
         pt_rtn = copy.deepcopy(point)
         pt_rtn.positions = self._remap_order(self.joint_names, keys, point.positions)
         
+        return pt_rtn
         
     def _remap_order(self, ordered_keys, value_keys, values):
         
