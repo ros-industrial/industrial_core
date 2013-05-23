@@ -20,6 +20,9 @@ rosbuild_add_library(${PROJECT_NAME} src/utils.cpp src/param_utils.cpp)
 rosbuild_add_gtest(utest test/utest.cpp)
 target_link_libraries(utest ${PROJECT_NAME})
 
+rosbuild_add_executable(test_joint_names test/test_joint_names.cpp)
+target_link_libraries(test_joint_names ${PROJECT_NAME})
+
 #uncomment if you have defined messages
 #rosbuild_genmsg()
 #uncomment if you have defined services

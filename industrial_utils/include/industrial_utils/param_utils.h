@@ -53,17 +53,19 @@ namespace param
 bool getListParam(const std::string param_name, std::vector<std::string> & list_param);
 
 /**
- * \brief Tries to read joint names from given parameter,
- * with a fallback to default joint names if parameter not available.
- * Default joint names will be "joint_N", where N is 1 to the number
- * of joints passed in.
+ * \brief Tries to get a set of joint names using several fallback methods:
+ *          1) check parameter for an explicit list
+ *          2) try to parse from given URDF data
+ *          3) use default joint names: ["joint_1", "joint_2", ..., "joint_6"]
  *
- * \param param_name name of joint-names parameter
+ * \param[in] joint_list_param name of joint-names-list parameter to check
+ * \param[in] urdf_param name of URDF description parameter to check
  * \param[out] joint_names list of joint names
  *
  * \return true if parameter found, false if defaults used
  */
-bool getJointNames(const std::string param_name, std::vector<std::string> & joint_names);
+bool getJointNames(const std::string joint_list_param, const std::string urdf_param,
+		           std::vector<std::string> & joint_names);
 
 /**
  * \brief Tries to read joint velocity limits from the specified URDF parameter

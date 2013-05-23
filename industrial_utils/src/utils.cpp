@@ -30,7 +30,7 @@
  */
 
 #include "industrial_utils/utils.h"
-
+#include "ros/ros.h"
 #include <algorithm>
 
 namespace industrial_utils
@@ -69,6 +69,60 @@ bool isSame(const std::vector<std::string> & lhs, const std::vector<std::string>
   return rtn;
 }
 
+bool findChainJointNames(const boost::shared_ptr<const urdf::Link> &link, bool ignore_fixed,
+		                 std::vector<std::string> &joint_names)
+{
+  typedef std::vector<boost::shared_ptr<urdf::Joint> > joint_list;
+  typedef std::vector<boost::shared_ptr<urdf::Link> > link_list;
+  std::string found_joint, found_link;
 
+  // check for joints directly connected to this link
+  const joint_list &joints = link->child_joints;
+  ROS_DEBUG("Found %d child joints:", joints.size());
+  for (joint_list::const_iterator it=joints.begin(); it!=joints.end(); ++it)
+  {
+    ROS_DEBUG_STREAM("  " << (*it)->name << ": type " <<  (*it)->type);
+    if (ignore_fixed && (*it)->type == urdf::Joint::FIXED)
+      continue;
+
+    if (found_joint.empty())
+    {
+      found_joint = (*it)->name;
+      joint_names.push_back(found_joint);
+    }
+    else
+    {
+      ROS_WARN_STREAM("Unable to find chain in URDF.  Branching joints: " << found_joint << " and " << (*it)->name);
+      return false;  // branching tree (multiple valid child-joints)
+    }
+  }
+
+  // check for joints connected to children of this link
+  const link_list &links = link->child_links;
+  std::vector<std::string> sub_joints;
+  ROS_DEBUG("Found %d child links:", links.size());
+  for (link_list::const_iterator it=links.begin(); it!=links.end(); ++it)
+  {
+    ROS_DEBUG_STREAM("  " << (*it)->name);
+    if (!findChainJointNames(*it, ignore_fixed, sub_joints))   // NOTE: recursive call
+      return false;
+
+    if (sub_joints.empty())
+      continue;
+
+    if (found_link.empty())
+    {
+      found_link = (*it)->name;
+      joint_names.insert(joint_names.end(), sub_joints.begin(), sub_joints.end());  // append sub_joints
+    }
+    else
+    {
+      ROS_WARN_STREAM("Unable to find chain in URDF.  Branching links: " << found_link << " and " << (*it)->name);
+      return false;  // branching tree (multiple valid child-joints)
+    }
+  }
+
+  return true;
+}
 
 } //industrial_utils

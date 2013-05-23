@@ -39,6 +39,7 @@
 #include "ros/ros.h"
 #include "industrial_msgs/CmdJointTrajectory.h"
 #include "industrial_msgs/StopMotion.h"
+#include "sensor_msgs/JointState.h"
 #include "simple_message/smpl_msg_connection.h"
 #include "simple_message/socket/tcp_client.h"
 #include "simple_message/messages/joint_traj_pt_message.h"
@@ -52,6 +53,7 @@ namespace joint_trajectory_interface
   using industrial::smpl_msg_connection::SmplMsgConnection;
   using industrial::tcp_client::TcpClient;
   using industrial::joint_traj_pt_message::JointTrajPtMessage;
+  namespace StandardSocketPorts = industrial::simple_socket::StandardSocketPorts;
 
 /**
  * \brief Message handler that relays joint trajectories to the robot controller
@@ -72,9 +74,15 @@ public:
     /**
      * \brief Initialize robot connection using default method.
      *
+     * \param default_ip default IP address to use for robot connection [OPTIONAL]
+     *                    - this value will be used if ROS param "robot_ip_address" cannot be read
+     * \param default_port default port to use for robot connection [OPTIONAL]
+     *                    - this value will be used if ROS param "~port" cannot be read
+     *
      * \return true on success, false otherwise
      */
-    virtual bool init();
+    virtual bool init(std::string default_ip = "", int default_port = StandardSocketPorts::MOTION);
+
 
     /**
      * \brief Initialize robot connection using specified method.
@@ -217,10 +225,26 @@ protected:
   virtual bool stopMotionCB(industrial_msgs::StopMotion::Request &req,
                                     industrial_msgs::StopMotion::Response &res);
 
+  /**
+   * \brief Validate that trajectory command meets minimum requirements
+   *
+   * \param traj incoming trajectory
+   * \return true if trajectory is valid, false otherwise
+   */
+  virtual bool is_valid(const trajectory_msgs::JointTrajectory &traj);
+
+  /*
+   * \brief Callback for JointState topic
+   *
+   * \param msg JointState message
+   */
+  virtual void jointStateCB(const sensor_msgs::JointStateConstPtr &msg);
+
   TcpClient default_tcp_connection_;
 
   ros::NodeHandle node_;
   SmplMsgConnection* connection_;
+  ros::Subscriber sub_cur_pos_;  // handle for joint-state topic subscription
   ros::Subscriber sub_joint_trajectory_; // handle for joint-trajectory topic subscription
   ros::ServiceServer srv_joint_trajectory_;  // handle for joint-trajectory service
   ros::ServiceServer srv_stop_motion_;   // handle for stop_motion service
@@ -229,6 +253,8 @@ protected:
   double default_vel_ratio_;  // default velocity ratio to use for joint commands, if no velocity or max_vel specified
   double default_duration_;   // default duration to use for joint commands, if no
   std::map<std::string, double> joint_vel_limits_;  // cache of max joint velocities from URDF
+  sensor_msgs::JointState cur_joint_pos_;  // cache of last received joint state
+
 
 private:
   static JointTrajPtMessage create_message(int seq, std::vector<double> joint_pos, double velocity, double duration);

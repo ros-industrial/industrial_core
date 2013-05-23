@@ -46,11 +46,8 @@ JointTrajectoryAction::JointTrajectoryAction() :
 
   pn.param("constraints/goal_threshold", goal_threshold_, DEFAULT_GOAL_THRESHOLD_);
 
-  if (!industrial_utils::param::getJointNames("controller_joint_names", joint_names_))
-  {
-    ROS_WARN("Unable to read 'controller_joint_names' param.  Using standard 6-DOF joint names.");
-  }
-  ROS_INFO_STREAM("Loaded " << joint_names_.size() << " joint names from 'controller_joint_names' parameter");
+  if (!industrial_utils::param::getJointNames("controller_joint_names", "robot_description", joint_names_))
+    ROS_ERROR("Failed to initialize joint_names.");
 
   // The controller joint names parameter includes empty joint names for those joints not supported
   // by the controller.  These are removed since the trajectory action should ignore these.

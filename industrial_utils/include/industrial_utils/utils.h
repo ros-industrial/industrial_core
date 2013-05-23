@@ -34,6 +34,8 @@
 
 #include <vector>
 #include <string>
+#include "urdf/model.h"
+#include "sensor_msgs/JointState.h"
 
 namespace industrial_utils
 {
@@ -63,6 +65,19 @@ bool isSimilar(std::vector<std::string> lhs, std::vector<std::string> rhs);
  */
 bool isSame(const std::vector<std::string> & lhs, const std::vector<std::string> & rhs);
 
+/*
+ * \brief Returns joint names for a simple serial chain from a URDF tree
+ *          - returns an error if branching tree is found
+ *          - assumes chain runs root->leaf.  leaf->root->leaf chains not allowed.
+ *
+ * \param[in] link URDF model link to search from (e.g. model.getRoot())
+ * \param[in] ignore_fixed flag to ignore fixed joints
+ * \param[in,out] joint_names vector of joint names
+ *
+ * \return true if successful, false if error occurred (e.g. branching tree)
+ */
+bool findChainJointNames(const boost::shared_ptr<const urdf::Link> &link, bool ignore_fixed,
+		                 std::vector<std::string> &joint_names);
 
 } //industrial_utils
 

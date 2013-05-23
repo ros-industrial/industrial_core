@@ -48,21 +48,30 @@ RobotStateInterface::RobotStateInterface()
   this->add_handler(&default_robot_status_handler_);
 }
 
-bool RobotStateInterface::init()
+bool RobotStateInterface::init(std::string default_ip, int default_port)
 {
-  ros::NodeHandle n;
-  std::string s;
+  std::string ip;
+  int port;
 
-  // initialize default connection, if one not specified.
-  if (!n.getParam("robot_ip_address", s))
+  // override IP/port with ROS params, if available
+  ros::param::param<std::string>("robot_ip_address", ip, default_ip);
+  ros::param::param<int>("~port", port, default_port);
+
+  // check for valid parameter values
+  if (ip.empty())
   {
-    ROS_ERROR("Robot State failed to get param 'robot_ip_address'");
+    ROS_ERROR("No valid robot IP address found.  Please set ROS 'robot_ip_address' param");
+    return false;
+  }
+  if (port <= 0)
+  {
+    ROS_ERROR("No valid robot IP port found.  Please set ROS '~port' param");
     return false;
   }
 
-  char* ip_addr = strdup(s.c_str());  // connection.init() requires "char*", not "const char*"
-  ROS_INFO("Robot state connecting to IP address: %s", ip_addr);
-  default_tcp_connection_.init(ip_addr, StandardSocketPorts::STATE);
+  char* ip_addr = strdup(ip.c_str());  // connection.init() requires "char*", not "const char*"
+  ROS_INFO("Robot state connecting to IP address: '%s:%d'", ip_addr, port);
+  default_tcp_connection_.init(ip_addr, port);
   free(ip_addr);
 
   return init(&default_tcp_connection_);
@@ -71,14 +80,18 @@ bool RobotStateInterface::init()
 bool RobotStateInterface::init(SmplMsgConnection* connection)
 {
   std::vector<std::string> joint_names;
-  if (!getJointNames("controller_joint_names", joint_names))
-    ROS_WARN("Unable to read 'controller_joint_names' param.  Using standard 6-DOF joint names.");
+  if (!getJointNames("controller_joint_names", "robot_description", joint_names))
+  {
+    ROS_ERROR("Failed to initialize joint_names.  Aborting");
+    return false;
+  }
 
   return init(connection, joint_names);
 }
 
 bool RobotStateInterface::init(SmplMsgConnection* connection, std::vector<std::string>& joint_names)
 {
+  this->joint_names_ = joint_names;
   this->connection_ = connection;
   connection_->makeConnect();
 
@@ -87,7 +100,7 @@ bool RobotStateInterface::init(SmplMsgConnection* connection, std::vector<std::s
     return false;
 
   // initialize default handlers
-  if (!default_joint_handler_.init(connection_, joint_names))
+  if (!default_joint_handler_.init(connection_, joint_names_))
     return false;
   this->add_handler(&default_joint_handler_);
 

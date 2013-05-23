@@ -32,6 +32,7 @@
 #include <sstream>
 
 #include "industrial_utils/param_utils.h"
+#include "industrial_utils/utils.h"
 #include "ros/ros.h"
 #include "urdf/model.h"
 
@@ -83,14 +84,43 @@ bool getListParam(const std::string param_name, std::vector<std::string> & list_
 
 }
 
-bool getJointNames(const std::string param_name, std::vector<std::string> & joint_names)
+std::string vec2str(const std::vector<std::string> &vec)
 {
-  if (ros::param::has(param_name) && getListParam(param_name, joint_names))
-    return true;
+  std::string s, delim = ", ";
+  std::stringstream ss;
+  std::copy(vec.begin(), vec.end(), std::ostream_iterator<std::string>(ss, delim.c_str()));
+  s = ss.str();
+  return "[" + s.erase(s.length()-2) + "]";
+}
 
-  const int NUM_JOINTS = 6;  //Most robots have 6 joints
-
+bool getJointNames(const std::string joint_list_param, const std::string urdf_param,
+		           std::vector<std::string> & joint_names)
+{
   joint_names.clear();
+
+  // 1) Try to read explicit list of joint names
+  if (ros::param::has(joint_list_param) && getListParam(joint_list_param, joint_names))
+  {
+    ROS_INFO_STREAM("Found user-specified joint names in '" << joint_list_param << "': " << vec2str(joint_names));
+    return true;
+  }
+  else
+    ROS_WARN_STREAM("Unable to find user-specified joint names in '" << joint_list_param << "'");
+
+  // 2) Try to find joint names from URDF model
+  urdf::Model model;
+  if ( ros::param::has(urdf_param)
+       && model.initParam(urdf_param)
+       && findChainJointNames(model.getRoot(), true, joint_names) )
+  {
+    ROS_INFO_STREAM("Using joint names from URDF: '" << urdf_param << "': " << vec2str(joint_names));
+    return true;
+  }
+  else
+    ROS_WARN_STREAM("Unable to find URDF joint names in '" << urdf_param << "'");
+
+  // 3) Use default joint-names
+  const int NUM_JOINTS = 6;  //Most robots have 6 joints
   for (int i=0; i<NUM_JOINTS; ++i)
   {
     std::stringstream tmp;
@@ -98,7 +128,8 @@ bool getJointNames(const std::string param_name, std::vector<std::string> & join
     joint_names.push_back(tmp.str());
   }
 
-    return false;
+  ROS_INFO_STREAM("Using standard 6-DOF joint names: " << vec2str(joint_names));
+  return true;
 }
 
 bool getJointVelocityLimits(const std::string urdf_param_name, std::map<std::string, double> &velocity_limits)

@@ -46,20 +46,32 @@ namespace industrial_robot_client
 namespace joint_trajectory_interface
 {
 
-bool JointTrajectoryInterface::init()
-{
-  std::string s;
+#define ROS_ERROR_RETURN(rtn,...) do {ROS_ERROR(__VA_ARGS__); return(rtn);} while(0)
 
-  // initialize default connection, if one not specified.
-  if (!node_.getParam("robot_ip_address", s))
+bool JointTrajectoryInterface::init(std::string default_ip, int default_port)
+{
+  std::string ip;
+  int port;
+
+  // override IP/port with ROS params, if available
+  ros::param::param<std::string>("robot_ip_address", ip, default_ip);
+  ros::param::param<int>("~port", port, default_port);
+
+  // check for valid parameter values
+  if (ip.empty())
   {
-    ROS_ERROR("Robot State failed to get param 'robot_ip_address'");
+    ROS_ERROR("No valid robot IP address found.  Please set ROS 'robot_ip_address' param");
+    return false;
+  }
+  if (port <= 0)
+  {
+    ROS_ERROR("No valid robot IP port found.  Please set ROS '~port' param");
     return false;
   }
 
-  char* ip_addr = strdup(s.c_str());  // connection.init() requires "char*", not "const char*"
-  ROS_INFO("Joint Trajectory Interface connecting to IP address: %s", ip_addr);
-  default_tcp_connection_.init(ip_addr, StandardSocketPorts::MOTION);
+  char* ip_addr = strdup(ip.c_str());  // connection.init() requires "char*", not "const char*"
+  ROS_INFO("Joint Trajectory Interface connecting to IP address: '%s:%d'", ip_addr, port);
+  default_tcp_connection_.init(ip_addr, port);
   free(ip_addr);
 
   return init(&default_tcp_connection_);
@@ -68,8 +80,11 @@ bool JointTrajectoryInterface::init()
 bool JointTrajectoryInterface::init(SmplMsgConnection* connection)
 {
   std::vector<std::string> joint_names;
-  if (!getJointNames("controller_joint_names", joint_names))
-    ROS_WARN("Unable to read 'controller_joint_names' param.  Using standard 6-DOF joint names.");
+  if (!getJointNames("controller_joint_names", "robot_description", joint_names))
+  {
+    ROS_ERROR("Failed to initialize joint_names.  Aborting");
+    return false;
+  }
 
   return init(connection, joint_names);
 }
@@ -82,9 +97,14 @@ bool JointTrajectoryInterface::init(SmplMsgConnection* connection, const std::ve
   this->joint_vel_limits_ = velocity_limits;
   connection_->makeConnect();
 
+  // try to read velocity limits from URDF, if none specified
+  if (joint_vel_limits_.empty() && !industrial_utils::param::getJointVelocityLimits("robot_description", joint_vel_limits_))
+    ROS_WARN("Unable to read velocity limits from 'robot_description' param.  Velocity validation disabled.");
+
   this->srv_stop_motion_ = this->node_.advertiseService("stop_motion", &JointTrajectoryInterface::stopMotionCB, this);
   this->srv_joint_trajectory_ = this->node_.advertiseService("joint_path_command", &JointTrajectoryInterface::jointTrajectoryCB, this);
   this->sub_joint_trajectory_ = this->node_.subscribe("joint_path_command", 0, &JointTrajectoryInterface::jointTrajectoryCB, this);
+  this->sub_cur_pos_ = this->node_.subscribe("joint_states", 1, &JointTrajectoryInterface::jointStateCB, this);
 
   return true;
 }
@@ -132,6 +152,10 @@ void JointTrajectoryInterface::jointTrajectoryCB(const trajectory_msgs::JointTra
 bool JointTrajectoryInterface::trajectory_to_msgs(const trajectory_msgs::JointTrajectoryConstPtr& traj, std::vector<JointTrajPtMessage>* msgs)
 {
   msgs->clear();
+
+  // check for valid trajectory
+  if (!is_valid(*traj))
+    return false;
 
   for (size_t i=0; i<traj->points.size(); ++i)
   {
@@ -211,7 +235,6 @@ bool JointTrajectoryInterface::calc_speed(const trajectory_msgs::JointTrajectory
 bool JointTrajectoryInterface::calc_velocity(const trajectory_msgs::JointTrajectoryPoint& pt, double* rbt_velocity)
 {
   std::vector<double> vel_ratios;
-  static bool limits_initialized = false;
 
   ROS_ASSERT(all_joint_names_.size() == pt.positions.size());
 
@@ -221,14 +244,6 @@ bool JointTrajectoryInterface::calc_velocity(const trajectory_msgs::JointTraject
     ROS_WARN("Joint velocities unspecified.  Using default/safe speed.");
     *rbt_velocity = default_vel_ratio_;
     return true;
-  }
-
-  // read velocity limits from URDF if not specified
-  if (joint_vel_limits_.empty() && !limits_initialized)
-  {
-    limits_initialized = true;
-    if (!getJointVelocityLimits("robot_description", joint_vel_limits_))
-      ROS_WARN("Unable to read velocity limits from 'robot_description' param.  Will use default/safe speed.");
   }
 
   for (size_t i=0; i<all_joint_names_.size(); ++i)
@@ -251,7 +266,7 @@ bool JointTrajectoryInterface::calc_velocity(const trajectory_msgs::JointTraject
     *rbt_velocity = vel_ratios[max_idx];
   else
   {
-    ROS_WARN("Joint velocity-limits unspecified.  Using default velocity-ratio.");
+    ROS_WARN_ONCE("Joint velocity-limits unspecified.  Using default velocity-ratio.");
     *rbt_velocity = default_vel_ratio_;
   }
 
@@ -318,6 +333,40 @@ bool JointTrajectoryInterface::stopMotionCB(industrial_msgs::StopMotion::Request
   res.code.val = industrial_msgs::ServiceReturnCode::SUCCESS;
 
   return true;  // always return true.  To distinguish between call-failed and service-unavailable.
+}
+
+bool JointTrajectoryInterface::is_valid(const trajectory_msgs::JointTrajectory &traj)
+{
+  for (int i=0; i<traj.points.size(); ++i)
+  {
+    const trajectory_msgs::JointTrajectoryPoint &pt = traj.points[i];
+
+    // check for non-empty positions
+    if (pt.positions.empty())
+      ROS_ERROR_RETURN(false, "Validation failed: Missing position data for trajectory pt %d", i);
+
+    // check for joint velocity limits
+    for (int j=0; j<pt.velocities.size(); ++j)
+    {
+      std::map<std::string, double>::iterator max_vel = joint_vel_limits_.find(traj.joint_names[j]);
+      if (max_vel == joint_vel_limits_.end()) continue;  // no velocity-checking if limit not defined
+
+      if (std::abs(pt.velocities[j]) > max_vel->second)
+        ROS_ERROR_RETURN(false, "Validation failed: Max velocity exceeded for trajectory pt %d, joint '%s'", i, traj.joint_names[j].c_str());
+    }
+
+    // check for valid timestamp
+    if ((i > 0) && (pt.time_from_start.toSec() == 0))
+      ROS_ERROR_RETURN(false, "Validation failed: Missing valid timestamp data for trajectory pt %d", i);
+  }
+
+  return true;
+}
+
+// copy robot JointState into local cache
+void JointTrajectoryInterface::jointStateCB(const sensor_msgs::JointStateConstPtr &msg)
+{
+  this->cur_joint_pos_ = *msg;
 }
 
 } //joint_trajectory_interface
