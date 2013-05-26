@@ -29,16 +29,13 @@
 * POSSIBILITY OF SUCH DAMAGE.
 */ 
 
-#ifdef ROS
+#ifndef FLATHEADERS
 #include "simple_message/simple_comms_fault_handler.h"
 #include "simple_message/log_wrapper.h"
-#endif
-
-#ifdef MOTOPLUS
+#else
 #include "simple_comms_fault_handler.h"
 #include "log_wrapper.h"
 #endif
-
 
 namespace industrial
 {

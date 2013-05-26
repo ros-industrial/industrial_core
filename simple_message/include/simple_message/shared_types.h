@@ -52,31 +52,23 @@ namespace industrial
 namespace shared_types
 {
 
-
-
-// By default we will define ROS_TYPES.  Defining another type should redefine these
-// types below (assuming the compiler doesn't choke).
-#ifdef ROS
-
-
-//  Real and integer types should be 4 bytes (this may change between 32 bit and
-//  64 bit architectures.
+#if defined(INT32)
+#include "stdint.h"
+typedef int32_t shared_int;
+#elif defined(INT64)
+#include "stdint.h"
+typedef int64_t shared_int;
+#else
 typedef int shared_int;
+#endif
+
+#ifndef FLOAT64
 typedef float shared_real;
+#else
+typedef double shared_real;
+#endif
+
 typedef bool shared_bool;
-
-#endif //ROS
-
-
-
-#ifdef MOTOPLUS
-
-typedef int shared_int;
-typedef float shared_real;
-typedef bool shared_bool;
-
-#endif //MOTOPLUS
-
 
 
 } // namespace shared_types

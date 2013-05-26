@@ -29,12 +29,10 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifdef ROS
+#ifndef FLATHEADERS
 #include "simple_message/socket/udp_server.h"
 #include "simple_message/log_wrapper.h"
-#endif
-
-#ifdef MOTOPLUS
+#else
 #include "udp_server.h"
 #include "log_wrapper.h"
 #endif

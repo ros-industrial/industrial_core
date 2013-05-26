@@ -32,21 +32,23 @@
 #ifndef TCP_SOCKET_H
 #define TCP_SOCKET_H
 
-#ifdef ROS
+#ifndef FLATHEADERS
+#include "simple_message/socket/simple_socket.h"
+#include "simple_message/shared_types.h"
+#else
+#include "simple_socket.h"
+#include "shared_types.h"
+#endif
+
+#ifdef LINUXSOCKETS
 #include "sys/socket.h"
 #include "arpa/inet.h"
 #include "string.h"
 #include "unistd.h"
-
-#include "simple_message/socket/simple_socket.h"
-#include "simple_message/shared_types.h"
 #endif
 
 #ifdef MOTOPLUS
 #include "motoPlus.h"
-
-#include "simple_socket.h"
-#include "shared_types.h"
 #endif
 
 

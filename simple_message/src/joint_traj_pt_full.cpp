@@ -28,13 +28,11 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifdef ROS
+#ifndef FLATHEADERS
 #include "simple_message/joint_traj_pt_full.h"
 #include "simple_message/shared_types.h"
 #include "simple_message/log_wrapper.h"
-#endif
-
-#ifdef MOTOPLUS
+#else
 #include "joint_traj_pt_full.h"
 #include "shared_types.h"
 #include "log_wrapper.h"

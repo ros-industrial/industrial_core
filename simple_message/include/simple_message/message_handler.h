@@ -32,20 +32,13 @@
 #ifndef MESSAGE_HANDLER_H
 #define MESSAGE_HANDLER_H
 
-#ifdef ROS
-
+#ifndef FLATHEADERS
 #include "simple_message/simple_message.h"
 #include "simple_message/smpl_msg_connection.h"
-
-#endif
-
-#ifdef MOTOPLUS
-
+#else
 #include "simple_message.h"
 #include "smpl_msg_connection.h"
-
 #endif
-
 
 namespace industrial
 {

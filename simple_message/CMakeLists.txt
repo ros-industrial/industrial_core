@@ -20,6 +20,7 @@ rosbuild_init()
 # certain functions and headers.  The definition below enables compiling
 # for a ROS node.
 add_definitions(-DROS=1)  #build using ROS libraries
+add_definitions(-DLINUXSOCKETS=1)  #use linux sockets for communication
 
 #set the default path for built executables to the "bin" directory
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
@@ -92,3 +93,12 @@ rosbuild_add_compile_flags(simple_message_bswap "-fPIC") # for use in shared-lib
 
 rosbuild_add_gtest(utest_byte_swapping ${UTEST_SRC_FILES})
 target_link_libraries(utest_byte_swapping simple_message_bswap)
+
+# ALTERNATIVE LIBRARY (64-bit floats)
+rosbuild_add_library(simple_message_float64 ${SRC_FILES})
+set_target_properties(simple_message_float64 PROPERTIES COMPILE_DEFINITIONS "FLOAT64")
+rosbuild_add_compile_flags(simple_message_float64 "-fPIC") # for use in shared-libs
+
+rosbuild_add_gtest(utest_float64 ${UTEST_SRC_FILES})
+set_target_properties(utest_float64 PROPERTIES COMPILE_DEFINITIONS "FLOAT64")
+target_link_libraries(utest_float64 simple_message_float64)

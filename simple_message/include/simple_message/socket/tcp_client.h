@@ -32,11 +32,9 @@
 #ifndef TCP_CLIENT_H
 #define TCP_CLIENT_H
 
-#ifdef ROS
+#ifndef FLATHEADERS
 #include "simple_message/socket/tcp_socket.h"
-#endif
-
-#ifdef MOTOPLUS
+#else
 #include "tcp_socket.h"
 #endif
 

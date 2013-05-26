@@ -32,20 +32,14 @@
 #ifndef SIMPLE_MESSAGE_CONNECTION_H
 #define SIMPLE_MESSAGE_CONNECTION_H
 
-#ifdef ROS
-
+#ifndef FLATHEADERS
 #include "simple_message/byte_array.h"
 #include "simple_message/simple_message.h"
 #include "simple_message/shared_types.h"
-
-#endif
-
-#ifdef MOTOPLUS
-
+#else
 #include "byte_array.h"
 #include "simple_message.h"
 #include "shared_types.h"
-
 #endif
 
 

@@ -28,20 +28,21 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifdef ROS
+#ifndef FLATHEADERS
 #include "simple_message/robot_status.h"
 #include "simple_message/shared_types.h"
 #include "simple_message/log_wrapper.h"
+#else
+#include "robot_status.h"
+#include "shared_types.h"
+#include "log_wrapper.h"
+#endif
+
+#ifdef ROS
 // Files below used to translate between ROS messages enums and
 // enums defined in this file
 #include "industrial_msgs/RobotMode.h"
 #include "industrial_msgs/TriState.h"
-#endif
-
-#ifdef MOTOPLUS
-#include "robot_status.h"
-#include "shared_types.h"
-#include "log_wrapper.h"
 #endif
 
 using namespace industrial::shared_types;

@@ -29,20 +29,17 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifdef ROS
+#ifndef FLATHEADERS
 #include "simple_message/socket/tcp_socket.h"
 #include "simple_message/log_wrapper.h"
 #include "simple_message/simple_message.h"
 #include "simple_message/shared_types.h"
-#endif
-
-#ifdef MOTOPLUS
+#else
 #include "tcp_socket.h"
 #include "log_wrapper.h"
 #include "simple_message.h"
 #include "shared_types.h"
 #endif
-
 
 using namespace industrial::smpl_msg_connection;
 using namespace industrial::byte_array;

@@ -29,14 +29,12 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifdef ROS
+#ifndef FLATHEADERS
 #include "simple_message/messages/robot_status_message.h"
 #include "simple_message/robot_status.h"
 #include "simple_message/byte_array.h"
 #include "simple_message/log_wrapper.h"
-#endif
-
-#ifdef MOTOPLUS
+#else
 #include "robot_status_message.h"
 #include "robot_status.h"
 #include "byte_array.h"

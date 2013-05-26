@@ -29,17 +29,17 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifdef ROS
+#ifndef FLATHEADERS
 #include "simple_message/simple_message.h"
 #include "simple_message/log_wrapper.h"
-#endif
-
-#ifdef MOTOPLUS
-#include "motoPlus.h"
+#else
 #include "simple_message.h"
 #include "log_wrapper.h"
 #endif
 
+#ifdef MOTOPLUS
+#include "motoPlus.h"
+#endif
 
 
 using namespace industrial::byte_array;

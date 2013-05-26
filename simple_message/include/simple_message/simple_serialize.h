@@ -32,16 +32,10 @@
 #ifndef SIMPLE_SERIALIZE_H
 #define SIMPLE_SERIALIZE_H
 
-#ifdef ROS
-
+#ifndef FLATHEADERS
 #include "simple_message/byte_array.h"
-
-#endif
-
-#ifdef MOTOPLUS
-
+#else
 #include "byte_array.h"
-
 #endif
 
 #include "string.h"

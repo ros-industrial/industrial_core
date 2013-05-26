@@ -29,16 +29,13 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifdef ROS
+#ifndef FLATHEADERS
 #include "simple_message/socket/simple_socket.h"
 #include "simple_message/log_wrapper.h"
-#endif
-
-#ifdef MOTOPLUS
+#else
 #include "simple_socket.h"
 #include "log_wrapper.h"
 #endif
-
 
 using namespace industrial::byte_array;
 using namespace industrial::shared_types;

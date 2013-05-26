@@ -32,16 +32,10 @@
 #ifndef BYTE_ARRAY_H
 #define BYTE_ARRAY_H
 
-#ifdef ROS
-
+#ifndef FLATHEADERS
 #include "simple_message/shared_types.h"
-
-#endif
-
-#ifdef MOTOPLUS
-
+#else
 #include "shared_types.h"
-
 #endif
 
 #include "string.h"

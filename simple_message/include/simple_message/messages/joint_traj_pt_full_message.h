@@ -32,20 +32,16 @@
 #ifndef JOINT_TRAJ_PT_FULL_MESSAGE_H
 #define JOINT_TRAJ_PT_FULL_MESSAGE_H
 
-#ifdef ROS
+#ifndef FLATHEADERS
 #include "simple_message/typed_message.h"
 #include "simple_message/simple_message.h"
 #include "simple_message/shared_types.h"
 #include "simple_message/joint_traj_pt_full.h"
-
-#endif
-
-#ifdef MOTOPLUS
+#else
 #include "typed_message.h"
 #include "simple_message.h"
 #include "shared_types.h"
 #include "joint_traj_pt_full.h"
-
 #endif
 
 namespace industrial

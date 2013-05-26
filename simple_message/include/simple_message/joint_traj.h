@@ -32,14 +32,12 @@
 #ifndef JOINT_TRAJ_H
 #define JOINT_TRAJ_H
 
-#ifdef ROS
+#ifndef FLATHEADERS
 #include "simple_message/simple_message.h"
 #include "simple_message/simple_serialize.h"
 #include "simple_message/shared_types.h"
 #include "simple_message/joint_traj_pt.h"
-#endif
-
-#ifdef MOTOPLUS
+#else
 #include "simple_message.h"
 #include "simple_serialize.h"
 #include "shared_types.h"

@@ -28,17 +28,18 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifdef ROS
+#ifndef FLATHEADERS
 #include "simple_message/byte_array.h"
 #include "simple_message/simple_serialize.h"
 #include "simple_message/log_wrapper.h"
+#else
+#include "byte_array.h"
+#include "simple_serialize.h"
+#include "log_wrapper.h"
 #endif
 
 #ifdef MOTOPLUS
 #include "motoPlus.h"
-#include "byte_array.h"
-#include "simple_serialize.h"
-#include "log_wrapper.h"
 #endif
 
 #include "string.h"

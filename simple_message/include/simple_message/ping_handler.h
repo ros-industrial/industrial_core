@@ -33,16 +33,10 @@
 #ifndef PING_HANDLER_H
 #define PING_HANDLER_H
 
-#ifdef ROS
-
+#ifndef FLATHEADERS
 #include "simple_message/message_handler.h"
-
-#endif
-
-#ifdef MOTOPLUS
-
+#else
 #include "message_handler.h"
-
 #endif
 
 

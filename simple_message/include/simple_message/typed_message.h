@@ -32,18 +32,12 @@
 #ifndef TYPED_MESSAGE_H
 #define TYPED_MESSAGE_H
 
-#ifdef ROS
-
+#ifndef FLATHEADERS
 #include "simple_message/simple_message.h"
 #include "simple_message/byte_array.h"
-
-#endif
-
-#ifdef MOTOPLUS
-
+#else
 #include "simple_message.h"
 #include "byte_array.h"
-
 #endif
 
 

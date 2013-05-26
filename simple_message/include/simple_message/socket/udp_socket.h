@@ -32,26 +32,26 @@
 #ifndef UDP_SOCKET_H
 #define UDP_SOCKET_H
 
-
-#ifdef ROS
-#include "sys/socket.h"
-#include "arpa/inet.h"
-#include "string.h"
-#include "unistd.h"
-
+#ifndef FLATHEADERS
 #include "simple_message/socket/simple_socket.h"
 #include "simple_message/shared_types.h"
 #include "simple_message/smpl_msg_connection.h"
-#endif
-
-#ifdef MOTOPLUS
-#include "motoPlus.h"
-
+#else
 #include "simple_socket.h"
 #include "shared_types.h"
 #include "smpl_msg_connection.h"
 #endif
 
+#ifdef LINUXSOCKETS
+#include "sys/socket.h"
+#include "arpa/inet.h"
+#include "string.h"
+#include "unistd.h"
+#endif
+
+#ifdef MOTOPLUS
+#include "motoPlus.h"
+#endif
 
 namespace industrial
 {

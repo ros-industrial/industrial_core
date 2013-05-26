@@ -32,11 +32,9 @@
 #ifndef UDP_CLIENT_H
 #define UDP_CLIENT_H
 
-#ifdef ROS
+#ifndef FLATHEADERS
 #include "simple_message/socket/udp_socket.h"
-#endif
-
-#ifdef MOTOPLUS
+#else
 #include "udp_socket.h"
 #endif
 

@@ -32,7 +32,17 @@
 #ifndef SIMPLE_SOCKET_H
 #define SIMPLE_SOCKET_H
 
-#ifdef ROS
+#ifndef FLATHEADERS
+#include "simple_message/log_wrapper.h"
+#include "simple_message/shared_types.h"
+#include "simple_message/smpl_msg_connection.h"
+#else
+#include "log_wrapper.h"
+#include "shared_types.h"
+#include "smpl_msg_connection.h"
+#endif
+
+#ifdef LINUXSOCKETS
 
 #include "sys/socket.h"
 #include "arpa/inet.h"
@@ -40,10 +50,6 @@
 #include "unistd.h"
 #include "netinet/tcp.h"
 #include "errno.h"
-
-#include "simple_message/log_wrapper.h"
-#include "simple_message/shared_types.h"
-#include "simple_message/smpl_msg_connection.h"
 
 #define SOCKET(domain, type, protocol) socket(domain, type, protocol)
 #define BIND(sockfd, addr, addrlen) bind(sockfd, addr, addrlen)
@@ -71,9 +77,6 @@
 #include "motoPlus.h"
 
 #include "errno.h"
-#include "log_wrapper.h"
-#include "shared_types.h"
-#include "smpl_msg_connection.h"
 
 // Including os defintion for set socket option.  The motoplus wrappers do not give access to socket
 // options.  In order to remove system delays the nagel algorithm must be disabled using the

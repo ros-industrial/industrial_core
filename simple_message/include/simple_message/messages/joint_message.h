@@ -32,14 +32,12 @@
 #ifndef JOINT_MESSAGE_H
 #define JOINT_MESSAGE_H
 
-#ifdef ROS
+#ifndef FLATHEADERS
 #include "simple_message/typed_message.h"
 #include "simple_message/simple_message.h"
 #include "simple_message/shared_types.h"
 #include "simple_message/joint_data.h"
-#endif
-
-#ifdef MOTOPLUS
+#else
 #include "typed_message.h"
 #include "simple_message.h"
 #include "shared_types.h"
