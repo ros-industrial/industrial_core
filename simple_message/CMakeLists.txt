@@ -103,7 +103,7 @@ target_link_libraries(utest_byte_swapping simple_message_bswap)
 add_library(simple_message_float64 ${SRC_FILES})
 set_target_properties(simple_message_float64 PROPERTIES COMPILE_DEFINITIONS "FLOAT64")
 target_link_libraries(simple_message_float64 ${catkin_LIBRARIES})
-add_dependencies(simple_message_float ${industrial_msgs_EXPORTED_TARGETS})
+add_dependencies(simple_message_float64 ${industrial_msgs_EXPORTED_TARGETS})
 
 catkin_add_gtest(utest_float64 ${UTEST_SRC_FILES})
 set_target_properties(utest_float64 PROPERTIES COMPILE_DEFINITIONS "FLOAT64")
