@@ -85,6 +85,7 @@ include_directories(include
 # DEFAULT LIBRARY (SAME ENDIAN)
 add_library(simple_message ${SRC_FILES})
 target_link_libraries(simple_message ${catkin_LIBRARIES})
+add_dependencies(simple_message ${industrial_msgs_EXPORTED_TARGETS})
 
 catkin_add_gtest(utest ${UTEST_SRC_FILES})
 target_link_libraries(utest simple_message)
@@ -93,6 +94,7 @@ target_link_libraries(utest simple_message)
 add_library(simple_message_bswap ${SRC_FILES})
 set_target_properties(simple_message_bswap PROPERTIES COMPILE_DEFINITIONS "BYTE_SWAPPING")
 target_link_libraries(simple_message_bswap ${catkin_LIBRARIES})
+add_dependencies(simple_message_bswap ${industrial_msgs_EXPORTED_TARGETS})
 
 catkin_add_gtest(utest_byte_swapping ${UTEST_SRC_FILES})
 target_link_libraries(utest_byte_swapping simple_message_bswap)
@@ -101,6 +103,7 @@ target_link_libraries(utest_byte_swapping simple_message_bswap)
 add_library(simple_message_float64 ${SRC_FILES})
 set_target_properties(simple_message_float64 PROPERTIES COMPILE_DEFINITIONS "FLOAT64")
 target_link_libraries(simple_message_float64 ${catkin_LIBRARIES})
+add_dependencies(simple_message_float64 ${industrial_msgs_EXPORTED_TARGETS})
 
 catkin_add_gtest(utest_float64 ${UTEST_SRC_FILES})
 set_target_properties(utest_float64 PROPERTIES COMPILE_DEFINITIONS "FLOAT64")
