@@ -101,13 +101,13 @@ typedef TriStates::TriState TriState;
  * to highest). The standard sizes are given, but can change based on type sizes:
  *
  *   member:             type                                      size
- *   mode                (industrial::shared_types::shared_int)    4  bytes
- *   e_stopped           (industrial::shared_types::shared_int)    4  bytes
  *   drives_powered      (industrial::shared_types::shared_int)    4  bytes
- *   motion_possible     (industrial::shared_types::shared_int)    4  bytes
- *   in_motion           (industrial::shared_types::shared_int)    4  bytes
- *   in_error            (industrial::shared_types::shared_int)    4  bytes
+ *   e_stopped           (industrial::shared_types::shared_int)    4  bytes
  *   error_code          (industrial::shared_types::shared_int)    4  bytes
+ *   in_error            (industrial::shared_types::shared_int)    4  bytes
+ *   in_motion           (industrial::shared_types::shared_int)    4  bytes
+ *   mode                (industrial::shared_types::shared_int)    4  bytes
+ *   motion_possible     (industrial::shared_types::shared_int)    4  bytes
  *
  * THIS CLASS IS NOT THREAD-SAFE
  *
