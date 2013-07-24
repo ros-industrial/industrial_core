@@ -201,7 +201,7 @@ protected:
     this->connected_ = connected;
   }
 
-  void logSocketError(char* msg, int rc)
+  void logSocketError(const char* msg, int rc)
   {
     LOG_ERROR("%s, rc: %d, errno: %d", msg, rc, errno);
   }
