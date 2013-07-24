@@ -112,3 +112,15 @@ add_dependencies(simple_message_float64 ${industrial_msgs_EXPORTED_TARGETS})
 catkin_add_gtest(utest_float64 ${UTEST_SRC_FILES})
 set_target_properties(utest_float64 PROPERTIES COMPILE_DEFINITIONS "FLOAT64")
 target_link_libraries(utest_float64 simple_message_float64)
+
+
+#############
+## Install ##
+#############
+install(
+    TARGETS simple_message simple_message_bswap simple_message_float64 
+    LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION})
+
+install(
+    DIRECTORY include/${PROJECT_NAME}/
+    DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})

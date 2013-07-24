@@ -137,4 +137,29 @@ catkin_add_gtest(utest_robot_client test/utest.cpp)
 target_link_libraries(utest_robot_client industrial_robot_client ${catkin_LIBRARIES})
 
 
+#############
+## Install ##
+#############
+install(
+    TARGETS industrial_robot_client industrial_robot_client_bswap
+    LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION})
+
+install(TARGETS 
+        robot_state 
+        robot_state_bswap 
+        motion_streaming_interface 
+        motion_download_interface 
+        motion_streaming_interface_bswap 
+        motion_download_interface_bswap 
+        joint_trajectory_action 
+    RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+
+install(
+    DIRECTORY include/${PROJECT_NAME}/
+    DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
+
+foreach(dir config launch)
+   install(DIRECTORY ${dir}/
+      DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/${dir})
+endforeach(dir)
 
