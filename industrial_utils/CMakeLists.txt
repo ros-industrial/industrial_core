@@ -61,4 +61,13 @@ target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES})
 catkin_add_gtest(utest_inds_utils test/utest.cpp)
 target_link_libraries(utest_inds_utils ${PROJECT_NAME} ${catkin_LIBRARIES})
 
+#############
+## Install ##
+#############
+install(
+    TARGETS ${PROJECT_NAME} 
+    LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION})
 
+install(
+    DIRECTORY include/${PROJECT_NAME}/
+    DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
