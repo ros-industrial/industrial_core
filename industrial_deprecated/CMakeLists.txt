@@ -9,7 +9,7 @@ find_package(catkin REQUIRED COMPONENTS rosgraph_msgs rospy)
 find_package(Boost REQUIRED COMPONENTS system)
 
 # Python setup
-catkin_python_setup()
+#catkin_python_setup()
 
 #Add unit test to check roslaunch dependencies.
 #rosbuild_add_roslaunch_check(launch)
