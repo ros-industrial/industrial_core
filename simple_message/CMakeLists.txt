@@ -15,32 +15,36 @@ set(ROS_BUILD_SHARED_LIBS false)
 add_definitions(-DROS=1)  #build using ROS libraries
 add_definitions(-DLINUXSOCKETS=1)  #use linux sockets for communication
 
-set(SRC_FILES 	src/byte_array.cpp
-		src/simple_message.cpp
-		src/smpl_msg_connection.cpp
-	
-		src/socket/simple_socket.cpp
-		src/socket/udp_socket.cpp
-		src/socket/udp_client.cpp
-		src/socket/udp_server.cpp
-		src/socket/tcp_socket.cpp
-		src/socket/tcp_client.cpp
-		src/socket/tcp_server.cpp
-	
-		src/message_handler.cpp
-		src/message_manager.cpp
-		src/ping_handler.cpp
-		src/ping_message.cpp
-		src/joint_data.cpp
-		src/joint_traj_pt.cpp
-		src/joint_traj.cpp
-		src/robot_status.cpp
-	
-		src/messages/joint_message.cpp
-		src/messages/joint_traj_pt_message.cpp
-		src/messages/robot_status_message.cpp
-	
-		src/simple_comms_fault_handler.cpp)
+set(SRC_FILES src/byte_array.cpp
+	src/simple_message.cpp
+	src/smpl_msg_connection.cpp
+
+	src/socket/simple_socket.cpp
+	src/socket/udp_socket.cpp
+	src/socket/udp_client.cpp
+	src/socket/udp_server.cpp
+	src/socket/tcp_socket.cpp
+	src/socket/tcp_client.cpp
+	src/socket/tcp_server.cpp
+
+	src/message_handler.cpp
+	src/message_manager.cpp
+	src/ping_handler.cpp
+	src/ping_message.cpp
+	src/joint_data.cpp
+	src/joint_feedback.cpp
+	src/joint_traj_pt.cpp
+	src/joint_traj_pt_full.cpp
+	src/joint_traj.cpp
+	src/robot_status.cpp
+
+	src/messages/joint_message.cpp
+	src/messages/joint_feedback_message.cpp
+	src/messages/joint_traj_pt_message.cpp
+	src/messages/joint_traj_pt_full_message.cpp
+	src/messages/robot_status_message.cpp
+
+	src/simple_comms_fault_handler.cpp)
 					
 set(UTEST_SRC_FILES test/utest.cpp test/utest_message.cpp)
 
