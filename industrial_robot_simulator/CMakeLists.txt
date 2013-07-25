@@ -5,7 +5,7 @@ project(industrial_robot_simulator)
 find_package(catkin REQUIRED COMPONENTS roscpp std_msgs sensor_msgs control_msgs trajectory_msgs industrial_robot_client)
 
 # Python setup
-catkin_python_setup()
+#catkin_python_setup()
 
 ###################################
 ## catkin specific configuration ##
