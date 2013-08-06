@@ -69,10 +69,16 @@ set(UTEST_SRC_FILES test/utest.cpp test/utest_message.cpp)
 ## LIBRARIES: libraries you create in this project that dependent projects also need
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
+
+# NOTE: The libraries generated this package are not included in the catkin_package
+# macro because libraries must be explicitly linked in projects that depend on this
+# package.  If this is not done (and these libraries were exported), then multiple
+# library definitions (normal - simple_message and byteswapped - simple_message_bswap)
+# are both included (this is bad).
+
 catkin_package(
     CATKIN_DEPENDS roscpp industrial_msgs
     INCLUDE_DIRS include 
-    LIBRARIES simple_message_bswap simple_message
 )
 
 ###########
