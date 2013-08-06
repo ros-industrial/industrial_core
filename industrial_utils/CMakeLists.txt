@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(industrial_utils)
 # Load catkin and all dependencies required for this package
-find_package(catkin REQUIRED COMPONENTS roscpp urdf)
+find_package(catkin REQUIRED COMPONENTS roscpp urdf simple_message)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -56,7 +56,7 @@ include_directories(include
   ${catkin_INCLUDE_DIRS})
 
 add_library(${PROJECT_NAME} src/utils.cpp src/param_utils.cpp)
-target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} simple_message)
 
 catkin_add_gtest(utest_inds_utils test/utest.cpp)
 target_link_libraries(utest_inds_utils ${PROJECT_NAME} ${catkin_LIBRARIES})

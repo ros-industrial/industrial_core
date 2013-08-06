@@ -36,6 +36,7 @@
 #include <string>
 #include "urdf/model.h"
 #include "sensor_msgs/JointState.h"
+#include "simple_message/joint_data.h"
 
 namespace industrial_utils
 {
@@ -78,6 +79,19 @@ bool isSame(const std::vector<std::string> & lhs, const std::vector<std::string>
  */
 bool findChainJointNames(const boost::shared_ptr<const urdf::Link> &link, bool ignore_fixed,
 		                 std::vector<std::string> &joint_names);
+
+/**
+ *
+ * \brief Helper funcition to convert JointData to vector of doubles.
+ *
+ * \param[in]  joints JointData to be converted
+ * \param[in]  len required length
+ * \param[out] vec JointData in form of a vector
+ *
+ * \return true if sucessful, false in case of error
+ *
+ */
+bool jointData2Vector(const industrial::joint_data::JointData &joints, int len, std::vector<double> &vec);
 
 } //industrial_utils
 
