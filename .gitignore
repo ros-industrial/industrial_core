@@ -16,4 +16,4 @@
 *.svn
 
 # Temp files
-.*~
+*~
