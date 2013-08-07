@@ -13,7 +13,8 @@ add_definitions(-DROS=1)  #build using ROS libraries
 add_definitions(-DLINUXSOCKETS=1)  #build using LINUX SOCKETS libraries
 
 set(SRC_FILES src/joint_relay_handler.cpp
-	      src/robot_status_relay_handler.cpp
+              src/joint_feedback_handler.cpp
+              src/robot_status_relay_handler.cpp
               src/joint_trajectory_downloader.cpp
               src/joint_trajectory_streamer.cpp
               src/joint_trajectory_interface.cpp
@@ -85,6 +86,7 @@ include_directories(include
 
 add_library(industrial_robot_client ${SRC_FILES})
 target_link_libraries(industrial_robot_client simple_message)
+target_link_libraries(industrial_robot_client industrial_utils)
 
 add_library(industrial_robot_client_bswap ${SRC_FILES})
 target_link_libraries(industrial_robot_client_bswap simple_message_bswap)
