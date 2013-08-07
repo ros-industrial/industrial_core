@@ -52,10 +52,16 @@ set(SRC_FILES src/joint_relay_handler.cpp
 ## LIBRARIES: libraries you create in this project that dependent projects also need
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
+
+# NOTE: The libraries generated this package are not included in the catkin_package
+# macro because libraries must be explicitly linked in projects that depend on this
+# package.  If this is not done (and these libraries were exported), then multiple
+# library definitions (normal - industrial_robot_client and byteswapped - 
+# industrial_robot_client_bswap) are both included (this is bad).
+
 catkin_package(
     CATKIN_DEPENDS roscpp std_msgs sensor_msgs control_msgs trajectory_msgs simple_message actionlib_msgs actionlib urdf industrial_msgs industrial_utils
     INCLUDE_DIRS include
-    LIBRARIES industrial_robot_client industrial_robot_client_bswap
 )                
 
 
@@ -96,15 +102,24 @@ target_link_libraries(industrial_robot_client_bswap simple_message_bswap)
 
 add_executable(robot_state
   src/generic_robot_state_node.cpp)
-target_link_libraries(robot_state industrial_robot_client ${catkin_LIBRARIES})
+target_link_libraries(robot_state 
+  industrial_robot_client
+  simple_message
+  ${catkin_LIBRARIES})
 
 add_executable(motion_streaming_interface
   src/generic_joint_streamer_node.cpp)
-target_link_libraries(motion_streaming_interface industrial_robot_client ${catkin_LIBRARIES})
+target_link_libraries(motion_streaming_interface 
+  industrial_robot_client 
+  simple_message
+  ${catkin_LIBRARIES})
 
 add_executable(motion_download_interface
   src/generic_joint_downloader_node.cpp)
-target_link_libraries(motion_download_interface industrial_robot_client ${catkin_LIBRARIES})
+target_link_libraries(motion_download_interface 
+  industrial_robot_client 
+  simple_message
+  ${catkin_LIBRARIES})
 
 # The following executables(nodes) are for applications where the robot
 # controller and pc have different same byte order (i.e. byte swapping IS
@@ -112,15 +127,24 @@ target_link_libraries(motion_download_interface industrial_robot_client ${catkin
 
 add_executable(robot_state_bswap
   src/generic_robot_state_node.cpp)
-target_link_libraries(robot_state_bswap industrial_robot_client_bswap ${catkin_LIBRARIES})
+target_link_libraries(robot_state_bswap 
+  industrial_robot_client_bswap 
+  simple_message_bswap
+  ${catkin_LIBRARIES})
 
 add_executable(motion_streaming_interface_bswap
   src/generic_joint_streamer_node.cpp)
-target_link_libraries(motion_streaming_interface_bswap industrial_robot_client_bswap ${catkin_LIBRARIES})
+target_link_libraries(motion_streaming_interface_bswap 
+  industrial_robot_client_bswap  
+  simple_message_bswap
+  ${catkin_LIBRARIES})
 
 add_executable(motion_download_interface_bswap
   src/generic_joint_downloader_node.cpp)
-target_link_libraries(motion_download_interface_bswap industrial_robot_client_bswap ${catkin_LIBRARIES})
+target_link_libraries(motion_download_interface_bswap 
+  industrial_robot_client_bswap  
+  simple_message_bswap
+  ${catkin_LIBRARIES})
 
 # The following executables(nodes) interface with the robot controller
 # at a higher level so there is no need to create two versions (one with
@@ -129,12 +153,15 @@ target_link_libraries(motion_download_interface_bswap industrial_robot_client_bs
 add_executable(joint_trajectory_action 
   src/generic_joint_trajectory_action_node.cpp
   src/joint_trajectory_action.cpp)
-target_link_libraries(joint_trajectory_action industrial_robot_client ${catkin_LIBRARIES})
+target_link_libraries(joint_trajectory_action 
+  industrial_robot_client ${catkin_LIBRARIES})
 add_dependencies(joint_trajectory_action industrial_robot_client_gencpp)
 
 # Testing - Only performed on normal (non byte swapped library)
 catkin_add_gtest(utest_robot_client test/utest.cpp)
-target_link_libraries(utest_robot_client industrial_robot_client ${catkin_LIBRARIES})
+target_link_libraries(utest_robot_client 
+  industrial_robot_client 
+  ${catkin_LIBRARIES})
 
 
 #############
