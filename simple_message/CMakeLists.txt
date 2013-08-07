@@ -85,6 +85,8 @@ include_directories(include
   ${catkin_INCLUDE_DIRS}
 )
 
+# NOTE: All test files require TEST_PORT_BASE to be defined.  Defining different
+# ports for each test executable allows them to run in parallel.
 
 # DEFAULT LIBRARY (SAME ENDIAN)
 add_library(simple_message ${SRC_FILES})
@@ -92,6 +94,7 @@ target_link_libraries(simple_message ${catkin_LIBRARIES})
 add_dependencies(simple_message ${industrial_msgs_EXPORTED_TARGETS})
 
 catkin_add_gtest(utest ${UTEST_SRC_FILES})
+set_target_properties(utest PROPERTIES COMPILE_DEFINITIONS "TEST_PORT_BASE=11000")
 target_link_libraries(utest simple_message)
 
 # ALTERNATIVE LIBRARY (DIFFERENT ENDIAN)
@@ -101,6 +104,7 @@ target_link_libraries(simple_message_bswap ${catkin_LIBRARIES})
 add_dependencies(simple_message_bswap ${industrial_msgs_EXPORTED_TARGETS})
 
 catkin_add_gtest(utest_byte_swapping ${UTEST_SRC_FILES})
+set_target_properties(utest_byte_swapping PROPERTIES COMPILE_DEFINITIONS "TEST_PORT_BASE=12000")
 target_link_libraries(utest_byte_swapping simple_message_bswap)
 
 # ALTERNATIVE LIBRARY (64-bit floats)
@@ -110,7 +114,7 @@ target_link_libraries(simple_message_float64 ${catkin_LIBRARIES})
 add_dependencies(simple_message_float64 ${industrial_msgs_EXPORTED_TARGETS})
 
 catkin_add_gtest(utest_float64 ${UTEST_SRC_FILES})
-set_target_properties(utest_float64 PROPERTIES COMPILE_DEFINITIONS "FLOAT64")
+set_target_properties(utest_float64 PROPERTIES COMPILE_DEFINITIONS "TEST_PORT_BASE=13000;FLOAT64")
 target_link_libraries(utest_float64 simple_message_float64)
 
 
