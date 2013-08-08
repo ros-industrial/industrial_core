@@ -255,7 +255,7 @@ class TestTcpServer : public TcpServer
     return TcpServer::receiveBytes(buffer, num_bytes);
   }
 };
-TEST(SocketSuite, issue25)
+TEST(SocketSuite, read)
 {
   const int tcpPort = TEST_PORT_BASE;
   char ipAddr[] = "127.0.0.1";
@@ -264,7 +264,8 @@ TEST(SocketSuite, issue25)
   TestTcpServer tcpServer;
   ByteArray send, recv;
   shared_int DATA = 99;
-  shared_int RECV_BYTES = 2 * sizeof(shared_int);
+  shared_int TWO_INTS = 2 * sizeof(shared_int);
+  shared_int ONE_INTS = 1 * sizeof(shared_int);
 
   // Construct server
   ASSERT_TRUE(tcpServer.init(tcpPort));
@@ -277,12 +278,21 @@ TEST(SocketSuite, issue25)
 
   ASSERT_TRUE(send.load(DATA));
 
+  // Send just right amount
   ASSERT_TRUE(tcpClient.sendBytes(send));
+  ASSERT_TRUE(tcpClient.sendBytes(send));
+  ASSERT_TRUE(tcpServer.receiveBytes(recv, TWO_INTS));
+  ASSERT_EQ(TWO_INTS, recv.getBufferSize());
 
-  // Give incorrect byte length to receive bytes
-  ASSERT_TRUE(tcpServer.receiveBytes(recv, RECV_BYTES));
 
-  ASSERT_EQ(RECV_BYTES, recv.getBufferSize());
+  // Send too many bytes
+  ASSERT_TRUE(tcpClient.sendBytes(send));
+  ASSERT_TRUE(tcpClient.sendBytes(send));
+  ASSERT_TRUE(tcpClient.sendBytes(send));
+  ASSERT_TRUE(tcpServer.receiveBytes(recv, TWO_INTS));
+  ASSERT_EQ(TWO_INTS, recv.getBufferSize());
+  ASSERT_TRUE(tcpServer.receiveBytes(recv, ONE_INTS));
+  ASSERT_EQ(ONE_INTS, recv.getBufferSize());
 }
 
 
