@@ -121,24 +121,26 @@ namespace industrial
           {
             if(ready)
             {
-              rc = rawReceiveBytes(this->buffer_, num_bytes);
+              rc = rawReceiveBytes(this->buffer_, remainBytes);
               if (this->SOCKET_FAIL == rc)
               {
                 this->logSocketError("Socket received failed", rc);
+		        remainBytes = 0;
                 rtn = false;
                 break;
               }
               else if (0 == rc)
               {
                 LOG_WARN("Recieved zero bytes: %u", rc);
+		        remainBytes = 0;
                 rtn = false;
                 break;
               }
               else
               {
-                remainBytes = num_bytes - rc;
-                LOG_COMM("Byte array receive, bytes read: %u, bytes left: %u",
-                    rc, remainBytes);
+                remainBytes = remainBytes - rc;
+                LOG_COMM("Byte array receive, bytes read: %u, bytes reqd: %u, bytes left: %u",
+                    rc, num_bytes, remainBytes);
                 buffer.load(&this->buffer_, rc);
                 rtn = true;
               }
