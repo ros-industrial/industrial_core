@@ -296,6 +296,51 @@ TEST(SocketSuite, read)
 }
 
 
+// Utility for running tcp client in sending loop
+void*
+spinSender(void* arg)
+{
+  TestTcpClient* client = (TestTcpClient*)arg;  
+  ByteArray send;
+  const int DATA = 256;
+
+  send.load(DATA);
+
+  while(true)
+  {
+    client->sendBytes(send);
+    sleep(2);
+  }
+}
+
+TEST(SocketSuite, splitPackets)
+{
+  const int tcpPort = TEST_PORT_BASE + 1;
+  char ipAddr[] = "127.0.0.1";
+  const int RECV_LENGTH = 64;
+
+  TestTcpClient tcpClient;
+  TestTcpServer tcpServer;
+  ByteArray recv;
+// Construct server
+  ASSERT_TRUE(tcpServer.init(tcpPort));
+
+  // Construct a client
+  ASSERT_TRUE(tcpClient.init(&ipAddr[0], tcpPort));
+  ASSERT_TRUE(tcpClient.makeConnect());
+
+  ASSERT_TRUE(tcpServer.makeConnect());
+
+  pthread_t senderThrd;
+  pthread_create(&senderThrd, NULL, spinSender, &tcpClient);
+
+  ASSERT_TRUE(tcpServer.receiveBytes(recv, RECV_LENGTH));
+
+  pthread_cancel(senderThrd);
+  pthread_join(senderThrd, NULL);
+}
+
+
 TEST(SimpleMessageSuite, init)
 {
   SimpleMessage msg;
@@ -401,7 +446,7 @@ spinFunc(void* arg)
 
 TEST(DISABLED_MessageManagerSuite, udp)
 {
-  const int udpPort = TEST_PORT_BASE + 1;
+  const int udpPort = TEST_PORT_BASE + 100;
   char ipAddr[] = "127.0.0.1";
 
   UdpClient* udpClient = new UdpClient();
@@ -439,7 +484,7 @@ TEST(DISABLED_MessageManagerSuite, udp)
 
 TEST(MessageManagerSuite, tcp)
 {
-  const int tcpPort = TEST_PORT_BASE + 2;
+  const int tcpPort = TEST_PORT_BASE + 101;
   char ipAddr[] = "127.0.0.1";
 
   TcpClient* tcpClient = new TcpClient();
