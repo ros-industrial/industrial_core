@@ -335,6 +335,7 @@ TEST(SocketSuite, splitPackets)
   pthread_create(&senderThrd, NULL, spinSender, &tcpClient);
 
   ASSERT_TRUE(tcpServer.receiveBytes(recv, RECV_LENGTH));
+  ASSERT_EQ(RECV_LENGTH, recv.getBufferSize());
 
   pthread_cancel(senderThrd);
   pthread_join(senderThrd, NULL);
