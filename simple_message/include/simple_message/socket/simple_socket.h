@@ -183,9 +183,9 @@ protected:
   static const int MAX_BUFFER_SIZE = 1024;
 
   /**
-   * \brief socket read timeout (ms)
+   * \brief socket ready polling timeout (ms)
    */
-  static const int SOCKET_READ_TO = 1000;
+  static const int SOCKET_POLL_TO = 1000;
 
   /**
    * \brief internal data buffer for receiving
