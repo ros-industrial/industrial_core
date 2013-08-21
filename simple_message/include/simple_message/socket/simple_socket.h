@@ -203,7 +203,8 @@ protected:
 
   void logSocketError(const char* msg, int rc)
   {
-    LOG_ERROR("%s, rc: %d, errno: %d", msg, rc, errno);
+    int errno_ = errno;
+    LOG_ERROR("%s, rc: %d. Error: '%s' (errno: %d)", msg, rc, strerror(errno_), errno_);
   }
   
   /**
