@@ -27,3 +27,5 @@ catkin_package(
 # See http://ros.org/doc/groovy/api/catkin/html/adv_user_guide/variables.html
 
 install(PROGRAMS industrial_robot_simulator DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+
+install(DIRECTORY launch/ DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch)
