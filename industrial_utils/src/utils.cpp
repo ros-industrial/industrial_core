@@ -125,4 +125,19 @@ bool findChainJointNames(const boost::shared_ptr<const urdf::Link> &link, bool i
   return true;
 }
 
+bool jointData2Vector(const industrial::joint_data::JointData &joints, int len, std::vector<double> &vec)
+{
+    if ( (len<0) || (len>joints.getMaxNumJoints()) )
+    {
+        ROS_ERROR("Failed to copy JointData.  Len (%d) out of range (0 to %d)", len, joints.getMaxNumJoints());
+        return false;
+    }
+
+    vec.resize(len);
+    for (int i=0; i<len; ++i)
+        vec[i] = joints.getJoint(i);
+
+    return true;
+}
+
 } //industrial_utils
