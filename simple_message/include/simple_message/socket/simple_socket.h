@@ -153,6 +153,15 @@ public:
   {
     return connected_;
   }
+  
+  /**
+   * \brief returns true if socket data is ready to receive
+   *
+   * \param timeout (ms) negative or zero values result in blocking
+   *
+   * \return true if data is ready to recieve
+   */
+  bool isReadyReceive(int timeout);
 
 protected:
 
@@ -205,15 +214,7 @@ protected:
   {
     LOG_ERROR("%s, rc: %d, errno: %d", msg, rc, errno);
   }
-  
-  /**
-   * \brief returns true if socket data is ready to receive
-   *
-   * \param timeout (ms) negative or zero values result in blocking
-   *
-   * \return true if data is ready to recieve
-   */
-  bool isReadyReceive(int timeout);
+
   
   // Send/Receive functions (inherited classes should override raw methods
   // Virtual
