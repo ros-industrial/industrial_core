@@ -17,8 +17,4 @@
   <build_depend>rospy</build_depend>
   <run_depend>rosgraph_msgs</run_depend>
   <run_depend>rospy</run_depend>
-
-  <export>
-
-  </export>
 </package>
