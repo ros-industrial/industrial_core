@@ -1,4 +1,4 @@
-<library path="libmoveit_industrial_trajectory_filters_plugins">
+<library path="libindustrial_trajectory_filters">
 
   <class name="industrial_trajectory_filters/NPointFilter"
 	type="industrial_trajectory_filters::NPointFilterAdapter" 	
