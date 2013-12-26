@@ -153,6 +153,19 @@ public:
   {
     return connected_;
   }
+  
+  /**
+   * \brief returns true if socket data is ready to receive
+   *
+   * \param timeout (ms) negative or zero values result in blocking
+   *
+   * \return true if data is ready to recieve
+   */
+  bool isReadyReceive(int timeout)
+  {
+    bool r, e;
+    return poll(timeout, r, e);
+  }
 
 protected:
 
@@ -223,19 +236,6 @@ protected:
    * \return true if function DID NOT timeout (must check flags)
    */
   bool poll(int timeout, bool & ready, bool & error);
-
-  /**
-   * \brief returns true if socket data is ready to receive
-   *
-   * \param timeout (ms) negative or zero values result in blocking
-   *
-   * \return true if data is ready to recieve
-   */
-  bool isReadyReceive(int timeout)
-  {
-    bool r, e;
-    return poll(timeout, r, e);
-  }
   
   // Send/Receive functions (inherited classes should override raw methods
   // Virtual
