@@ -1,12 +1,22 @@
 <package>
   <name>industrial_trajectory_filters</name>
   <version>1.0.0</version>
-  <description>industrial_trajectory_filters</description>
-
+  <description>
+   <p>
+     ROS Industrial libraries/plugins for filtering trajectories.
+   </p>
+   <p>
+     This package is part of the ROS Industrial program and contains libraries
+     and moveit plugins for filtering robot trajectories.
+   </p>
+  </description>
+  <author email="sedwards@swri.org">Shaun Edwards</author>
+  <author email="jnicho@swri.org">Jorge Nicho</author>
   <maintainer email="sedwards@swri.org">Shaun Edwards</maintainer>
   <license>BSD</license>
-  <url type="website">http://ros.org/wiki/industrial_robot_client</url>
-  <author>Shaun Edwards</author>
+  <url type="website">http://ros.org/wiki/industrial_trajectory_filters</url>
+  <url type="bugtracker">https://github.com/ros-industrial/industrial_core/issues</url>
+  <url type="repository">https://github.com/ros-industrial/industrial_core</url>
 
   <buildtool_depend>catkin</buildtool_depend>
 
@@ -24,6 +34,5 @@
 
   <export>	
     <moveit_core plugin="${prefix}/planning_request_adapters_plugin_description.xml"/> 
-    <cpp lflags="-Wl,-rpath,${prefix}/lib -L${prefix}/lib" cflags="-I${prefix}/include"/>
   </export>
 </package>
