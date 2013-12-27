@@ -15,6 +15,7 @@
   <run_depend>industrial_robot_simulator</run_depend>
   <run_depend>industrial_deprecated</run_depend>
   <run_depend>industrial_utils</run_depend>
+  <run_depend>industrial_trajectory_filters</run_depend>
 
   <export>
     <metapackage/>
