@@ -42,7 +42,8 @@
  #include <pluginlib/class_list_macros.h>
  */
 
-namespace industrial_trajectory_filters {
+namespace industrial_trajectory_filters
+{
 
 /**
  * \brief This is a simple filter which performs a uniforming sampling of
@@ -51,49 +52,49 @@ namespace industrial_trajectory_filters {
  */
 template<typename T>
 
-class UniformSampleFilter: public industrial_trajectory_filters::FilterBase<T> {
-public:
-	/**
-	 * @brief Default constructor
-	 */
-	UniformSampleFilter();
-	/**
-	 * @brief Default destructor
-	 */
-	~UniformSampleFilter();
+  class UniformSampleFilter : public industrial_trajectory_filters::FilterBase<T>
+  {
+  public:
+    /**
+     * @brief Default constructor
+     */
+    UniformSampleFilter();
+    /**
+     * @brief Default destructor
+     */
+    ~UniformSampleFilter();
 
-	virtual bool configure();
+    virtual bool configure();
 
-	/**
-	 * Uniformly samples(in terms of time) the input trajectory based upon the
-	 * sample duration.  Sampling is performed via interpolation ensuring smooth
-	 * velocity and acceleration.  NOTE: For this reason trajectories must be
-	 * fully defined before using this filter.
-	 * @param trajectory_in non uniform trajectory
-	 * @param trajectory_out uniform(in terms of time) trajectory
-	 * @return
-	 */
-	bool update(const T& trajectory_in, T& trajectory_out);
+    /**
+     * Uniformly samples(in terms of time) the input trajectory based upon the
+     * sample duration.  Sampling is performed via interpolation ensuring smooth
+     * velocity and acceleration.  NOTE: For this reason trajectories must be
+     * fully defined before using this filter.
+     * @param trajectory_in non uniform trajectory
+     * @param trajectory_out uniform(in terms of time) trajectory
+     * @return
+     */
+    bool update(const T& trajectory_in, T& trajectory_out);
 
-	/**
-	 * @brief Perform interpolation between p1 and p2.  Time from start must be
-	 * in between p1 and p2 times.
-	 * @param p1 prior trajectory point
-	 * @param p2 subsequent trajectory point
-	 * @param time_from_start time from start of trajectory (i.e. p0).
-	 * @param interp_pt resulting interpolated point
-	 * @return true if successful, otherwise false.
-	 */
-	bool interpolatePt(trajectory_msgs::JointTrajectoryPoint & p1,
-			trajectory_msgs::JointTrajectoryPoint & p2, double time_from_start,
-			trajectory_msgs::JointTrajectoryPoint & interp_pt);
+    /**
+     * @brief Perform interpolation between p1 and p2.  Time from start must be
+     * in between p1 and p2 times.
+     * @param p1 prior trajectory point
+     * @param p2 subsequent trajectory point
+     * @param time_from_start time from start of trajectory (i.e. p0).
+     * @param interp_pt resulting interpolated point
+     * @return true if successful, otherwise false.
+     */
+    bool interpolatePt(trajectory_msgs::JointTrajectoryPoint & p1, trajectory_msgs::JointTrajectoryPoint & p2,
+                       double time_from_start, trajectory_msgs::JointTrajectoryPoint & interp_pt);
 
-private:
-	/**
-	 * @brief uniform sample duration (sec)
-	 */
-	double sample_duration_;
-};
+  private:
+    /**
+     * @brief uniform sample duration (sec)
+     */
+    double sample_duration_;
+  };
 
 /**
  * @brief Specializing trajectory filter implementation
