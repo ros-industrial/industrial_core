@@ -161,7 +161,11 @@ public:
    *
    * \return true if data is ready to recieve
    */
-  bool isReadyReceive(int timeout);
+  bool isReadyReceive(int timeout)
+  {
+    bool r, e;
+    return poll(timeout, r, e);
+  }
 
 protected:
 
@@ -190,6 +194,12 @@ protected:
    * in order to avoid dynamic memory allocation)
    */
   static const int MAX_BUFFER_SIZE = 1024;
+
+  /**
+   * \brief socket ready polling timeout (ms)
+   */
+  static const int SOCKET_POLL_TO = 1000;
+
   /**
    * \brief internal data buffer for receiving
    */
@@ -212,9 +222,20 @@ protected:
 
   void logSocketError(const char* msg, int rc)
   {
-    LOG_ERROR("%s, rc: %d, errno: %d", msg, rc, errno);
+    int errno_ = errno;
+    LOG_ERROR("%s, rc: %d. Error: '%s' (errno: %d)", msg, rc, strerror(errno_), errno_);
   }
-
+  
+  /**
+   * \brief polls socket for data or error
+   *
+   * \param timeout (ms) negative or zero values result in blocking
+   * \param ready true if ready
+   * \param except true if exception
+   *
+   * \return true if function DID NOT timeout (must check flags)
+   */
+  bool poll(int timeout, bool & ready, bool & error);
   
   // Send/Receive functions (inherited classes should override raw methods
   // Virtual

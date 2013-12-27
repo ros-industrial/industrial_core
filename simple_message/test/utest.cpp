@@ -75,6 +75,10 @@ using namespace industrial::joint_traj_pt_message;
 using namespace industrial::typed_message;
 using namespace industrial::joint_traj;
 
+// Multiple tests require TEST_PORT_BASE to be defined.  This is defined
+// by the make file at compile time.
+//#define TEST_PORT_BASE 11000
+
 TEST(ByteArraySuite, init)
 {
 
@@ -159,15 +163,15 @@ TEST(ByteArraySuite, byteSwapping)
 
     ByteArray swapped;
     unsigned char buffer[] = {
-            0x00, 0x00, 0x00, 0x38,   // be: 56
-            0x00, 0x00, 0x00, 0x0a,   // be: 10
-            0x00, 0x00, 0x00, 0x01,   // be:  1
+        0x00, 0x00, 0x00, 0x38,   // be: 56
+        0x00, 0x00, 0x00, 0x0a,   // be: 10
+        0x00, 0x00, 0x00, 0x01,   // be:  1
 
-            0x3e, 0x81, 0x32, 0x64,   // be:  0.25233757495880127
-            0x3f, 0x30, 0x4b, 0x75,   // be:  0.68865138292312622
-            0x3f, 0xa8, 0x9d, 0xd2,   // be:  1.3173162937164307
-            0x3f, 0x85, 0x93, 0xdd,   // be:  1.0435749292373657
-            0xbf, 0xf4, 0x8c, 0xc5,   // be: -1.9105459451675415
+        0x3e, 0x81, 0x32, 0x64,   // be:  0.25233757495880127
+        0x3f, 0x30, 0x4b, 0x75,   // be:  0.68865138292312622
+        0x3f, 0xa8, 0x9d, 0xd2,   // be:  1.3173162937164307
+        0x3f, 0x85, 0x93, 0xdd,   // be:  1.0435749292373657
+        0xbf, 0xf4, 0x8c, 0xc5,   // be: -1.9105459451675415
 
     };
     const unsigned int bufferLength = 32;
@@ -233,6 +237,110 @@ TEST(ByteArraySuite, copy)
   // A failed load should not change the buffer.
   EXPECT_EQ((shared_int)copyTo.getBufferSize(), 2*SIZE);
 }
+
+// Need access to protected members for testing
+class TestTcpClient : public TcpClient
+{
+  public:
+  bool sendBytes(ByteArray & buffer)
+  {
+    return TcpClient::sendBytes(buffer);
+  };
+};
+class TestTcpServer : public TcpServer
+{
+  public:
+  bool receiveBytes(ByteArray & buffer, shared_int num_bytes)
+  {
+    return TcpServer::receiveBytes(buffer, num_bytes);
+  }
+};
+TEST(SocketSuite, read)
+{
+  const int tcpPort = TEST_PORT_BASE;
+  char ipAddr[] = "127.0.0.1";
+
+  TestTcpClient tcpClient;
+  TestTcpServer tcpServer;
+  ByteArray send, recv;
+  shared_int DATA = 99;
+  shared_int TWO_INTS = 2 * sizeof(shared_int);
+  shared_int ONE_INTS = 1 * sizeof(shared_int);
+
+  // Construct server
+  ASSERT_TRUE(tcpServer.init(tcpPort));
+
+  // Construct a client
+  ASSERT_TRUE(tcpClient.init(&ipAddr[0], tcpPort));
+  ASSERT_TRUE(tcpClient.makeConnect());
+
+  ASSERT_TRUE(tcpServer.makeConnect());
+
+  ASSERT_TRUE(send.load(DATA));
+
+  // Send just right amount
+  ASSERT_TRUE(tcpClient.sendBytes(send));
+  ASSERT_TRUE(tcpClient.sendBytes(send));
+  ASSERT_TRUE(tcpServer.receiveBytes(recv, TWO_INTS));
+  ASSERT_EQ(TWO_INTS, recv.getBufferSize());
+
+
+  // Send too many bytes
+  ASSERT_TRUE(tcpClient.sendBytes(send));
+  ASSERT_TRUE(tcpClient.sendBytes(send));
+  ASSERT_TRUE(tcpClient.sendBytes(send));
+  ASSERT_TRUE(tcpServer.receiveBytes(recv, TWO_INTS));
+  ASSERT_EQ(TWO_INTS, recv.getBufferSize());
+  ASSERT_TRUE(tcpServer.receiveBytes(recv, ONE_INTS));
+  ASSERT_EQ(ONE_INTS, recv.getBufferSize());
+}
+
+
+// Utility for running tcp client in sending loop
+void*
+spinSender(void* arg)
+{
+  TestTcpClient* client = (TestTcpClient*)arg;  
+  ByteArray send;
+  const int DATA = 256;
+
+  send.load(DATA);
+
+  while(true)
+  {
+    client->sendBytes(send);
+    sleep(2);
+  }
+}
+
+TEST(SocketSuite, splitPackets)
+{
+  const int tcpPort = TEST_PORT_BASE + 1;
+  char ipAddr[] = "127.0.0.1";
+  const int RECV_LENGTH = 64;
+
+  TestTcpClient tcpClient;
+  TestTcpServer tcpServer;
+  ByteArray recv;
+// Construct server
+  ASSERT_TRUE(tcpServer.init(tcpPort));
+
+  // Construct a client
+  ASSERT_TRUE(tcpClient.init(&ipAddr[0], tcpPort));
+  ASSERT_TRUE(tcpClient.makeConnect());
+
+  ASSERT_TRUE(tcpServer.makeConnect());
+
+  pthread_t senderThrd;
+  pthread_create(&senderThrd, NULL, spinSender, &tcpClient);
+
+  ASSERT_TRUE(tcpServer.receiveBytes(recv, RECV_LENGTH));
+  ASSERT_EQ(RECV_LENGTH, recv.getBufferSize());
+
+  pthread_cancel(senderThrd);
+  pthread_join(senderThrd, NULL);
+}
+
 
 TEST(SimpleMessageSuite, init)
 {
@@ -339,7 +447,7 @@ spinFunc(void* arg)
 
 TEST(DISABLED_MessageManagerSuite, udp)
 {
-  const int udpPort = 11000;
+  const int udpPort = TEST_PORT_BASE + 100;
   char ipAddr[] = "127.0.0.1";
 
   UdpClient* udpClient = new UdpClient();
@@ -375,9 +483,9 @@ TEST(DISABLED_MessageManagerSuite, udp)
   pthread_join(udpSrvThrd, NULL);
 }
 
-TEST(MessageManagerSuite, tcp)
+TEST(DISABLED_MessageManagerSuite, tcp)
 {
-  const int tcpPort = 11000;
+  const int tcpPort = TEST_PORT_BASE + 101;
   char ipAddr[] = "127.0.0.1";
 
   TcpClient* tcpClient = new TcpClient();

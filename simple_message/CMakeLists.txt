@@ -69,10 +69,16 @@ set(UTEST_SRC_FILES test/utest.cpp test/utest_message.cpp)
 ## LIBRARIES: libraries you create in this project that dependent projects also need
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
+
+# NOTE: The libraries generated this package are not included in the catkin_package
+# macro because libraries must be explicitly linked in projects that depend on this
+# package.  If this is not done (and these libraries were exported), then multiple
+# library definitions (normal - simple_message and byteswapped - simple_message_bswap)
+# are both included (this is bad).
+
 catkin_package(
     CATKIN_DEPENDS roscpp industrial_msgs
     INCLUDE_DIRS include 
-    LIBRARIES simple_message_bswap simple_message
 )
 
 ###########
@@ -85,6 +91,8 @@ include_directories(include
   ${catkin_INCLUDE_DIRS}
 )
 
+# NOTE: All test files require TEST_PORT_BASE to be defined.  Defining different
+# ports for each test executable allows them to run in parallel.
 
 # DEFAULT LIBRARY (SAME ENDIAN)
 add_library(simple_message ${SRC_FILES})
@@ -92,6 +100,7 @@ target_link_libraries(simple_message ${catkin_LIBRARIES})
 add_dependencies(simple_message ${industrial_msgs_EXPORTED_TARGETS})
 
 catkin_add_gtest(utest ${UTEST_SRC_FILES})
+set_target_properties(utest PROPERTIES COMPILE_DEFINITIONS "TEST_PORT_BASE=11000")
 target_link_libraries(utest simple_message)
 
 # ALTERNATIVE LIBRARY (DIFFERENT ENDIAN)
@@ -101,6 +110,7 @@ target_link_libraries(simple_message_bswap ${catkin_LIBRARIES})
 add_dependencies(simple_message_bswap ${industrial_msgs_EXPORTED_TARGETS})
 
 catkin_add_gtest(utest_byte_swapping ${UTEST_SRC_FILES})
+set_target_properties(utest_byte_swapping PROPERTIES COMPILE_DEFINITIONS "TEST_PORT_BASE=12000")
 target_link_libraries(utest_byte_swapping simple_message_bswap)
 
 # ALTERNATIVE LIBRARY (64-bit floats)
@@ -110,7 +120,7 @@ target_link_libraries(simple_message_float64 ${catkin_LIBRARIES})
 add_dependencies(simple_message_float64 ${industrial_msgs_EXPORTED_TARGETS})
 
 catkin_add_gtest(utest_float64 ${UTEST_SRC_FILES})
-set_target_properties(utest_float64 PROPERTIES COMPILE_DEFINITIONS "FLOAT64")
+set_target_properties(utest_float64 PROPERTIES COMPILE_DEFINITIONS "TEST_PORT_BASE=13000;FLOAT64")
 target_link_libraries(utest_float64 simple_message_float64)
 
 
