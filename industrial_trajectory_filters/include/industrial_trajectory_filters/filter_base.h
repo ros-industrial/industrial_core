@@ -1,33 +1,33 @@
 /*
-* Software License Agreement (BSD License)
-*
-* Copyright (c) 2011, Southwest Research Institute
-* All rights reserved.
-*
-* Redistribution and use in source and binary forms, with or without
-* modification, are permitted provided that the following conditions are met:
-*
-* 	* Redistributions of source code must retain the above copyright
-* 	notice, this list of conditions and the following disclaimer.
-* 	* Redistributions in binary form must reproduce the above copyright
-* 	notice, this list of conditions and the following disclaimer in the
-* 	documentation and/or other materials provided with the distribution.
-* 	* Neither the name of the Southwest Research Institute, nor the names
-*	of its contributors may be used to endorse or promote products derived
-*	from this software without specific prior written permission.
-*
-* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-* AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-* IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
-* LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-* SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-* CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-* ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-* POSSIBILITY OF SUCH DAMAGE.
-*/
+ * Software License Agreement (BSD License)
+ *
+ * Copyright (c) 2011, Southwest Research Institute
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * 	* Redistributions of source code must retain the above copyright
+ * 	notice, this list of conditions and the following disclaimer.
+ * 	* Redistributions in binary form must reproduce the above copyright
+ * 	notice, this list of conditions and the following disclaimer in the
+ * 	documentation and/or other materials provided with the distribution.
+ * 	* Neither the name of the Southwest Research Institute, nor the names
+ *	of its contributors may be used to endorse or promote products derived
+ *	from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ */
 
 #ifndef FILTER_BASE_H_
 #define FILTER_BASE_H_
@@ -39,11 +39,28 @@
 #include <moveit/planning_request_adapter/planning_request_adapter.h>
 #include <class_loader/class_loader.h>
 
-/** Trajectory filter interface:
+namespace industrial_trajectory_filters {
+
+/**
+ * @brief Message Adapter structure serves as a stand-in for the arm navigation message type with
+ * which the filter was specialized.
  *
- * Description:
- *   This version of the FilterBase<T> can be used to encapsulate the functionality from an arm navigation
+ */
+struct MessageAdapter {
+
+	/**
+	 * @brief Arm navigation message type for trajectory filter
+	 *
+	 */
+	struct Request {
+		trajectory_msgs::JointTrajectory trajectory;
+	} request;
+};
+
+/**
+ * @brief This version of the FilterBase<T> can be used to encapsulate the functionality from an arm navigation
  *   trajectory filter into a PlanningRequestAdapter that is used by MoveIt.
+ *
  * 	 Since this version of the FilterBase<T> class only provides some degree of backwards compatibility
  * 	 with the original FilterBase interface, then some parts of the arm navigation filter must be modified in order
  * 	 to accommodate the differences introduced by this new interface class.
@@ -99,141 +116,153 @@
  *	 	 MessageAdapter structure and the planning interface objects in the argument list.  The filter's implementation
  *	 	 should override this method whenever a custom adapter structure is used.
  */
-
-namespace industrial_trajectory_filters
-{
-
-/*
- * Message Adapter structure serves as a stand-in for the arm navigation message type that
- * the filter was specialized with.
- *
- */
-struct MessageAdapter
-{
-	struct Request
-	{
-		trajectory_msgs::JointTrajectory trajectory;
-	} request;
-};
-
-/*
- * Filter Base Interface
- * 	Replaces the original arm navigation FilterBase<T>.
- */
 template<typename T>
-class FilterBase: public planning_request_adapter::PlanningRequestAdapter
-{
+class FilterBase: public planning_request_adapter::PlanningRequestAdapter {
 public:
 
-  FilterBase(): planning_request_adapter::PlanningRequestAdapter(),
-  	  nh_("~"),
-  	  configured_(false),
-  	  filter_type_("FilterBase"),
-  	  filter_name_("Unimplemented")
-  {
+	/**
+	 * @brief Default constructor
+	 */
+	FilterBase() :
+			planning_request_adapter::PlanningRequestAdapter(), nh_("~"), configured_(
+					false), filter_type_("FilterBase"), filter_name_(
+					"Unimplemented") {
 
-  }
+	}
 
-  virtual ~FilterBase(){};
+	/**
+	 * Default destructor
+	 */
+	virtual ~FilterBase() {
+	}
+	;
 
+	/**
+	 * @brief Update the filter and return the data separately. This function
+	 * must be implemented in the derived class.
+	 *
+	 * @param data_in A reference to the data to be input to the filter
+	 * @param data_out A reference to the data output location
+	 * @return true on success, otherwise false.
+	 */
+	virtual bool update(const T& data_in, T& data_out)=0;
 
-  /** update: Original FilterBase method
-   *  	Update the filter and return the data separately
-   * 	- param data_in A reference to the data to be input to the filter
-   * 	- param data_out A reference to the data output location
-   * 	This function must be implemented in the derived class.
-   */
-  virtual bool update(const T& data_in, T& data_out)=0;
+	/**
+	 * @brief Original FilterBase method, return filter type
+	 * @return filter type (as string)
+	 */
+	std::string getType() {
+		return filter_type_;
+	}
+	;
 
-
-  std::string getType() {return filter_type_;}; // original FilterBase method
-  inline const std::string& getName(){return filter_name_;}; // original FilterBase method
-
+	/**
+	 * @brief Original FitlerBase Method
+	 * @return filter name (as string).
+	 */
+	inline const std::string& getName() {
+		return filter_name_;
+	}
+	; // original FilterBase method
 
 protected:
 
-  /** configure: Original FilterBase method
-   * Pure virtual function for the sub class to configure the filter
-   * This function must be implemented in the derived class.
-   */
-  virtual bool configure()=0;
+	/**
+	 * @brief FilterBase method for the sub class to configure the filter
+	 * This function must be implemented in the derived class.
+	 * @return true if successful, otherwise false.
+	 */
+	virtual bool configure()=0;
 
-  ///The name of the filter
-  std::string filter_name_;
+	/**
+	 * @brief  filter name
+	 */
+	std::string filter_name_;
 
-  ///The type of the filter (Used by FilterChain for Factory construction)
-  std::string filter_type_;
+	/**
+	 * The type of the filter (Used by FilterChain for Factory construction)
+	 */
+	std::string filter_type_;
 
-  /// Whether the filter has been configured.
-  bool configured_;
+	/**
+	 * @brief Holds filter configuration state.
+	 */
+	bool configured_;
 
-  // node handle that can be used for param lookup
-  ros::NodeHandle nh_;
-
+	/**
+	 * @brief Internal node handle (used for parameter lookup)
+	 */
+	ros::NodeHandle nh_;
 
 protected:
 
-  /*
-   *  Moveit Planning Request Adapter method
-   *  	This basic implementation of the adaptAndPlan method calls the planner and then maps the trajectory data
-   *  	from the MotionPlanResponse object into the MessageAdapter mapping structure. The MessageAdapter object is
-   *  	then passed to the "update" method that resembles that from the old FilterBase interface class.  The filtered
-   *  	trajectory is finally saved in the MotionPlanResponse object.
-   */
-  virtual bool 	adaptAndPlan (const PlannerFn &planner,
-		  const planning_scene::PlanningSceneConstPtr &planning_scene,
-		  const planning_interface::MotionPlanRequest &req,
-		  planning_interface::MotionPlanResponse &res,
-		  std::vector< std::size_t > &added_path_index) const
-	  {
+	/**
+	 *  @brief Moveit Planning Request Adapter method.  This basic implementation of the
+	 *  adaptAndPlan method calls the planner and then maps the trajectory data from the
+	 *  MotionPlanResponse object into the MessageAdapter mapping structure. The
+	 *  MessageAdapter object is then passed to the "update" method that resembles that
+	 *  from the old FilterBase interface class.  The filtered trajectory is finally
+	 *  saved in the MotionPlanResponse object.
+	 */
+	virtual bool adaptAndPlan(const PlannerFn &planner,
+			const planning_scene::PlanningSceneConstPtr &planning_scene,
+			const planning_interface::MotionPlanRequest &req,
+			planning_interface::MotionPlanResponse &res,
+			std::vector<std::size_t> &added_path_index) const {
 
-		  // non const pointer to this
-		  FilterBase<MessageAdapter> *p = const_cast<FilterBase<MessageAdapter>* >(this);
+		// non const pointer to this
+		FilterBase<MessageAdapter> *p =
+				const_cast<FilterBase<MessageAdapter>*>(this);
 
-	  	  // calling the configure method
-	  	  if(!configured_ && p->configure())
-	  	  {
-	  		  p->configured_ = true;
-	  	  }
+		// calling the configure method
+		if (!configured_ && p->configure()) {
+			p->configured_ = true;
+		}
 
-	  	  // moveit messages for saving trajectory data
-	  	  moveit_msgs::RobotTrajectory robot_trajectory_in,robot_trajectory_out;
-	  	  MessageAdapter trajectory_in, trajectory_out; // mapping structures
+		// moveit messages for saving trajectory data
+		moveit_msgs::RobotTrajectory robot_trajectory_in, robot_trajectory_out;
+		MessageAdapter trajectory_in, trajectory_out; // mapping structures
 
-	  	  // calling planner first
-	  	  bool result = planner(planning_scene, req, res);
+		// calling planner first
+		bool result = planner(planning_scene, req, res);
 
-	  	  // applying filter to planned trajectory
-	  	  if (result && res.trajectory_)
-	  	  {
-	  		// mapping arguments into message adapter struct
-	  		res.trajectory_->getRobotTrajectoryMsg(robot_trajectory_in);
-	  		trajectory_in.request.trajectory =robot_trajectory_in.joint_trajectory;
+		// applying filter to planned trajectory
+		if (result && res.trajectory_) {
+			// mapping arguments into message adapter struct
+			res.trajectory_->getRobotTrajectoryMsg(robot_trajectory_in);
+			trajectory_in.request.trajectory =
+					robot_trajectory_in.joint_trajectory;
 
-	  		// applying arm navigation filter to planned trajectory
-	  		p->update(trajectory_in,trajectory_out);
+			// applying arm navigation filter to planned trajectory
+			p->update(trajectory_in, trajectory_out);
 
-	  		// saving filtered trajectory into moveit message.
-	  		robot_trajectory_out.joint_trajectory = trajectory_out.request.trajectory;
-	  		res.trajectory_->setRobotTrajectoryMsg(planning_scene->getCurrentState(),robot_trajectory_out);
+			// saving filtered trajectory into moveit message.
+			robot_trajectory_out.joint_trajectory =
+					trajectory_out.request.trajectory;
+			res.trajectory_->setRobotTrajectoryMsg(
+					planning_scene->getCurrentState(), robot_trajectory_out);
 
-	  	  }
+		}
 
-		  return result;
-	  }
+		return result;
+	}
 
-  	  virtual std::string getDescription() const
-  	  {
-  		  // non const pointer to this
-	      FilterBase<MessageAdapter> *p = const_cast<FilterBase<MessageAdapter>* >(this);
+	/**
+	 * @brief Return description string
+	 * @return description (as a string)
+	 */
+	virtual std::string getDescription() const {
+		// non const pointer to this
+		FilterBase<MessageAdapter> *p =
+				const_cast<FilterBase<MessageAdapter>*>(this);
 
-  		  std::stringstream ss;
-  		  ss<<"Trajectory filter '"<<p->getName()<<"' of type '"<<p->getType()<<"'";
-  		  return ss.str();
-  	  }
+		std::stringstream ss;
+		ss << "Trajectory filter '" << p->getName() << "' of type '"
+				<< p->getType() << "'";
+		return ss.str();
+	}
 };
 
 }
-
 
 #endif /* FILTER_BASE_H_ */
