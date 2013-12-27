@@ -39,22 +39,25 @@
 #include <moveit/planning_request_adapter/planning_request_adapter.h>
 #include <class_loader/class_loader.h>
 
-namespace industrial_trajectory_filters {
+namespace industrial_trajectory_filters
+{
 
 /**
  * @brief Message Adapter structure serves as a stand-in for the arm navigation message type with
  * which the filter was specialized.
  *
  */
-struct MessageAdapter {
+struct MessageAdapter
+{
 
-	/**
-	 * @brief Arm navigation message type for trajectory filter
-	 *
-	 */
-	struct Request {
-		trajectory_msgs::JointTrajectory trajectory;
-	} request;
+  /**
+   * @brief Arm navigation message type for trajectory filter
+   *
+   */
+  struct Request
+  {
+    trajectory_msgs::JointTrajectory trajectory;
+  } request;
 };
 
 /**
@@ -117,151 +120,152 @@ struct MessageAdapter {
  *	 	 should override this method whenever a custom adapter structure is used.
  */
 template<typename T>
-class FilterBase: public planning_request_adapter::PlanningRequestAdapter {
-public:
+  class FilterBase : public planning_request_adapter::PlanningRequestAdapter
+  {
+  public:
 
-	/**
-	 * @brief Default constructor
-	 */
-	FilterBase() :
-			planning_request_adapter::PlanningRequestAdapter(), nh_("~"), configured_(
-					false), filter_type_("FilterBase"), filter_name_(
-					"Unimplemented") {
+    /**
+     * @brief Default constructor
+     */
+    FilterBase() :
+        planning_request_adapter::PlanningRequestAdapter(), nh_("~"), configured_(false), filter_type_("FilterBase"), filter_name_(
+            "Unimplemented")
+    {
 
-	}
+    }
 
-	/**
-	 * Default destructor
-	 */
-	virtual ~FilterBase() {
-	}
-	;
+    /**
+     * Default destructor
+     */
+    virtual ~FilterBase()
+    {
+    }
+    ;
 
-	/**
-	 * @brief Update the filter and return the data separately. This function
-	 * must be implemented in the derived class.
-	 *
-	 * @param data_in A reference to the data to be input to the filter
-	 * @param data_out A reference to the data output location
-	 * @return true on success, otherwise false.
-	 */
-	virtual bool update(const T& data_in, T& data_out)=0;
+    /**
+     * @brief Update the filter and return the data separately. This function
+     * must be implemented in the derived class.
+     *
+     * @param data_in A reference to the data to be input to the filter
+     * @param data_out A reference to the data output location
+     * @return true on success, otherwise false.
+     */
+    virtual bool update(const T& data_in, T& data_out)=0;
 
-	/**
-	 * @brief Original FilterBase method, return filter type
-	 * @return filter type (as string)
-	 */
-	std::string getType() {
-		return filter_type_;
-	}
-	;
+    /**
+     * @brief Original FilterBase method, return filter type
+     * @return filter type (as string)
+     */
+    std::string getType()
+    {
+      return filter_type_;
+    }
+    ;
 
-	/**
-	 * @brief Original FitlerBase Method
-	 * @return filter name (as string).
-	 */
-	inline const std::string& getName() {
-		return filter_name_;
-	}
-	; // original FilterBase method
+    /**
+     * @brief Original FitlerBase Method
+     * @return filter name (as string).
+     */
+    inline const std::string& getName()
+    {
+      return filter_name_;
+    }
+    ; // original FilterBase method
 
-protected:
+  protected:
 
-	/**
-	 * @brief FilterBase method for the sub class to configure the filter
-	 * This function must be implemented in the derived class.
-	 * @return true if successful, otherwise false.
-	 */
-	virtual bool configure()=0;
+    /**
+     * @brief FilterBase method for the sub class to configure the filter
+     * This function must be implemented in the derived class.
+     * @return true if successful, otherwise false.
+     */
+    virtual bool configure()=0;
 
-	/**
-	 * @brief  filter name
-	 */
-	std::string filter_name_;
+    /**
+     * @brief  filter name
+     */
+    std::string filter_name_;
 
-	/**
-	 * The type of the filter (Used by FilterChain for Factory construction)
-	 */
-	std::string filter_type_;
+    /**
+     * The type of the filter (Used by FilterChain for Factory construction)
+     */
+    std::string filter_type_;
 
-	/**
-	 * @brief Holds filter configuration state.
-	 */
-	bool configured_;
+    /**
+     * @brief Holds filter configuration state.
+     */
+    bool configured_;
 
-	/**
-	 * @brief Internal node handle (used for parameter lookup)
-	 */
-	ros::NodeHandle nh_;
+    /**
+     * @brief Internal node handle (used for parameter lookup)
+     */
+    ros::NodeHandle nh_;
 
-protected:
+  protected:
 
-	/**
-	 *  @brief Moveit Planning Request Adapter method.  This basic implementation of the
-	 *  adaptAndPlan method calls the planner and then maps the trajectory data from the
-	 *  MotionPlanResponse object into the MessageAdapter mapping structure. The
-	 *  MessageAdapter object is then passed to the "update" method that resembles that
-	 *  from the old FilterBase interface class.  The filtered trajectory is finally
-	 *  saved in the MotionPlanResponse object.
-	 */
-	virtual bool adaptAndPlan(const PlannerFn &planner,
-			const planning_scene::PlanningSceneConstPtr &planning_scene,
-			const planning_interface::MotionPlanRequest &req,
-			planning_interface::MotionPlanResponse &res,
-			std::vector<std::size_t> &added_path_index) const {
+    /**
+     *  @brief Moveit Planning Request Adapter method.  This basic implementation of the
+     *  adaptAndPlan method calls the planner and then maps the trajectory data from the
+     *  MotionPlanResponse object into the MessageAdapter mapping structure. The
+     *  MessageAdapter object is then passed to the "update" method that resembles that
+     *  from the old FilterBase interface class.  The filtered trajectory is finally
+     *  saved in the MotionPlanResponse object.
+     */
+    virtual bool adaptAndPlan(const PlannerFn &planner, const planning_scene::PlanningSceneConstPtr &planning_scene,
+                              const planning_interface::MotionPlanRequest &req,
+                              planning_interface::MotionPlanResponse &res,
+                              std::vector<std::size_t> &added_path_index) const
+    {
 
-		// non const pointer to this
-		FilterBase<MessageAdapter> *p =
-				const_cast<FilterBase<MessageAdapter>*>(this);
+      // non const pointer to this
+      FilterBase<MessageAdapter> *p = const_cast<FilterBase<MessageAdapter>*>(this);
 
-		// calling the configure method
-		if (!configured_ && p->configure()) {
-			p->configured_ = true;
-		}
+      // calling the configure method
+      if (!configured_ && p->configure())
+      {
+        p->configured_ = true;
+      }
 
-		// moveit messages for saving trajectory data
-		moveit_msgs::RobotTrajectory robot_trajectory_in, robot_trajectory_out;
-		MessageAdapter trajectory_in, trajectory_out; // mapping structures
+      // moveit messages for saving trajectory data
+      moveit_msgs::RobotTrajectory robot_trajectory_in, robot_trajectory_out;
+      MessageAdapter trajectory_in, trajectory_out; // mapping structures
 
-		// calling planner first
-		bool result = planner(planning_scene, req, res);
+      // calling planner first
+      bool result = planner(planning_scene, req, res);
 
-		// applying filter to planned trajectory
-		if (result && res.trajectory_) {
-			// mapping arguments into message adapter struct
-			res.trajectory_->getRobotTrajectoryMsg(robot_trajectory_in);
-			trajectory_in.request.trajectory =
-					robot_trajectory_in.joint_trajectory;
+      // applying filter to planned trajectory
+      if (result && res.trajectory_)
+      {
+        // mapping arguments into message adapter struct
+        res.trajectory_->getRobotTrajectoryMsg(robot_trajectory_in);
+        trajectory_in.request.trajectory = robot_trajectory_in.joint_trajectory;
 
-			// applying arm navigation filter to planned trajectory
-			p->update(trajectory_in, trajectory_out);
+        // applying arm navigation filter to planned trajectory
+        p->update(trajectory_in, trajectory_out);
 
-			// saving filtered trajectory into moveit message.
-			robot_trajectory_out.joint_trajectory =
-					trajectory_out.request.trajectory;
-			res.trajectory_->setRobotTrajectoryMsg(
-					planning_scene->getCurrentState(), robot_trajectory_out);
+        // saving filtered trajectory into moveit message.
+        robot_trajectory_out.joint_trajectory = trajectory_out.request.trajectory;
+        res.trajectory_->setRobotTrajectoryMsg(planning_scene->getCurrentState(), robot_trajectory_out);
 
-		}
+      }
 
-		return result;
-	}
+      return result;
+    }
 
-	/**
-	 * @brief Return description string
-	 * @return description (as a string)
-	 */
-	virtual std::string getDescription() const {
-		// non const pointer to this
-		FilterBase<MessageAdapter> *p =
-				const_cast<FilterBase<MessageAdapter>*>(this);
+    /**
+     * @brief Return description string
+     * @return description (as a string)
+     */
+    virtual std::string getDescription() const
+    {
+      // non const pointer to this
+      FilterBase<MessageAdapter> *p = const_cast<FilterBase<MessageAdapter>*>(this);
 
-		std::stringstream ss;
-		ss << "Trajectory filter '" << p->getName() << "' of type '"
-				<< p->getType() << "'";
-		return ss.str();
-	}
-};
+      std::stringstream ss;
+      ss << "Trajectory filter '" << p->getName() << "' of type '" << p->getType() << "'";
+      return ss.str();
+    }
+  };
 
 }
 

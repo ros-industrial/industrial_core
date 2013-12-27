@@ -34,48 +34,50 @@
 
 #include <industrial_trajectory_filters/filter_base.h>
 
-namespace industrial_trajectory_filters {
+namespace industrial_trajectory_filters
+{
 
 /**
  * @brief This is a simple filter which reduces a trajectory to N points or less
  */
 template<typename T>
 
-class NPointFilter: public industrial_trajectory_filters::FilterBase<T> {
-public:
-	/**
-	 * @brief Default constructor
-	 */
-	NPointFilter();
-	/**
-	 * @brief Default destructor
-	 */
-	~NPointFilter();
-	;
+  class NPointFilter : public industrial_trajectory_filters::FilterBase<T>
+  {
+  public:
+    /**
+     * @brief Default constructor
+     */
+    NPointFilter();
+    /**
+     * @brief Default destructor
+     */
+    ~NPointFilter();
+    ;
 
-	virtual bool configure();
+    virtual bool configure();
 
-	// \brief Reduces a trajectory to N points or less.  The resulting trajectory
-	// contains only point within the original trajectory (no interpolation is done
-	// between points).
+    // \brief Reduces a trajectory to N points or less.  The resulting trajectory
+    // contains only point within the original trajectory (no interpolation is done
+    // between points).
 
-	/**
-	 * \brief Reduces a trajectory to N points or less.  The resulting trajectory
-	 * contains only point within the original trajectory (no interpolation is done
-	 *  between points).
-	 * @param trajectory_in input trajectory
-	 * @param trajectory_out filtered trajectory (N points or less
-	 * @return true if successful
-	 */
-	bool update(const T& trajectory_in, T& trajectory_out);
+    /**
+     * \brief Reduces a trajectory to N points or less.  The resulting trajectory
+     * contains only point within the original trajectory (no interpolation is done
+     *  between points).
+     * @param trajectory_in input trajectory
+     * @param trajectory_out filtered trajectory (N points or less
+     * @return true if successful
+     */
+    bool update(const T& trajectory_in, T& trajectory_out);
 
-private:
-	/**
-	 * @brief number of points to reduce trajectory to
-	 */
-	int n_points_;
+  private:
+    /**
+     * @brief number of points to reduce trajectory to
+     */
+    int n_points_;
 
-};
+  };
 
 /**
  * @brief Specializing trajectory filter implementation

@@ -38,89 +38,93 @@ using namespace industrial_trajectory_filters;
 const int DEFAULT_N = 2;
 
 template<typename T>
-NPointFilter<T>::NPointFilter() :
-		FilterBase<T>() {
-	ROS_INFO_STREAM("Constructing N point filter");
-	n_points_ = DEFAULT_N;
-	this->filter_name_ = "NPointFilter";
-	this->filter_type_ = "NPointFilter";
-}
+  NPointFilter<T>::NPointFilter() :
+      FilterBase<T>()
+  {
+    ROS_INFO_STREAM("Constructing N point filter");
+    n_points_ = DEFAULT_N;
+    this->filter_name_ = "NPointFilter";
+    this->filter_type_ = "NPointFilter";
+  }
 
 template<typename T>
-NPointFilter<T>::~NPointFilter() {
-}
+  NPointFilter<T>::~NPointFilter()
+  {
+  }
 
 template<typename T>
-bool NPointFilter<T>::configure() {
-	//if (!filters::FilterBase<T>::getParam("n_points", n_points_))
-	if (!this->nh_.getParam("n_points", n_points_)) {
-		ROS_WARN_STREAM("NPointFilter, params has no attribute n_points.");
-	}
-	if (n_points_ < 2) {
-		ROS_WARN_STREAM(
-				"n_points attribute less than min(2), setting to minimum");
-		n_points_ = 2;
-	}
-	ROS_INFO_STREAM("Using a n_points value of " << n_points_);
+  bool NPointFilter<T>::configure()
+  {
+    //if (!filters::FilterBase<T>::getParam("n_points", n_points_))
+    if (!this->nh_.getParam("n_points", n_points_))
+    {
+      ROS_WARN_STREAM("NPointFilter, params has no attribute n_points.");
+    }
+    if (n_points_ < 2)
+    {
+      ROS_WARN_STREAM( "n_points attribute less than min(2), setting to minimum");
+      n_points_ = 2;
+    }
+    ROS_INFO_STREAM("Using a n_points value of " << n_points_);
 
-	return true;
-}
+    return true;
+  }
 
 template<typename T>
-bool NPointFilter<T>::update(const T& trajectory_in, T& trajectory_out) {
-	bool success = false;
-	int size_in = trajectory_in.request.trajectory.points.size();
+  bool NPointFilter<T>::update(const T& trajectory_in, T& trajectory_out)
+  {
+    bool success = false;
+    int size_in = trajectory_in.request.trajectory.points.size();
 
-	// Copy non point related data
-	trajectory_out.request.trajectory = trajectory_in.request.trajectory;
-	// Clear out the trajectory points
-	trajectory_out.request.trajectory.points.clear();
+    // Copy non point related data
+    trajectory_out.request.trajectory = trajectory_in.request.trajectory;
+    // Clear out the trajectory points
+    trajectory_out.request.trajectory.points.clear();
 
-	if (size_in > n_points_) {
-		//Add first point to output trajectory
-		trajectory_out.request.trajectory.points.push_back(
-				trajectory_in.request.trajectory.points.front());
+    if (size_in > n_points_)
+    {
+      //Add first point to output trajectory
+      trajectory_out.request.trajectory.points.push_back(trajectory_in.request.trajectory.points.front());
 
-		int intermediate_points = n_points_ - 2; //subtract the first and last elements
-		double int_point_increment = double(size_in)
-				/ double(intermediate_points + 1.0);
-		ROS_INFO_STREAM(
-				"Number of intermediate points: " << intermediate_points << ", increment: " << int_point_increment);
+      int intermediate_points = n_points_ - 2; //subtract the first and last elements
+      double int_point_increment = double(size_in) / double(intermediate_points + 1.0);
+      ROS_INFO_STREAM(
+          "Number of intermediate points: " << intermediate_points << ", increment: " << int_point_increment);
 
-		// The intermediate point index is determined by the following equation:
-		//     int_point_index = i * int_point_increment
-		// Ex: n_points_ = 4, size_in = 11, intermediate_points = 2 ->
-		//     int_point_increment = 3.66667,
-		//     i = 1: int_point_index = 3
-		//		 i = 2: int_point_index = 7
-		for (int i = 1; i <= intermediate_points; i++) {
-			int int_point_index = int(double(i) * int_point_increment);
-			ROS_INFO_STREAM("Intermediate point index: " << int_point_index);
-			trajectory_out.request.trajectory.points.push_back(
-					trajectory_in.request.trajectory.points[int_point_index]);
-		}
+      // The intermediate point index is determined by the following equation:
+      //     int_point_index = i * int_point_increment
+      // Ex: n_points_ = 4, size_in = 11, intermediate_points = 2 ->
+      //     int_point_increment = 3.66667,
+      //     i = 1: int_point_index = 3
+      //		 i = 2: int_point_index = 7
+      for (int i = 1; i <= intermediate_points; i++)
+      {
+        int int_point_index = int(double(i) * int_point_increment);
+        ROS_INFO_STREAM("Intermediate point index: " << int_point_index);
+        trajectory_out.request.trajectory.points.push_back(trajectory_in.request.trajectory.points[int_point_index]);
+      }
 
-		//Add last point to output trajectory
-		trajectory_out.request.trajectory.points.push_back(
-				trajectory_in.request.trajectory.points.back());
+      //Add last point to output trajectory
+      trajectory_out.request.trajectory.points.push_back(trajectory_in.request.trajectory.points.back());
 
-		ROS_INFO_STREAM(
-				"Filtered trajectory from: " << trajectory_in.request.trajectory.points.size() << " to: " << trajectory_out.request.trajectory.points.size());
+      ROS_INFO_STREAM(
+          "Filtered trajectory from: " << trajectory_in.request.trajectory.points.size() << " to: " << trajectory_out.request.trajectory.points.size());
 
-		success = true;
-	} else {
-		ROS_WARN_STREAM(
-				"Trajectory size less than n: " << n_points_ << ", pass through");
-		trajectory_out.request.trajectory = trajectory_in.request.trajectory;
-		success = true;
-	}
+      success = true;
+    }
+    else
+    {
+      ROS_WARN_STREAM( "Trajectory size less than n: " << n_points_ << ", pass through");
+      trajectory_out.request.trajectory = trajectory_in.request.trajectory;
+      success = true;
+    }
 
-	return success;
-}
+    return success;
+  }
 
 // registering planner adapter
 CLASS_LOADER_REGISTER_CLASS(industrial_trajectory_filters::NPointFilterAdapter,
-		planning_request_adapter::PlanningRequestAdapter);
+                            planning_request_adapter::PlanningRequestAdapter);
 
 /*
  * Old plugin declaration for arm navigation trajectory filters
