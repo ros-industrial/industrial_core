@@ -19,6 +19,14 @@ catkin_package(
     CATKIN_DEPENDS roscpp std_msgs sensor_msgs control_msgs trajectory_msgs industrial_robot_client
 )
 
+##########
+## Test ##
+##########
+
+# ROS launch testing
+find_package(roslaunch)
+roslaunch_add_file_check(launch)
+
 #############
 ## Install ##
 #############

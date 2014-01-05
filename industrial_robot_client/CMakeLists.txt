@@ -157,12 +157,23 @@ target_link_libraries(joint_trajectory_action
   industrial_robot_client ${catkin_LIBRARIES})
 add_dependencies(joint_trajectory_action industrial_robot_client_gencpp)
 
+##########
+## Test ##
+##########
 # Testing - Only performed on normal (non byte swapped library)
 catkin_add_gtest(utest_robot_client test/utest.cpp)
 target_link_libraries(utest_robot_client 
   industrial_robot_client 
   ${catkin_LIBRARIES})
 
+# ROS launch testing
+## ROS launch test should be enabled when launch parameters are supported,
+## see details below:
+## robot_interface_streaming.launch: 'robot_ip'
+## robot_state_visualize.launch]: 'urdf_path'
+## robot_interface_download.launch]: 'robot_ip'
+##find_package(roslaunch)
+##roslaunch_add_file_check(launch)
 
 #############
 ## Install ##
