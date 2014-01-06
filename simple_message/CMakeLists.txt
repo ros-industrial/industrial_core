@@ -1,7 +1,7 @@
-# http://ros.org/doc/groovy/api/catkin/html/user_guide/supposed.html
 cmake_minimum_required(VERSION 2.8.3)
+
 project(simple_message)
-# Load catkin and all dependencies required for this package
+
 find_package(catkin REQUIRED COMPONENTS roscpp industrial_msgs)
 
 # Build static libs, to reduce dependency-chaining for industrial_robot_client
@@ -12,7 +12,7 @@ set(ROS_BUILD_SHARED_LIBS false)
 # and various robot controllers.  This requires conditionally compiling
 # certain functions and headers.  The definition below enables compiling
 # for a ROS node.
-add_definitions(-DROS=1)  #build using ROS libraries
+add_definitions(-DROS=1)           #build using ROS libraries
 add_definitions(-DLINUXSOCKETS=1)  #use linux sockets for communication
 
 set(SRC_FILES src/byte_array.cpp
@@ -61,15 +61,6 @@ set(UTEST_SRC_FILES test/utest.cpp test/utest_message.cpp)
 # controllers).  This library performs byte swapping at the lowest load/unload
 # levels.
 
-###################################
-## catkin specific configuration ##
-###################################
-## The catkin_package macro generates cmake config files for your package
-## Declare things to be passed to dependent projects
-## LIBRARIES: libraries you create in this project that dependent projects also need
-## CATKIN_DEPENDS: catkin_packages dependent projects also need
-## DEPENDS: system dependencies of this project that dependent projects also need
-
 # NOTE: The libraries generated this package are not included in the catkin_package
 # macro because libraries must be explicitly linked in projects that depend on this
 # package.  If this is not done (and these libraries were exported), then multiple
@@ -81,12 +72,7 @@ catkin_package(
     INCLUDE_DIRS include 
 )
 
-###########
-## Build ##
-###########
 
-## Specify additional locations of header files
-## Your package locations should be listed before other locations
 include_directories(include
   ${catkin_INCLUDE_DIRS}
 )
@@ -124,9 +110,7 @@ set_target_properties(utest_float64 PROPERTIES COMPILE_DEFINITIONS "TEST_PORT_BA
 target_link_libraries(utest_float64 simple_message_float64)
 
 
-#############
-## Install ##
-#############
+
 install(
     TARGETS simple_message simple_message_bswap simple_message_float64 
     LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION})

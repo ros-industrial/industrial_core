@@ -1,15 +1,13 @@
-# http://ros.org/doc/groovy/api/catkin/html/user_guide/supposed.html
 cmake_minimum_required(VERSION 2.8.3)
+
 project(industrial_robot_client)
-# Load catkin and all dependencies required for this package
+
 find_package(catkin REQUIRED COMPONENTS roscpp std_msgs sensor_msgs control_msgs trajectory_msgs simple_message actionlib_msgs actionlib urdf industrial_msgs industrial_utils)
 
-## System dependencies are found with CMake's conventions
-# find_package(Boost REQUIRED COMPONENTS system)
 find_package(Boost REQUIRED COMPONENTS system thread)
 
 # The definition is copied from the CMakeList for the simple_message package.
-add_definitions(-DROS=1)  #build using ROS libraries
+add_definitions(-DROS=1)           #build using ROS libraries
 add_definitions(-DLINUXSOCKETS=1)  #build using LINUX SOCKETS libraries
 
 set(SRC_FILES src/joint_relay_handler.cpp
@@ -20,57 +18,13 @@ set(SRC_FILES src/joint_relay_handler.cpp
               src/robot_state_interface.cpp
               src/utils.cpp)
 
-#######################################
-## Declare ROS messages and services ##
-#######################################
-
-## Generate messages in the 'msg' folder
-# add_message_files(
-#   FILES
-#   Message1.msg
-#   Message2.msg
-# )
-
-## Generate services in the 'srv' folder
-# add_service_files(
-#   FILES
-#   Service1.srv
-#   Service2.srv
-# )
-
-## Generate added messages and services with any dependencies listed here
-# generate_messages(
-#   DEPENDENCIES
-#   std_msgs
-# )
-
-###################################
-## catkin specific configuration ##
-###################################
-## The catkin_package macro generates cmake config files for your package
-## Declare things to be passed to dependent projects
-## LIBRARIES: libraries you create in this project that dependent projects also need
-## CATKIN_DEPENDS: catkin_packages dependent projects also need
-## DEPENDS: system dependencies of this project that dependent projects also need
-
-# NOTE: The libraries generated this package are not included in the catkin_package
-# macro because libraries must be explicitly linked in projects that depend on this
-# package.  If this is not done (and these libraries were exported), then multiple
-# library definitions (normal - industrial_robot_client and byteswapped - 
-# industrial_robot_client_bswap) are both included (this is bad).
-
 catkin_package(
     CATKIN_DEPENDS roscpp std_msgs sensor_msgs control_msgs trajectory_msgs simple_message actionlib_msgs actionlib urdf industrial_msgs industrial_utils
     INCLUDE_DIRS include
 )                
 
 
-###########
-## Build ##
-###########
 
-## Specify additional locations of header files
-## Your package locations should be listed before other locations
 include_directories(include
   ${catkin_INCLUDE_DIRS}
 )
@@ -88,13 +42,11 @@ include_directories(include
 #      or
 #    target_link_libraries(my_node industrial_robot_client_bswap)
 
-
 add_library(industrial_robot_client ${SRC_FILES})
 target_link_libraries(industrial_robot_client simple_message)
 
 add_library(industrial_robot_client_bswap ${SRC_FILES})
 target_link_libraries(industrial_robot_client_bswap simple_message_bswap)
-
 
 # The following executables(nodes) are for applications where the robot
 # controller and pc have the same byte order (i.e. byte swapping NOT
@@ -164,9 +116,6 @@ target_link_libraries(utest_robot_client
   ${catkin_LIBRARIES})
 
 
-#############
-## Install ##
-#############
 install(
     TARGETS industrial_robot_client industrial_robot_client_bswap
     LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION})
