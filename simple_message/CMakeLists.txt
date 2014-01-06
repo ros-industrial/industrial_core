@@ -134,3 +134,10 @@ install(
 install(
     DIRECTORY include/${PROJECT_NAME}/
     DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
+
+# The simple message library is a source library with only the most common
+# libraries pre-built.  For this reason, the source is installed in the shared
+# directory.
+install(
+    DIRECTORY src/
+    DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/src)
