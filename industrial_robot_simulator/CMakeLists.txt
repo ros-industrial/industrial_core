@@ -24,8 +24,10 @@ catkin_package(
 ##########
 
 # ROS launch testing
-find_package(roslaunch)
-roslaunch_add_file_check(launch)
+## ROS launch testing should be re-enabled when the roslaunch script is officially
+## released (see https://github.com/ros/ros_comm/pull/333)
+##find_package(roslaunch)
+##roslaunch_add_file_check(launch)
 
 #############
 ## Install ##
