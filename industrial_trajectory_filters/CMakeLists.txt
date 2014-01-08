@@ -7,7 +7,7 @@ find_package(catkin REQUIRED COMPONENTS moveit_ros_planning trajectory_msgs)
 catkin_package(
     CATKIN_DEPENDS moveit_ros_planning trajectory_msgs
     INCLUDE_DIRS include
-    LIBRARIES ${MOVEIT_LIB_NAME}
+    LIBRARIES ${PROJECT_NAME}
 )
 
 include_directories(include

@@ -2,7 +2,9 @@ cmake_minimum_required(VERSION 2.8.3)
 
 project(industrial_robot_client)
 
-find_package(catkin REQUIRED COMPONENTS roscpp std_msgs sensor_msgs control_msgs trajectory_msgs simple_message actionlib_msgs actionlib urdf industrial_msgs industrial_utils)
+find_package(catkin REQUIRED COMPONENTS roscpp std_msgs sensor_msgs 
+  control_msgs trajectory_msgs simple_message actionlib_msgs actionlib 
+  urdf industrial_msgs industrial_utils)
 
 find_package(Boost REQUIRED COMPONENTS system thread)
 
@@ -11,15 +13,22 @@ add_definitions(-DROS=1)           #build using ROS libraries
 add_definitions(-DLINUXSOCKETS=1)  #build using LINUX SOCKETS libraries
 
 set(SRC_FILES src/joint_relay_handler.cpp
-	      src/robot_status_relay_handler.cpp
+              src/robot_status_relay_handler.cpp
               src/joint_trajectory_downloader.cpp
               src/joint_trajectory_streamer.cpp
               src/joint_trajectory_interface.cpp
               src/robot_state_interface.cpp
               src/utils.cpp)
 
+# NOTE: The libraries generated this package are not included in the catkin_package
+# macro because libraries must be explicitly linked in projects that depend on this
+# package.  If this is not done (and these libraries were exported), then multiple
+# library definitions (normal - industrial_robot_client and byteswapped.
+# industrial_robot_client_bswap) are both included (this is bad).
 catkin_package(
-    CATKIN_DEPENDS roscpp std_msgs sensor_msgs control_msgs trajectory_msgs simple_message actionlib_msgs actionlib urdf industrial_msgs industrial_utils
+    CATKIN_DEPENDS roscpp std_msgs sensor_msgs control_msgs trajectory_msgs
+      simple_message actionlib_msgs actionlib urdf industrial_msgs
+      industrial_utils
     INCLUDE_DIRS include
 )                
 
@@ -36,11 +45,12 @@ include_directories(include
 # passthrough of binary numeric data to the robot controller, and one that
 # uses byte-swapping to account for endian mis-matches.
 #
-# Due to rosmake dependency limitations, higher-level code must explicitly
-# link to the desired industrial_robot_client library:
+# Due to catkin dependency limitations, higher-level code must
+# explicitly link to the desired industrial_robot_client library:
 #    target_link_libraries(my_node industrial_robot_client)
 #      or
 #    target_link_libraries(my_node industrial_robot_client_bswap)
+#
 
 add_library(industrial_robot_client ${SRC_FILES})
 target_link_libraries(industrial_robot_client simple_message)
@@ -109,12 +119,23 @@ target_link_libraries(joint_trajectory_action
   industrial_robot_client ${catkin_LIBRARIES})
 add_dependencies(joint_trajectory_action industrial_robot_client_gencpp)
 
+##########
+## Test ##
+##########
 # Testing - Only performed on normal (non byte swapped library)
 catkin_add_gtest(utest_robot_client test/utest.cpp)
 target_link_libraries(utest_robot_client 
   industrial_robot_client 
   ${catkin_LIBRARIES})
 
+# ROS launch testing
+## ROS launch test should be enabled when launch parameters are supported,
+## see details below:
+## robot_interface_streaming.launch: 'robot_ip'
+## robot_state_visualize.launch]: 'urdf_path'
+## robot_interface_download.launch]: 'robot_ip'
+##find_package(roslaunch)
+##roslaunch_add_file_check(launch)
 
 install(
     TARGETS industrial_robot_client industrial_robot_client_bswap
