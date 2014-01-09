@@ -2,8 +2,8 @@
 Changelog for package industrial_robot_simulator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.3.1 (2014-01-09)
+------------------
 * robot_simulator: avoid hardcoded python path. Fix `#53 <https://github.com/shaun-edwards/industrial_core/issues/53>`_.
 * Remove obsolete export tags. Fix `#43 <https://github.com/shaun-edwards/industrial_core/issues/43>`_.
 * Add install target for launchfile in sim pkg.
