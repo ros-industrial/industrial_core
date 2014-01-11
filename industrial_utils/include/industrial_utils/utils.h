@@ -35,7 +35,6 @@
 #include <vector>
 #include <string>
 #include "urdf/model.h"
-#include "sensor_msgs/JointState.h"
 
 namespace industrial_utils
 {
