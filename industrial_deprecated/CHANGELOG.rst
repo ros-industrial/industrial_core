@@ -2,6 +2,10 @@
 Changelog for package industrial_deprecated
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Removed header from industrial_utils/utils.h (not required)
+
 0.3.1 (2014-01-09)
 ------------------
 * Purged deprecated packages

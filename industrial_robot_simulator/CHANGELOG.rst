@@ -2,6 +2,10 @@
 Changelog for package industrial_robot_simulator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Removed header from industrial_utils/utils.h (not required)
+
 0.3.1 (2014-01-09)
 ------------------
 * robot_simulator: avoid hardcoded python path. Fix `#53 <https://github.com/shaun-edwards/industrial_core/issues/53>`_.

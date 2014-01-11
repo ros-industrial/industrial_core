@@ -2,6 +2,10 @@
 Changelog for package simple_message
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Removed header from industrial_utils/utils.h (not required)
+
 0.3.1 (2014-01-09)
 ------------------
 * Added polling check to socket read and muiltiple read calls in order to receive all desired bytes
