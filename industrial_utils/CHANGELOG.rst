@@ -2,8 +2,8 @@
 Changelog for package industrial_utils
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.3.2 (2014-01-10)
+------------------
 * Removed header from industrial_utils/utils.h (not required)
 * Contributors: Shaun Edwards
 
