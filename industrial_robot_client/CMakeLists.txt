@@ -30,13 +30,18 @@ catkin_package(
       simple_message actionlib_msgs actionlib urdf industrial_msgs
       industrial_utils
     INCLUDE_DIRS include
-)                
+)
 
 
 
 include_directories(include
   ${catkin_INCLUDE_DIRS}
 )
+
+
+# do some trickery with the linker for simple_message
+simple_message_linker_setup()
+
 
 # This library depends on the simple_message library, which is available
 # in two formats to support endian differences between robot & PC.
