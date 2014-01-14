@@ -2,8 +2,8 @@
 Changelog for package industrial_robot_client
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.3.3 (2014-01-13)
+------------------
 * Fixed build issue due simple message library linking
 * Contributors: gavanderhoorn
 
