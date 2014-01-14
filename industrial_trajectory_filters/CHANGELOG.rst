@@ -2,6 +2,9 @@
 Changelog for package industrial_trajectory_filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* No change
 0.3.2 (2014-01-10)
 ------------------
 * Removed header from industrial_utils/utils.h (not required)

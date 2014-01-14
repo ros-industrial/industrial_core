@@ -2,6 +2,11 @@
 Changelog for package industrial_robot_client
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Fixed build issue due simple message library linking
+* Contributors: gavanderhoorn
+
 0.3.2 (2014-01-10)
 ------------------
 * Removed header from industrial_utils/utils.h (not required)
