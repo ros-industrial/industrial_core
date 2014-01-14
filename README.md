@@ -1,5 +1,5 @@
 # Industrial Core
-
+[![Build Status](http://jenkins.ros.org/job/devel-hydro-industrial_core/badge/icon)](http://jenkins.ros.org/job/devel-hydro-industrial_core/)<BR>
 [ROS-Industrial][] core meta-package.  See the [ROS wiki][] page for more information.  
 
 ## Contents
