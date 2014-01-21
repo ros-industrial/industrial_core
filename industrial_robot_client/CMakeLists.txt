@@ -30,6 +30,8 @@ catkin_package(
       simple_message actionlib_msgs actionlib urdf industrial_msgs
       industrial_utils
     INCLUDE_DIRS include
+    LIBRARIES ${PROJECT_NAME}_dummy
+    CFG_EXTRAS issue46_workaround.cmake
 )
 
 
@@ -39,8 +41,17 @@ include_directories(include
 )
 
 
-# do some trickery with the linker for simple_message
-simple_message_linker_setup()
+# generate dummy library (we export it in catkin_package(..)), to force catkin
+# to set up LIBRARY_DIRS properly.
+# TODO: find out if LIBRARY_DIRS can be exported without dummy library target
+add_custom_command(
+  OUTPUT  ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}_dummy.cpp
+  COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}_dummy.cpp)
+add_library(${PROJECT_NAME}_dummy ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}_dummy.cpp)
+# unfortunately this will have to be installed, but the linker will remove it
+# from the library dependencies of dependent targets, as it contains no symbols
+# that can be imported from it.
+install(TARGETS ${PROJECT_NAME}_dummy DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION})
 
 
 # This library depends on the simple_message library, which is available
