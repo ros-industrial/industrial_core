@@ -70,8 +70,8 @@ set(UTEST_SRC_FILES test/utest.cpp test/utest_message.cpp)
 catkin_package(
     CATKIN_DEPENDS roscpp industrial_msgs
     INCLUDE_DIRS include
-    LIBRARIES simple_message_dummy
-    CFG_EXTRAS simple_message_linker_setup.cmake
+    LIBRARIES ${PROJECT_NAME}_dummy
+    CFG_EXTRAS issue46_workaround.cmake
 )
 
 
@@ -81,16 +81,16 @@ include_directories(include
 
 
 # generate dummy library (we export it in catkin_package(..)), to force catkin
-# to set up simple_message_LIBRARY_DIRS properly.
+# to set up LIBRARY_DIRS properly.
 # TODO: find out if LIBRARY_DIRS can be exported without dummy library target
 add_custom_command(
-  OUTPUT  ${CMAKE_CURRENT_BINARY_DIR}/simple_message_dummy.cpp
-  COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_BINARY_DIR}/simple_message_dummy.cpp)
-add_library(simple_message_dummy ${CMAKE_CURRENT_BINARY_DIR}/simple_message_dummy.cpp)
+  OUTPUT  ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}_dummy.cpp
+  COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}_dummy.cpp)
+add_library(${PROJECT_NAME}_dummy ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}_dummy.cpp)
 # unfortunately this will have to be installed, but the linker will remove it
 # from the library dependencies of dependent targets, as it contains no symbols
 # that can be imported from it.
-install(TARGETS simple_message_dummy DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION})
+install(TARGETS ${PROJECT_NAME}_dummy DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION})
 
 
 # NOTE: All test files require TEST_PORT_BASE to be defined.  Defining different
