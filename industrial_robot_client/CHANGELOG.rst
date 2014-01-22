@@ -2,8 +2,8 @@
 Changelog for package industrial_robot_client
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.3.4 (2014-01-21)
+------------------
 * robot_client: workaround for `#46 <https://github.com/shaun-edwards/industrial_core/issues/46>`_. Fix `#67 <https://github.com/shaun-edwards/industrial_core/issues/67>`_.
   This is an updated version of the workaround committed in 9df46977. Instead
   of requiring dependent packages to invoke the function defined in the

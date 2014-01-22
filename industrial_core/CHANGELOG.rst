@@ -2,8 +2,8 @@
 Changelog for package industrial_core
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.3.4 (2014-01-21)
+------------------
 * Fix `#67 <https://github.com/ros-industrial/industrial_core/issues/67>`_.
 
 0.3.3 (2014-01-13)
