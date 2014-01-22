@@ -2,6 +2,10 @@
 Changelog for package industrial_utils
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* No change
+
 0.3.3 (2014-01-13)
 ------------------
 * No change
