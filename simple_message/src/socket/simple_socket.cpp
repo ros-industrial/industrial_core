@@ -115,7 +115,7 @@ namespace industrial
       if (this->isConnected())
       {
         buffer.init();
-        while (remainBytes > 0)
+        while (remainBytes > 0 || num_bytes == 0)
         {
           // Polling the socket results in an "interruptable" socket read.  This
           // allows Control-C to break out of a socket read.  Without polling,
@@ -165,6 +165,8 @@ namespace industrial
           {
             LOG_COMM("Socket poll timeout, trying again");
           }
+          if(num_bytes == 0)
+            break;
         }
       }
       else

@@ -164,7 +164,8 @@ public:
   bool isReadyReceive(int timeout)
   {
     bool r, e;
-    return poll(timeout, r, e);
+    poll(timeout, r, e);
+    return r;
   }
 
 protected:
