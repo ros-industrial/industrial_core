@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Software License Agreement (BSD License)
  *
  * Copyright (c) 2011, Southwest Research Institute
@@ -105,8 +105,18 @@ public:
    *   - leave empty to lookup from URDF
    * \return true on success, false otherwise (an invalid message type)
    */
+#ifndef __clang__
   virtual bool init(SmplMsgConnection* connection, const std::vector<std::string> &joint_names,
                     const std::map<std::string, double> &velocity_limits = std::map<std::string, double>());
+                    
+#else
+  virtual bool init(SmplMsgConnection* connection, const std::vector<std::string> &joint_names) {
+  	return init(connection,joint_names,std::map<std::string, double>());
+  }
+                    
+  virtual bool init(SmplMsgConnection* connection, const std::vector<std::string> &joint_names,
+                    const std::map<std::string, double> &velocity_limits);                  
+#endif
 
   virtual ~JointTrajectoryInterface();
 
