@@ -17,3 +17,11 @@
 
 # Temp files
 *~
+
+# Other ROS stuff
+CATKIN_IGNORE*
+
+# Eclipse stuff
+.pydevproject
+.project
+.cproject
