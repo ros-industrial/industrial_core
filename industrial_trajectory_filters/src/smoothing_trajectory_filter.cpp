@@ -96,7 +96,7 @@ void  print_tragectory_to_matlab_format(std::string filename, std::string mat_na
   {
     if(!initialized_) return(false);
 
-    print_tragectory_to_matlab_format("/home/clewis/test1.m","A1",  rob_trajectory);
+    //    print_tragectory_to_matlab_format("/home/clewis/test1.m","A1",  rob_trajectory);
     const int num_points = rob_trajectory.getWayPointCount(); 
     if(num_points <=2) return(false); // nothing to do here, can't change either first or last point
     const int num_states = rob_trajectory.getWayPoint(0).getVariableCount();
@@ -145,9 +145,8 @@ void  print_tragectory_to_matlab_format(std::string filename, std::string mat_na
 
     } // end for every state
 
-    print_tragectory_to_matlab_format("/home/clewis/test2.m","A2",  rob_trajectory);
+    //print_tragectory_to_matlab_format("/home/clewis/test2.m","A2",  rob_trajectory);
 
-    // TODO don't be lazy, do some error checking!!
     return(true);
 
 }// end SmoothingTrajectoryFilter::applyfilter()
