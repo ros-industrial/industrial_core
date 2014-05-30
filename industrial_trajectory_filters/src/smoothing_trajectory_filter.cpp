@@ -44,23 +44,6 @@
 
 namespace industrial_trajectory_filters
 {
-  namespace{
-void  printTragectoryToMatlabFormat(std::string filename, std::string mat_name, robot_trajectory::RobotTrajectory& rob_trajectory)
-    {
-      FILE *fp = fopen(filename.c_str(),"w");
-      const int num_points = rob_trajectory.getWayPointCount(); 
-      const int num_states = rob_trajectory.getWayPoint(0).getVariableCount();
-      fprintf(fp, "%s = [\n",mat_name.c_str());
-      for(int i=0; i<num_points; i++){
-	for(int j=0; j<num_states; j++){
-	  fprintf(fp,"%lf ", rob_trajectory.getWayPoint(i).getVariablePosition(j)); // j'th state of i'th waypoint
-	}
-	fprintf(fp, ";\n");
-      }
-      fprintf(fp, "];\n");
-      fclose(fp);
-    }// end of print function
-  } // end of un named namespace
 
 
   SmoothingTrajectoryFilter::SmoothingTrajectoryFilter()
@@ -92,11 +75,10 @@ void  printTragectoryToMatlabFormat(std::string filename, std::string mat_name, 
     coef_.clear();
   }
 
- bool SmoothingTrajectoryFilter::applyFilter(robot_trajectory::RobotTrajectory& rob_trajectory)
+ bool SmoothingTrajectoryFilter::applyFilter(robot_trajectory::RobotTrajectory& rob_trajectory) const
   {
     if(!initialized_) return(false);
 
-    //Analyse Freq Response in Matlab?==>  printTrajectoryToMatlabFormat("full_file1_path","Name_of_Matrix1",  rob_trajectory);
     const int num_points = rob_trajectory.getWayPointCount(); 
     if(num_points <=2) return(false); // nothing to do here, can't change either first or last point
     const int num_states = rob_trajectory.getWayPoint(0).getVariableCount();
@@ -144,8 +126,6 @@ void  printTragectoryToMatlabFormat(std::string filename, std::string mat_name, 
       }// end for every waypoint
 
     } // end for every state
-
-    //Analyse Filter Response in Matlab?==>  printTrajectoryToMatlabFormat("full_file2_path","Name_of_Matrix2",  rob_trajectory);
 
     return(true);
 

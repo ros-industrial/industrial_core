@@ -82,16 +82,13 @@ public:
 	ROS_INFO_STREAM("Could not read filter, using default filter coefficients");
       }
     }
-    smoothing_filter_ = new industrial_trajectory_filters::SmoothingTrajectoryFilter(); //construct the filter
-    if(!smoothing_filter_->init(filter_coef_))
+    if(!smoothing_filter_.init(filter_coef_))
       ROS_ERROR("Initialization error on smoothing filter. Requires an odd number of coeficients");
     
   };
 
   /*!  \brief Destructor */
-  ~AddSmoothingFilter(){
-    delete(smoothing_filter_);
-  }
+  ~AddSmoothingFilter(){ };
 
   /*!  \brief Returns a short description of this plugin */
   virtual std::string getDescription() const { return "Add Smoothing Trajectory Filter"; }
@@ -120,17 +117,23 @@ public:
     if (result && res.trajectory_)
     {
       ROS_DEBUG("Running '%s'", getDescription().c_str()); // inform the user 
-      if (!smoothing_filter_->applyFilter(*res.trajectory_)) // do the work of smoothing using a smoothing object
-        ROS_WARN("Smoothing filter of the solution path failed.");
-    }
-
+      try{
+	if (!smoothing_filter_.applyFilter(*res.trajectory_)) // do the work 
+	  {
+	    throw 31415;
+	  }
+      } // end of try
+      catch(int x){
+	ROS_ERROR("Smoothing filter of the solution path failed. Filter Not Initialized ");
+      }// end of catch
+    }// end of if successful plan
     return result;
-  }
+  };
   
 
 private:
   ros::NodeHandle nh_;
-  industrial_trajectory_filters::SmoothingTrajectoryFilter *smoothing_filter_;
+  industrial_trajectory_filters::SmoothingTrajectoryFilter smoothing_filter_;
   std::string filter_name_;
   std::vector<double> filter_coef_;
 

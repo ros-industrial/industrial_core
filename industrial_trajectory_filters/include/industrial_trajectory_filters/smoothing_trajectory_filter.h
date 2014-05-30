@@ -61,7 +61,7 @@ public:
   /* \brief action of filter depends on the coefficients, intended to be a low pass filter
    *  @param rob_trajectory   A robot_trajectory::RobotTrajectory to be filtered
    */
-  bool applyFilter(robot_trajectory::RobotTrajectory& rob_trajectory);  
+  bool applyFilter(robot_trajectory::RobotTrajectory& rob_trajectory) const;  
 
 private:
   double gain_; /*!< gain_ is the sum of the coeficients to achieve unity gain overall */
