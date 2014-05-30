@@ -67,7 +67,7 @@ private:
   double gain_; /*!< gain_ is the sum of the coeficients to achieve unity gain overall */
   int num_coef_; /*< the number of coefficients  */
   std::vector<double> coef_; /*!< Vector of coefficients  */ 
-  bool initialized_; /*!< was the Init() function called sucessfully? */
+  bool initialized_; /*!< was the init() function called sucessfully? */
 };
 
 }
