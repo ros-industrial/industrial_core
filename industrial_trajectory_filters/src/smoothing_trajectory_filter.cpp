@@ -45,7 +45,7 @@
 namespace industrial_trajectory_filters
 {
   namespace{
-void  print_tragectory_to_matlab_format(std::string filename, std::string mat_name, robot_trajectory::RobotTrajectory& rob_trajectory)
+void  printTragectoryToMatlabFormat(std::string filename, std::string mat_name, robot_trajectory::RobotTrajectory& rob_trajectory)
     {
       FILE *fp = fopen(filename.c_str(),"w");
       const int num_points = rob_trajectory.getWayPointCount(); 
@@ -68,7 +68,7 @@ void  print_tragectory_to_matlab_format(std::string filename, std::string mat_na
       initialized_ = false;
   }
 
-  bool SmoothingTrajectoryFilter::Init(std::vector<double> coef)
+  bool SmoothingTrajectoryFilter::init(std::vector<double> &coef)
   {
     if(coef.size()%2 == 1) {		// smoothing filters must have an odd number of coefficients
       initialized_ = true;
@@ -96,7 +96,7 @@ void  print_tragectory_to_matlab_format(std::string filename, std::string mat_na
   {
     if(!initialized_) return(false);
 
-    //    print_tragectory_to_matlab_format("/home/clewis/test1.m","A1",  rob_trajectory);
+    //Analyse Freq Response in Matlab?==>  printTrajectoryToMatlabFormat("full_file1_path","Name_of_Matrix1",  rob_trajectory);
     const int num_points = rob_trajectory.getWayPointCount(); 
     if(num_points <=2) return(false); // nothing to do here, can't change either first or last point
     const int num_states = rob_trajectory.getWayPoint(0).getVariableCount();
@@ -145,7 +145,7 @@ void  print_tragectory_to_matlab_format(std::string filename, std::string mat_na
 
     } // end for every state
 
-    //print_tragectory_to_matlab_format("/home/clewis/test2.m","A2",  rob_trajectory);
+    //Analyse Filter Response in Matlab?==>  printTrajectoryToMatlabFormat("full_file2_path","Name_of_Matrix2",  rob_trajectory);
 
     return(true);
 

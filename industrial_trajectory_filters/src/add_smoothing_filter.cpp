@@ -50,11 +50,15 @@ public:
 
   static const std::string FILTER_PARAMETER_NAME_; // base name for filter parameters
 
+  /*!  \brief Constructor AddSmoothingFilter is a planning request adapter plugin which post-processes
+  *             The robot's trajectory to round out corners
+  *             The filter name and then its coefficients are obtained from the ROS parameter server
+  */
   AddSmoothingFilter() : planning_request_adapter::PlanningRequestAdapter(), nh_("~")
   {
       int num_coef;
 
-    // set of default filter coefficients in case paramter, or its associated file, or its syntax is wrong
+      // set of default filter coefficients in case paramter, or its associated file, or its syntax is wrong
       filter_coef_.push_back(0.25);
       filter_coef_.push_back(0.5);
       filter_coef_.push_back(1.0);
@@ -62,45 +66,43 @@ public:
       filter_coef_.push_back(0.25);
 
     // see if a new set of filter parameters is on the parameter server, if so, install them
-    if (!nh_.getParam(FILTER_PARAMETER_NAME_, filter_base_name_)){
+    if (!nh_.getParam(FILTER_PARAMETER_NAME_, filter_name_)){
       ROS_INFO_STREAM("Param '" << FILTER_PARAMETER_NAME_ << "' was not set. Using default filter values " );
     }
     else{ // base filter name exists
-      std::string filter_order_param = filter_base_name_ + "/num_coeficients";
-      if(!nh_.getParam(filter_order_param, num_coef)){
-	ROS_INFO_STREAM("Param '" << filter_order_param << "' was not set. Using default filter values " );
-      }
-      else{ // num_coef exists for this base name
-	if(num_coef %2 == 0){
-	  ROS_ERROR("Smoothing filters must have odd number of coeficients");
+      std::vector<double> temp_coef;
+      nh_.getParam(filter_name_.c_str(),temp_coef); // no need to check for success
+      if(temp_coef.size()%2 == 1 && temp_coef.size()>2){ // need to have odd number of coefficients greater than 2
+	filter_coef_.clear();
+	for(int i=0; i< (int) temp_coef.size(); i++){ // install the filter coefficients
+	  filter_coef_.push_back(temp_coef[i]);
 	}
-	else{
-	  std::vector<double> temp_coef;
-	  for(int i=0; i<num_coef; i++){
-	    char post[100];
-	    sprintf(post, "/coeficient_%d", i);
-	    std::string coef_name = filter_base_name_ + post;
-	    double coef;
-	    if(!nh_.getParam(coef_name, coef)){ // this order of coef exist for this base name 
-	      ROS_INFO_STREAM("Param '" << coef_name << "' was not set. Using default filter values " );
-	      break;
-	    }
-	    temp_coef.push_back(coef);
-	  }
-	  filter_coef_.clear();
-	  for(int i=0; i<num_coef; i++){ // install the filter coefficients
-	    filter_coef_.push_back(temp_coef[i]);
-	  }
-	} // odd number of coef?
+      }
+      else{
+	ROS_INFO_STREAM("Could not read filter, using default filter coefficients");
       }
     }
     smoothing_filter_ = new industrial_trajectory_filters::SmoothingTrajectoryFilter(); //construct the filter
-    if(!smoothing_filter_->Init(filter_coef_))
+    if(!smoothing_filter_->init(filter_coef_))
       ROS_ERROR("Initialization error on smoothing filter. Requires an odd number of coeficients");
+    
   };
 
+  /*!  \brief Destructor */
+  ~AddSmoothingFilter(){
+    delete(smoothing_filter_);
+  }
+
+  /*!  \brief Returns a short description of this plugin */
   virtual std::string getDescription() const { return "Add Smoothing Trajectory Filter"; }
 
+  /*!  \brief The work hourse of planning request adapters
+   *   \param planner A function called somewhere within this subroutine
+   *   \param planning_scene  an object describing the objects and kinematics
+   *   \param req   the request, includes the starting config, the goal, constraints, etc
+   *   \param res    the response, includes the robot trajectory and other info
+   *   \param added_path_index, a index of the points added by this adapter, which in this case will be empty
+   */
   virtual bool adaptAndPlan(const PlannerFn &planner,
                             const planning_scene::PlanningSceneConstPtr& planning_scene,
                             const planning_interface::MotionPlanRequest &req,
@@ -129,7 +131,7 @@ public:
 private:
   ros::NodeHandle nh_;
   industrial_trajectory_filters::SmoothingTrajectoryFilter *smoothing_filter_;
-  std::string filter_base_name_;
+  std::string filter_name_;
   std::vector<double> filter_coef_;
 
 };

@@ -42,21 +42,21 @@
 namespace industrial_trajectory_filters
 {
 
-/// \brief This class  filters the trajectory using a Finite Impluse Response filter
+  /*! \brief This class  filters the trajectory using a Finite Impluse Response filter */
 class SmoothingTrajectoryFilter
 {
 public:
   /*!  \brief Constructor */
   SmoothingTrajectoryFilter();
 
+  /*! \brief Destructor */
+  ~SmoothingTrajectoryFilter();
+  
   /*!  \brief Constructor
    *    @param coef   a vector of Smoothing coeficients with an odd number of values
    *    @return  true if the number of coeficients is odd, otherwise, false. All smoothing filters have odd number of coef
    */
-  bool Init(std::vector<double> coef);
-
-  /*!  \brief Destructor */
-  ~SmoothingTrajectoryFilter();
+  bool init(std::vector<double> &coef);
 
   /* \brief action of filter depends on the coefficients, intended to be a low pass filter
    *  @param rob_trajectory   A robot_trajectory::RobotTrajectory to be filtered
