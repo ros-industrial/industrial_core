@@ -13,11 +13,15 @@ add_message_files(
   ServiceReturnCode.msg
   TriState.msg
   DynamicJointPoint.msg
+  DynamicJointTrajectory.msg
+  DynamicJointState.msg
+  DynamicJointTrajectoryFeedback.msg
   )
 
 add_service_files(
   FILES
   CmdJointTrajectory.srv
+  CmdJointTrajectoryEx.srv
   GetRobotInfo.srv
   SetDrivePower.srv
   SetRemoteLoggerLevel.srv

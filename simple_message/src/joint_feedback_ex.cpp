@@ -81,23 +81,25 @@ bool JointFeedbackEx::unload(industrial::byte_array::ByteArray *buffer)
 
   for(int i=0;i<this->groups_number_;i++)
   {
-  JointFeedbackMessage tmp_msg;
-  JointFeedback j_feedback;
+      JointFeedbackMessage tmp_msg;
+      JointFeedback j_feedback;
 
 
 
-  if (!buffer->unload(j_feedback))
-  {
-    LOG_ERROR("Failed to unload joint feedback groups_number");
-    return false;
-  }
+      if (!buffer->unload(j_feedback))
+      {
+        LOG_ERROR("Failed to unload joint feedback groups_number");
+        return false;
+      }
 
-  tmp_msg.init(j_feedback);
+      ROS_ERROR("Executing unload");
+      ROS_ERROR("%d",buffer->getBufferSize());
 
-  this->joint_feedback_messages_.push_back(tmp_msg);
+      tmp_msg.init(j_feedback);
+
+      this->joint_feedback_messages_.push_back(tmp_msg);
 }
-  ROS_ERROR("Executing unload");
-  ROS_ERROR("%d",buffer->getBufferSize());
+
 
   LOG_COMM("Joint feedback successfully unloaded");
   return true;
