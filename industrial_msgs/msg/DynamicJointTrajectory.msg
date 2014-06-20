@@ -7,4 +7,5 @@
 
 Header header
 int16 num_groups
-DynamicJointPoint[] joint_points
+string[] joint_names
+DynamicJointPoint[] points

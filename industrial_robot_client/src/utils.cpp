@@ -165,8 +165,12 @@ bool isWithinRange(const std::vector<std::string> & lhs_keys, const std::vector<
   bool rtn = false;
   std::map<std::string, double> lhs_map;
   std::map<std::string, double> rhs_map;
+  ROS_ERROR("%s", lhs_keys[0].c_str());
+  ROS_ERROR("%s", rhs_keys[0].c_str());
   if (industrial_utils::isSimilar(lhs_keys, rhs_keys))
   {
+
+
     if (toMap(lhs_keys, lhs_values, lhs_map) && toMap(rhs_keys, rhs_values, rhs_map))
     {
       rtn = isWithinRange(lhs_keys, lhs_map, rhs_map, full_range);

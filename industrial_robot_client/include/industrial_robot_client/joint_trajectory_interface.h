@@ -44,6 +44,7 @@
 #include "simple_message/socket/tcp_client.h"
 #include "simple_message/messages/joint_traj_pt_message.h"
 #include "trajectory_msgs/JointTrajectory.h"
+#include "industrial_msgs/DynamicJointTrajectory.h"
 
 namespace industrial_robot_client
 {
@@ -133,6 +134,8 @@ protected:
    */
   virtual bool trajectory_to_msgs(const trajectory_msgs::JointTrajectoryConstPtr &traj, std::vector<JointTrajPtMessage>* msgs);
 
+    virtual bool trajectory_to_msgs(const industrial_msgs::DynamicJointTrajectoryConstPtr &traj, std::vector<JointTrajPtMessage>* msgs);
+
   /**
    * \brief Transform joint positions before publishing.
    * Can be overridden to implement, e.g. robot-specific joint coupling.
@@ -148,6 +151,12 @@ protected:
     return true;
   }
 
+    virtual bool transform(const industrial_msgs::DynamicJointPoint& pt_in, industrial_msgs::DynamicJointPoint* pt_out)
+    {
+      *pt_out = pt_in;  // by default, no transform is applied
+      return true;
+    }
+
   /**
    * \brief Select specific joints for sending to the robot
    *
@@ -160,6 +169,9 @@ protected:
    */
   virtual bool select(const std::vector<std::string>& ros_joint_names, const trajectory_msgs::JointTrajectoryPoint& ros_pt,
                       const std::vector<std::string>& rbt_joint_names, trajectory_msgs::JointTrajectoryPoint* rbt_pt);
+
+    virtual bool select(const std::vector<std::string>& ros_joint_names, const industrial_msgs::DynamicJointPoint& ros_pt,
+                        const std::vector<std::string>& rbt_joint_names, industrial_msgs::DynamicJointPoint* rbt_pt);
 
   /**
    * \brief Reduce the ROS velocity commands (per-joint velocities) to a single scalar for communication to the robot.
@@ -174,6 +186,8 @@ protected:
    */
   virtual bool calc_speed(const trajectory_msgs::JointTrajectoryPoint& pt, double* rbt_velocity, double* rbt_duration);
 
+    virtual bool calc_speed(const industrial_msgs::DynamicJointPoint& pt, double* rbt_velocity, double* rbt_duration);
+
   /**
    * \brief Reduce the ROS velocity commands (per-joint velocities) to a single scalar for communication to the robot.
    *   If unneeded by the robot server, set to 0 (or any value).
@@ -185,6 +199,8 @@ protected:
    */
   virtual bool calc_velocity(const trajectory_msgs::JointTrajectoryPoint& pt, double* rbt_velocity);
 
+     virtual bool calc_velocity(const industrial_msgs::DynamicJointPoint& pt, double* rbt_velocity);
+
   /**
    * \brief Compute the expected move duration for communication to the robot.
    *   If unneeded by the robot server, set to 0 (or any value).
@@ -195,6 +211,8 @@ protected:
    * \return true on success, false otherwise
    */
   virtual bool calc_duration(const trajectory_msgs::JointTrajectoryPoint& pt, double* rbt_duration);
+
+    virtual bool calc_duration(const industrial_msgs::DynamicJointPoint& pt, double* rbt_duration);
 
   /**
    * \brief Send trajectory to robot, using this node's robot-connection.
@@ -232,6 +250,8 @@ protected:
    * \return true if trajectory is valid, false otherwise
    */
   virtual bool is_valid(const trajectory_msgs::JointTrajectory &traj);
+
+    virtual bool is_valid(const industrial_msgs::DynamicJointTrajectory &traj);
 
   /*
    * \brief Callback for JointState topic

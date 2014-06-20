@@ -55,7 +55,7 @@ bool JointFeedbackEx::load(industrial::byte_array::ByteArray *buffer)
 {
   LOG_COMM("Executing joint feedback load");
 
-  ROS_ERROR("Executiing load");
+
   if (!buffer->load(this->groups_number_))
   {
     LOG_ERROR("Failed to load joint feedback groups_number");
@@ -69,9 +69,6 @@ bool JointFeedbackEx::load(industrial::byte_array::ByteArray *buffer)
 bool JointFeedbackEx::unload(industrial::byte_array::ByteArray *buffer)
 {
   LOG_COMM("Executing joint feedback unload");
-
-  ROS_ERROR("Executing unload");
-  ROS_ERROR("%d",buffer->getBufferSize());
 
   if (!buffer->unloadFront(this->groups_number_))
   {
@@ -91,10 +88,6 @@ bool JointFeedbackEx::unload(industrial::byte_array::ByteArray *buffer)
         LOG_ERROR("Failed to unload joint feedback groups_number");
         return false;
       }
-
-      ROS_ERROR("Executing unload");
-      ROS_ERROR("%d",buffer->getBufferSize());
-
       tmp_msg.init(j_feedback);
 
       this->joint_feedback_messages_.push_back(tmp_msg);

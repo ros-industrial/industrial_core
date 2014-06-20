@@ -60,6 +60,7 @@ bool SmplMsgConnection::sendMsg(SimpleMessage & message)
   ByteArray msgData;
 
   if (message.validateMessage())
+
   {
     message.toByteArray(msgData);
     sendBuffer.load((int)msgData.getBufferSize());
