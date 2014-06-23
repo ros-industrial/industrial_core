@@ -114,18 +114,12 @@ public:
     bool result = planner(planning_scene, req, res); 
 
     // do anything after calling the nested planner or adapters here
-    if (result && res.trajectory_)
+    if (result && res.trajectory_) // successful plan
     {
       ROS_DEBUG("Running '%s'", getDescription().c_str()); // inform the user 
-      try{
-	if (!smoothing_filter_.applyFilter(*res.trajectory_)) // do the work 
-	  {
-	    throw 31415;
-	  }
-      } // end of try
-      catch(int x){
+      if (!smoothing_filter_.applyFilter(*res.trajectory_)) {// do the smoothing
 	ROS_ERROR("Smoothing filter of the solution path failed. Filter Not Initialized ");
-      }// end of catch
+      }
     }// end of if successful plan
     return result;
   };
