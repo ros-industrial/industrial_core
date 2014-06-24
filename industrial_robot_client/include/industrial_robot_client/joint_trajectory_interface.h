@@ -151,7 +151,7 @@ protected:
     return true;
   }
 
-    virtual bool transform(const industrial_msgs::DynamicJointPoint& pt_in, industrial_msgs::DynamicJointPoint* pt_out)
+    virtual bool transform(const industrial_msgs::DynamicJointsGroup& pt_in, industrial_msgs::DynamicJointsGroup* pt_out)
     {
       *pt_out = pt_in;  // by default, no transform is applied
       return true;
@@ -170,8 +170,8 @@ protected:
   virtual bool select(const std::vector<std::string>& ros_joint_names, const trajectory_msgs::JointTrajectoryPoint& ros_pt,
                       const std::vector<std::string>& rbt_joint_names, trajectory_msgs::JointTrajectoryPoint* rbt_pt);
 
-    virtual bool select(const std::vector<std::string>& ros_joint_names, const industrial_msgs::DynamicJointPoint& ros_pt,
-                        const std::vector<std::string>& rbt_joint_names, industrial_msgs::DynamicJointPoint* rbt_pt);
+    virtual bool select(const std::vector<std::string>& ros_joint_names, const industrial_msgs::DynamicJointsGroup& ros_pt,
+                        const std::vector<std::string>& rbt_joint_names, industrial_msgs::DynamicJointsGroup* rbt_pt);
 
   /**
    * \brief Reduce the ROS velocity commands (per-joint velocities) to a single scalar for communication to the robot.
@@ -186,7 +186,7 @@ protected:
    */
   virtual bool calc_speed(const trajectory_msgs::JointTrajectoryPoint& pt, double* rbt_velocity, double* rbt_duration);
 
-    virtual bool calc_speed(const industrial_msgs::DynamicJointPoint& pt, double* rbt_velocity, double* rbt_duration);
+    virtual bool calc_speed(const industrial_msgs::DynamicJointsGroup& pt, double* rbt_velocity, double* rbt_duration);
 
   /**
    * \brief Reduce the ROS velocity commands (per-joint velocities) to a single scalar for communication to the robot.
@@ -199,7 +199,7 @@ protected:
    */
   virtual bool calc_velocity(const trajectory_msgs::JointTrajectoryPoint& pt, double* rbt_velocity);
 
-     virtual bool calc_velocity(const industrial_msgs::DynamicJointPoint& pt, double* rbt_velocity);
+     virtual bool calc_velocity(const industrial_msgs::DynamicJointsGroup& pt, double* rbt_velocity);
 
   /**
    * \brief Compute the expected move duration for communication to the robot.
@@ -212,7 +212,7 @@ protected:
    */
   virtual bool calc_duration(const trajectory_msgs::JointTrajectoryPoint& pt, double* rbt_duration);
 
-    virtual bool calc_duration(const industrial_msgs::DynamicJointPoint& pt, double* rbt_duration);
+    virtual bool calc_duration(const industrial_msgs::DynamicJointsGroup& pt, double* rbt_duration);
 
   /**
    * \brief Send trajectory to robot, using this node's robot-connection.

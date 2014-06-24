@@ -1,4 +1,4 @@
-# DynamicJointPoint specified on REPI0001
+# DynamicJointsGroup specified on REPI0001
 #group: # length of this array must match num_groups
 #    id:   control-group ID for use on-controller
 #    num_joints: # of joints in this motion group
@@ -10,5 +10,12 @@
 #    effort[]
 #    time_from_start
 
-int16 num_groups
-DynamicJointsGroup[] groups
+
+int16 group_number
+int16 num_joints
+int16 valid_fields
+float64[] positions
+float64[] velocities
+float64[] accelerations
+float64[] effort
+duration time_from_start

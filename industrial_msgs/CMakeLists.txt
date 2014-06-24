@@ -12,6 +12,7 @@ add_message_files(
   RobotStatus.msg
   ServiceReturnCode.msg
   TriState.msg
+  DynamicJointsGroup.msg
   DynamicJointPoint.msg
   DynamicJointTrajectory.msg
   DynamicJointState.msg

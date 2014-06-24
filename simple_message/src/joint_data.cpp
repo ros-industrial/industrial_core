@@ -141,10 +141,10 @@ bool JointData::load(industrial::byte_array::ByteArray *buffer)
 {
   bool rtn = false;
   shared_real value = 0.0;
-  ROS_ERROR("JOint data load");
+
   for (int i = 0; i < this->getMaxNumJoints(); i++)
   {
-    ROS_ERROR("%d, %d", i , value);
+
     this->getJoint(i, value);
     rtn = buffer->load(value);
     if (!rtn)

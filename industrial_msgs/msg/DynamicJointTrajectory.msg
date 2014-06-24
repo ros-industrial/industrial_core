@@ -6,6 +6,5 @@
 #group[]: DynamicJointPoint from DynamicJointPoint.msg
 
 Header header
-int16 num_groups
 string[] joint_names
 DynamicJointPoint[] points

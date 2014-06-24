@@ -40,7 +40,7 @@ namespace StandardSocketPorts = industrial::simple_socket::StandardSocketPorts;
 namespace SpecialSeqValues = industrial::joint_traj_pt::SpecialSeqValues;
 typedef industrial::joint_traj_pt::JointTrajPt rbt_JointTrajPt;
 typedef trajectory_msgs::JointTrajectoryPoint  ros_JointTrajPt;
-typedef industrial_msgs::DynamicJointPoint ros_dynJointTrajPt;
+typedef industrial_msgs::DynamicJointsGroup ros_dynJointTrajPt;
 
 namespace industrial_robot_client
 {
@@ -192,23 +192,26 @@ bool JointTrajectoryInterface::trajectory_to_msgs(const industrial_msgs::Dynamic
 
   for (size_t i=0; i<traj->points.size(); ++i)
   {
-    ros_dynJointTrajPt rbt_pt, xform_pt;
-    double vel, duration;
+    for(int gr=0;gr<traj->points[i].num_groups;gr++)
+    {
+        ros_dynJointTrajPt rbt_pt, xform_pt;
+        double vel, duration;
 
-    // select / reorder joints for sending to robot
-    if (!select(traj->joint_names, traj->points[i], this->all_joint_names_, &rbt_pt))
-      return false;
+        // select / reorder joints for sending to robot
+        if (!select(traj->joint_names, traj->points[i].groups[gr], this->all_joint_names_, &rbt_pt))
+          return false;
 
-    // transform point data (e.g. for joint-coupling)
-    if (!transform(rbt_pt, &xform_pt))
-      return false;
+        // transform point data (e.g. for joint-coupling)
+        if (!transform(rbt_pt, &xform_pt))
+          return false;
 
-    // reduce velocity to a single scalar, for robot command
-    if (!calc_speed(xform_pt, &vel, &duration))
-      return false;
+        // reduce velocity to a single scalar, for robot command
+        if (!calc_speed(xform_pt, &vel, &duration))
+          return false;
 
-    JointTrajPtMessage msg = create_message(i, xform_pt.positions, vel, duration);
-    msgs->push_back(msg);
+        JointTrajPtMessage msg = create_message(i, xform_pt.positions, vel, duration);
+        msgs->push_back(msg);
+    }
   }
 
   return true;
@@ -295,7 +298,7 @@ bool JointTrajectoryInterface::select(const std::vector<std::string>& ros_joint_
   return true;
 }
 
-bool JointTrajectoryInterface::calc_speed(const industrial_msgs::DynamicJointPoint &pt, double* rbt_velocity, double* rbt_duration)
+bool JointTrajectoryInterface::calc_speed(const industrial_msgs::DynamicJointsGroup &pt, double* rbt_velocity, double* rbt_duration)
 {
 	return calc_velocity(pt, rbt_velocity) && calc_duration(pt, rbt_duration);
 }
@@ -359,7 +362,7 @@ bool JointTrajectoryInterface::calc_velocity(const trajectory_msgs::JointTraject
   return true;
 }
 
-bool JointTrajectoryInterface::calc_velocity(const industrial_msgs::DynamicJointPoint& pt, double* rbt_velocity)
+bool JointTrajectoryInterface::calc_velocity(const industrial_msgs::DynamicJointsGroup& pt, double* rbt_velocity)
 {
   std::vector<double> vel_ratios;
 
@@ -406,7 +409,7 @@ bool JointTrajectoryInterface::calc_velocity(const industrial_msgs::DynamicJoint
   return true;
 }
 
-bool JointTrajectoryInterface::calc_duration(const industrial_msgs::DynamicJointPoint& pt, double* rbt_duration)
+bool JointTrajectoryInterface::calc_duration(const industrial_msgs::DynamicJointsGroup& pt, double* rbt_duration)
 {
   std::vector<double> durations;
   double this_time = pt.time_from_start.toSec();
@@ -482,7 +485,9 @@ bool JointTrajectoryInterface::is_valid(const industrial_msgs::DynamicJointTraje
 {
   for (int i=0; i<traj.points.size(); ++i)
   {
-    const industrial_msgs::DynamicJointPoint &pt = traj.points[i];
+    for(int gr =0; gr<traj.points[i].num_groups;gr++)
+    {
+    const industrial_msgs::DynamicJointsGroup &pt = traj.points[i].groups[gr];
 
     // check for non-empty positions
     if (pt.positions.empty())
@@ -501,6 +506,7 @@ bool JointTrajectoryInterface::is_valid(const industrial_msgs::DynamicJointTraje
     // check for valid timestamp
     if ((i > 0) && (pt.time_from_start.toSec() == 0))
       ROS_ERROR_RETURN(false, "Validation failed: Missing valid timestamp data for trajectory pt %d", i);
+  }
   }
 
   return true;
