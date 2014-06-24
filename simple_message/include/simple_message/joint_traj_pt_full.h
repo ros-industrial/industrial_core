@@ -170,6 +170,11 @@ public:
     return this->sequence_;
   }
 
+  industrial::shared_types::shared_int getValidFields()
+  {
+    return this->valid_fields_;
+  }
+
   /**
    * \brief Sets joint trajectory point timestamp
    *
@@ -192,6 +197,7 @@ public:
     time = this->time_;
     return is_valid(ValidFieldTypes::TIME);
   }
+
 
   /**
    * \brief Clears the joint trajectory point timestamp

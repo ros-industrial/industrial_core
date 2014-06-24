@@ -97,6 +97,7 @@ public:
   {
 	  industrial::byte_array::ByteArray data;
 	  data.load(*this);
+
 	  return msg.init(this->getMessageType(),
 			  industrial::simple_message::CommTypes::SERVICE_REQUEST,
 			  industrial::simple_message::ReplyTypes::INVALID, data);

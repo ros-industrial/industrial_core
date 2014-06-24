@@ -84,19 +84,29 @@ private:
    */
   ros::Timer watchdog_timer_;
 
+  std::map<int, ros::Timer>watchdog_timer_map_;
+
   /**
    * \brief Indicates action has an active goal
    */
   bool has_active_goal_;
 
+  std::map<int,bool> has_active_goal_map_;
+
   /**
    * \brief Cache of the current active goal
    */
   JointTractoryActionServer::GoalHandle active_goal_;
+
+  std::map<int, JointTractoryActionServer::GoalHandle> active_goal_map_;
   /**
    * \brief Cache of the current active trajectory
    */
   trajectory_msgs::JointTrajectory current_traj_;
+
+  std::map<int, trajectory_msgs::JointTrajectory> current_traj_map_;
+
+  std::vector<std::string> all_joint_names_;
 
   /**
    * \brief The default goal joint threshold see(goal_threshold). Unit
@@ -125,11 +135,15 @@ private:
    */
   control_msgs::FollowJointTrajectoryFeedbackConstPtr last_trajectory_state_;
 
+  std::map<int, control_msgs::FollowJointTrajectoryFeedbackConstPtr> last_trajectory_state_map_;
+
   /**
    * \brief Indicates trajectory state has been received.  Used by
    * watchdog to determine if the robot driver is responding.
    */
   bool trajectory_state_recvd_;
+
+  std::map<int, bool> trajectory_state_recvd_map_;
 
   /**
    * \brief Cache of the last subscribed status message
@@ -149,12 +163,33 @@ private:
    */
   void watchdog(const ros::TimerEvent &e);
 
+  void watchdog(const ros::TimerEvent &e, int group_number);
+
   /**
    * \brief Action server goal callback method
    *
    * \param gh goal handle
    *
    */
+
+  void goalCB(JointTractoryActionServer::GoalHandle & gh);
+
+  /**
+   * \brief Action server cancel callback method
+   *
+   * \param gh goal handle
+   *
+   */
+
+  void cancelCB(JointTractoryActionServer::GoalHandle & gh);
+  /**
+   * \brief Controller state callback (executed when feedback message
+   * received)
+   *
+   * \param msg joint trajectory feedback message
+   *
+   */
+
   void goalCB(JointTractoryActionServer::GoalHandle & gh, int group_number);
 
   /**
@@ -174,6 +209,9 @@ private:
    */
   void controllerStateCB(const control_msgs::FollowJointTrajectoryFeedbackConstPtr &msg);
 
+  void controllerStateCB(const control_msgs::FollowJointTrajectoryFeedbackConstPtr &msg, int robot_id);
+
+
   /**
    * \brief Controller status callback (executed when robot status
    *  message received)
@@ -191,6 +229,8 @@ private:
    */
   void abortGoal();
 
+  void abortGoal(int robot_id);
+
   /**
    * \brief Controller status callback (executed when robot status
    *  message received)
@@ -203,6 +243,12 @@ private:
    */
   bool withinGoalConstraints(const control_msgs::FollowJointTrajectoryFeedbackConstPtr &msg,
                              const trajectory_msgs::JointTrajectory & traj);
+
+  bool withinGoalConstraints(const control_msgs::FollowJointTrajectoryFeedbackConstPtr &msg,
+                             const trajectory_msgs::JointTrajectory & traj, int robot_id);
+
+  bool withinGoalConstraints(const control_msgs::FollowJointTrajectoryFeedbackConstPtr &msg,
+                             const industrial_msgs::DynamicJointTrajectory & traj);
 };
 
 } //joint_trajectory_action

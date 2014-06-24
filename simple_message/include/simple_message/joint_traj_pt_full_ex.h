@@ -123,6 +123,12 @@ public:
    *
    * \return joint trajectory sequence number
    */
+
+  industrial::shared_types::shared_int get_max_groups()
+  {
+      return MAX_NUM_GROUPS;
+  }
+
   industrial::shared_types::shared_int getSequence()
   {
     return this->sequence_;
@@ -149,7 +155,7 @@ public:
   bool unload(industrial::byte_array::ByteArray *buffer);
   unsigned int byteLength()
   {
-    return sizeof(industrial::shared_types::shared_int) + MAX_NUM_GROUPS*(this->joint_traj_full_sample_.byteLength());
+    return sizeof(industrial::shared_types::shared_int) + sizeof(industrial::shared_types::shared_int) + MAX_NUM_GROUPS*(this->joint_traj_full_sample_.byteLength()-sizeof(industrial::shared_types::shared_int));
   }
 
 private:
