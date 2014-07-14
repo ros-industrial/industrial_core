@@ -68,15 +68,12 @@ JointTrajectoryAction2::JointTrajectoryAction2() :
       group_number = groups_list[i]["group"][0]["group_number"];
       int group_number_int = static_cast<int>(group_number);
 
-      ROS_ERROR("group_number: %d", static_cast<int>(group_number));
-
       XmlRpc::XmlRpcValue name;
       std::string name_string;
 
       name = groups_list[i]["group"][0]["name"];
       name_string = static_cast<std::string>(name);
 
-      ROS_ERROR("name: %s", static_cast<std::string>(name).c_str());
 
       XmlRpc::XmlRpcValue ns;
       std::string ns_string;
@@ -85,15 +82,12 @@ JointTrajectoryAction2::JointTrajectoryAction2() :
 
       ns_string = static_cast<std::string>(ns);
 
-      ROS_ERROR("ns: %s", static_cast<std::string>(ns).c_str());
-
       rg.set_group_id(group_number_int);
       rg.set_joint_names(rg_joint_names);
       rg.set_name(name_string);
       rg.set_ns(ns_string);
 
       std::string joint_path_action_name = ns_string + "/" + name_string;
-      ROS_ERROR("%s", joint_path_action_name.c_str());
       robot_groups[group_number_int] = rg;
 
 
@@ -125,14 +119,6 @@ JointTrajectoryAction2::JointTrajectoryAction2() :
   pub_trajectory_command_ = node_.advertise<industrial_msgs::DynamicJointTrajectory>("joint_path_command", 1);
 
   this->robot_groups_ = robot_groups;
-
-  //TODO:create here for each group a subscriber to /namespace/name/feedback_states
-  //TODO:create here for each group a subscriber to /namespace/name/robot_status
-  //TODO:create here for each group a advertiser to /namespace/name/joint_path_command
-
-    //TODO: if more than one group generate a joint_path_command_ex
-
-
 
   action_server_.start();
 }
@@ -228,7 +214,7 @@ void JointTrajectoryAction2::goalCB(JointTractoryActionServer::GoalHandle & gh)
 
   int group_number;
 
- //TODO: HACK: change for getting the id from the group instead of a sequential checking on the map
+ //TODO: change for getting the id from the group instead of a sequential checking on the map
 
   ros::Duration last_time_from_start(0.0);
 
@@ -307,11 +293,7 @@ void JointTrajectoryAction2::cancelCB(JointTractoryActionServer::GoalHandle & gh
 
 void JointTrajectoryAction2::goalCB(JointTractoryActionServer::GoalHandle & gh, int group_number)
 {
-  ROS_INFO("Received new goal INDIVIDUAL");
-  ROS_ERROR("robot ID %d", group_number);
-  ROS_ERROR("Received new goal");
-  ROS_ERROR("This hoint %s",this->robot_groups_[group_number].get_joint_names()[0].c_str() );
-   ROS_ERROR("This hoinst %s",gh.getGoal()->trajectory.joint_names[0].c_str() );
+
   if (!gh.getGoal()->trajectory.points.empty())
   {
 
@@ -329,7 +311,6 @@ void JointTrajectoryAction2::goalCB(JointTractoryActionServer::GoalHandle & gh, 
       // Sends the trajectory along to the controller
       if (withinGoalConstraints(last_trajectory_state_map_[group_number], gh.getGoal()->trajectory, group_number))
       {
-          ROS_ERROR("SIMILAR");
 
         ROS_INFO_STREAM("Already within goal constraints, setting goal succeeded");
         gh.setAccepted();
@@ -341,22 +322,15 @@ void JointTrajectoryAction2::goalCB(JointTractoryActionServer::GoalHandle & gh, 
       {
 
         gh.setAccepted();
-        ROS_ERROR("saccept");
         active_goal_map_[group_number] = gh;
-        ROS_ERROR("ag");
         has_active_goal_map_[group_number]  = true;
-        ROS_ERROR("has");
 
-        ROS_ERROR("pt");
         ROS_INFO("Publishing trajectory");
 
         current_traj_map_[group_number] = active_goal_map_[group_number].getGoal()->trajectory;
 
-        ROS_ERROR("pt2");
 
         industrial_msgs::DynamicJointTrajectory dyn_traj;
-
-        ROS_ERROR("%d",current_traj_map_[group_number].points.size());
 
         for(int i = 0; i < current_traj_map_[group_number].points.size(); ++i)
         {
@@ -385,7 +359,6 @@ void JointTrajectoryAction2::goalCB(JointTractoryActionServer::GoalHandle & gh, 
 
         this->pub_trajectories_[group_number].publish(dyn_traj);
       }
-      ROS_ERROR("VOLTOU");
     }
     else
     {

@@ -89,13 +89,9 @@ bool JointTrajPtFullEx::load(industrial::byte_array::ByteArray *buffer)
   {
       JointTrajPtFull traj_full = joint_trajectory_points_[i];
 
-        ROS_ERROR("Loading point %d",i);
-
-      ROS_ERROR("GRROUP ID %d",traj_full.getRobotID() );
       if (!buffer->load(traj_full.getRobotID()))
       {
         LOG_ERROR("Failed to load joint traj pt. robot_id");
-        ROS_ERROR("Failed to load joint traj pt. robot_id");
         return false;
       }
 
@@ -104,17 +100,14 @@ bool JointTrajPtFullEx::load(industrial::byte_array::ByteArray *buffer)
       {
 
         LOG_ERROR("Failed to load joint traj. pt. valid fields");
-        ROS_ERROR("Failed to load joint traj pt. vfiels");
         return false;
       }
 
       industrial::shared_types::shared_real this_time;
       traj_full.getTime(this_time);
-      ROS_ERROR("TIME %f", this_time);
       if (!buffer->load(this_time))
       {
         LOG_ERROR("Failed to load joint traj. pt. time");
-        ROS_ERROR("Failed to load joint traj pt. time");
         return false;
       }
 
@@ -126,11 +119,9 @@ bool JointTrajPtFullEx::load(industrial::byte_array::ByteArray *buffer)
       for (int j=0;j < positions.getMaxNumJoints();j++)
       {
           pos = positions.getJoint(j);
-          ROS_ERROR("pos:%f",pos);
           if (!buffer->load(pos))
           {
             LOG_ERROR("Failed to load joint traj. pt. positions");
-            ROS_ERROR("Failed to load joint traj pt. positions");
             return false;
           }
 
@@ -144,11 +135,9 @@ bool JointTrajPtFullEx::load(industrial::byte_array::ByteArray *buffer)
       for (int j=0;j < velocities.getMaxNumJoints();j++)
       {
           vel = velocities.getJoint(j);
-          ROS_ERROR("vel:%f",vel);
           if (!buffer->load(vel))
           {
             LOG_ERROR("Failed to load joint traj. pt. positions");
-            ROS_ERROR("Failed to load joint traj pt. positions");
             return false;
           }
 
@@ -161,24 +150,20 @@ bool JointTrajPtFullEx::load(industrial::byte_array::ByteArray *buffer)
     for (int j=0;j < accelerations.getMaxNumJoints();j++)
     {
         acc = accelerations.getJoint(j);
-        ROS_ERROR("acc:%f",acc);
         if (!buffer->load(acc))
         {
           LOG_ERROR("Failed to load joint traj. pt. positions");
-          ROS_ERROR("Failed to load joint traj pt. positions");
           return false;
         }
 
     }
 
       LOG_COMM("Trajectory point successfully loaded");
-      ROS_ERROR("point succesfully loaded");
 
   }
 
 
   LOG_COMM("Trajectory point successfully loaded");
-  ROS_ERROR("succesfully loaded");
   return true;
 }
 
