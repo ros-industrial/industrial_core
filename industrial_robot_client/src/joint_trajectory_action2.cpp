@@ -232,6 +232,8 @@ void JointTrajectoryAction2::goalCB(JointTractoryActionServer::GoalHandle & gh)
         group_number = rbt_idx;
         industrial_msgs::DynamicJointsGroup dyn_group;
 
+        int num_joints = robot_groups_[group_number].get_joint_names().size();
+        
         if(is_found)
         {
 
@@ -239,6 +241,13 @@ void JointTrajectoryAction2::goalCB(JointTractoryActionServer::GoalHandle & gh)
               dyn_group.positions.insert(dyn_group.positions.begin(),gh.getGoal()->trajectory.points[i].positions.begin()+ros_idx,gh.getGoal()->trajectory.points[i].positions.begin()+ros_idx+robot_groups_[rbt_idx].get_joint_names().size() );
               dyn_group.velocities.insert(dyn_group.velocities.begin(),gh.getGoal()->trajectory.points[i].velocities.begin()+ros_idx,gh.getGoal()->trajectory.points[i].velocities.begin()+ros_idx+robot_groups_[rbt_idx].get_joint_names().size() );
               dyn_group.accelerations.insert(dyn_group.accelerations.begin(),gh.getGoal()->trajectory.points[i].accelerations.begin()+ros_idx,gh.getGoal()->trajectory.points[i].accelerations.begin()+ros_idx+robot_groups_[rbt_idx].get_joint_names().size() );
+              if(gh.getGoal()->trajectory.points[i].effort.empty())
+              {
+                std::vector<double> effort(num_joints,0.0);
+                dyn_group.effort = effort;
+                
+              }
+              else
               dyn_group.effort.insert(dyn_group.effort.begin(),gh.getGoal()->trajectory.points[i].effort.begin()+ros_idx,gh.getGoal()->trajectory.points[i].effort.begin()+ros_idx+robot_groups_[rbt_idx].get_joint_names().size() );
               //Provide check when effort is not filled
               dyn_group.time_from_start = gh.getGoal()->trajectory.points[i].time_from_start;//+last_time_from_start;
@@ -251,7 +260,7 @@ void JointTrajectoryAction2::goalCB(JointTractoryActionServer::GoalHandle & gh)
         //Generating message for groups that were not present in the trajectory message
         else{
 
-            int num_joints = robot_groups_[group_number].get_joint_names().size();
+            
 
             std::vector<double> positions(num_joints,0.0);
             std::vector<double> velocities(num_joints,0.0);
