@@ -222,7 +222,6 @@ bool JointTrajectoryInterface::select(const std::vector<std::string>& ros_joint_
                       const std::vector<std::string>& rbt_joint_names, ros_JointTrajPt* rbt_pt)
 {
   ROS_ASSERT(ros_joint_names.size() == ros_pt.positions.size());
-   ROS_ERROR("sle");
   // initialize rbt_pt
   *rbt_pt = ros_pt;
   rbt_pt->positions.clear(); rbt_pt->velocities.clear(); rbt_pt->accelerations.clear();
@@ -268,7 +267,7 @@ bool JointTrajectoryInterface::select(const std::vector<std::string>& ros_joint_
 
   for (size_t rbt_idx=0; rbt_idx < rbt_joint_names.size(); ++rbt_idx)
   {
-    ROS_ERROR("joint_names %s", rbt_joint_names[rbt_idx].c_str());
+
     bool is_empty = rbt_joint_names[rbt_idx].empty();
 
     // find matching ROS element
