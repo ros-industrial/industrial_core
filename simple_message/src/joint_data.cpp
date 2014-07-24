@@ -64,7 +64,6 @@ void JointData::init()
 
 bool JointData::setJoint(shared_int index, shared_real value)
 {
-
   bool rtn = false;
 
   if (index < this->getMaxNumJoints())
@@ -86,7 +85,6 @@ bool JointData::getJoint(shared_int index, shared_real & value) const
 
   if (index < this->getMaxNumJoints())
   {
-
     value = this->joints_[index];
     rtn = true;
   }
@@ -142,9 +140,9 @@ bool JointData::load(industrial::byte_array::ByteArray *buffer)
   bool rtn = false;
   shared_real value = 0.0;
 
+  LOG_COMM("Executing joint position load");
   for (int i = 0; i < this->getMaxNumJoints(); i++)
   {
-
     this->getJoint(i, value);
     rtn = buffer->load(value);
     if (!rtn)
@@ -164,14 +162,12 @@ bool JointData::unload(industrial::byte_array::ByteArray *buffer)
   LOG_COMM("Executing joint position unload");
   for (int i = this->getMaxNumJoints() - 1; i >= 0; i--)
   {
-
     rtn = buffer->unload(value);
     if (!rtn)
     {
       LOG_ERROR("Failed to unload message joint: %d from data[%d]", i, buffer->getBufferSize());
       break;
     }
-
     this->setJoint(i, value);
   }
   return rtn;
