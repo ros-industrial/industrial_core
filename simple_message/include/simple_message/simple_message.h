@@ -72,6 +72,8 @@ namespace StandardMsgTypes
  STATUS = 13,         //Robot status message (for reporting the robot state)
  JOINT_TRAJ_PT_FULL = 14,  // Joint trajectory point message (all message fields)
  JOINT_FEEDBACK = 15,      // Feedback of joint pos/vel/accel
+ JOINT_TRAJ_PT_FULL_EX = 16, // This is a subset of the "Dynamic Joint Point" in REP I0001
+ JOINT_FEEDBACK_EX = 17, //Extension of the feedback of joint pos/vel/accel to comply with REP I0001
 
  // Begin vendor specific message types (only define the beginning enum value,
  // specific enum values should be defined locally, within in the range reserved
