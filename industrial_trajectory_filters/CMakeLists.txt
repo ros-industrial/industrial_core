@@ -15,7 +15,12 @@ include_directories(include
 )
 
 
-add_library(${PROJECT_NAME} src/n_point_filter.cpp src/uniform_sample_filter.cpp)
+add_library(${PROJECT_NAME} 
+  src/n_point_filter.cpp 
+  src/uniform_sample_filter.cpp
+  src/add_smoothing_filter.cpp
+  src/smoothing_trajectory_filter.cpp
+)
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES})
 
 
