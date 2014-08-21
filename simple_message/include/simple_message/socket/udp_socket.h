@@ -65,26 +65,23 @@ public:
   UdpSocket();
   ~UdpSocket();
 
-  // Override
-  // receive is overridden because the base class implementation assumed
-  // socket data could be read partially.  UDP socket data is lost when
-  // only a portion of it is read.  For that reason this receive method
-  // reads the entire data stream (assumed to be a single message).
-  bool  receiveMsg(industrial::simple_message::SimpleMessage & message);
-
-
 protected:
 
   /**
    * \brief udp socket connect handshake value
    */
-  static const char CONNECT_HANDSHAKE = 255;
+  static const char CONNECT_HANDSHAKE = 142;
+
+  char udp_read_buffer_[MAX_BUFFER_SIZE + 1];
+  char* udp_read_head_;
+  size_t udp_read_len_;
 
   // Virtual
   int rawSendBytes(char *buffer,
       industrial::shared_types::shared_int num_bytes);
   int rawReceiveBytes(char *buffer,
       industrial::shared_types::shared_int num_bytes);
+  bool rawPoll(int timeout, bool & ready, bool & error);
 
 };
 

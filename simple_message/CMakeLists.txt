@@ -125,7 +125,9 @@ catkin_add_gtest(utest_float64 ${UTEST_SRC_FILES})
 set_target_properties(utest_float64 PROPERTIES COMPILE_DEFINITIONS "TEST_PORT_BASE=13000;FLOAT64")
 target_link_libraries(utest_float64 simple_message_float64)
 
-
+catkin_add_gtest(utest_udp ${UTEST_SRC_FILES})
+set_target_properties(utest_udp PROPERTIES COMPILE_DEFINITIONS "TEST_PORT_BASE=15000;UDP_TEST")
+target_link_libraries(utest_udp simple_message)
 
 install(
     TARGETS simple_message simple_message_bswap simple_message_float64 
