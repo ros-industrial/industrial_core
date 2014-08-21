@@ -120,7 +120,7 @@ namespace industrial
           // Polling the socket results in an "interruptable" socket read.  This
           // allows Control-C to break out of a socket read.  Without polling,
           // a sig-term is required to kill a program in a socket read function.
-          if (this->rawPoll(0, ready, error))
+          if (this->rawPoll(this->SOCKET_POLL_TO, ready, error))
           {
             if(ready)
             {
