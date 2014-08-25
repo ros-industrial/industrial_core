@@ -78,7 +78,7 @@ bool findChainJointNames(const boost::shared_ptr<const urdf::Link> &link, bool i
 
   // check for joints directly connected to this link
   const joint_list &joints = link->child_joints;
-  ROS_DEBUG("Found %d child joints:", joints.size());
+  ROS_DEBUG("Found %d child joints:", int(joints.size()));
   for (joint_list::const_iterator it=joints.begin(); it!=joints.end(); ++it)
   {
     ROS_DEBUG_STREAM("  " << (*it)->name << ": type " <<  (*it)->type);
@@ -100,7 +100,7 @@ bool findChainJointNames(const boost::shared_ptr<const urdf::Link> &link, bool i
   // check for joints connected to children of this link
   const link_list &links = link->child_links;
   std::vector<std::string> sub_joints;
-  ROS_DEBUG("Found %d child links:", links.size());
+  ROS_DEBUG("Found %d child links:", int(links.size()));
   for (link_list::const_iterator it=links.begin(); it!=links.end(); ++it)
   {
     ROS_DEBUG_STREAM("  " << (*it)->name);

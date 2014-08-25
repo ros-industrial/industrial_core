@@ -73,6 +73,16 @@ JointTrajectoryAction::~JointTrajectoryAction()
 void JointTrajectoryAction::robotStatusCB(const industrial_msgs::RobotStatusConstPtr &msg)
 {
   last_robot_status_ = msg; //caching robot status for later use.
+
+  if(has_active_goal_ && msg->error_code != 0)
+  {
+    std::stringstream ss;
+    ss << "Error code " << msg->error_code << " from joint_trajectory_streamer.";
+    control_msgs::FollowJointTrajectoryResult result;
+    result.error_code = control_msgs::FollowJointTrajectoryResult::INVALID_GOAL;
+    active_goal_.setAborted(result, ss.str());
+    has_active_goal_ = false;
+  }
 }
 
 void JointTrajectoryAction::watchdog(const ros::TimerEvent &e)
