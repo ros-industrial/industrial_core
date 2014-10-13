@@ -154,9 +154,12 @@ public:
     return connected_;
   }
   
-  virtual void setConnected(bool connected)
+  // Internally set the state of the connection to be disconnected.
+  // This is needed in UDP connections to signal when a timeout has occurred 
+  // and the connection needs to be reestablished using the handshake protocol.
+  virtual void setDisconnected()
   {
-    this->connected_ = connected;
+    setConnected(false);
   }
   
   /**
@@ -247,6 +250,10 @@ protected:
    * \return true if function DID NOT timeout (must check flags)
    */
   virtual bool rawPoll(int timeout, bool & ready, bool & error)=0;
+  virtual void setConnected(bool connected)
+  {
+    this->connected_ = connected;
+  }
 
 };
 
