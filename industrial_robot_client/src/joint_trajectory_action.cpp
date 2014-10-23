@@ -116,6 +116,18 @@ void JointTrajectoryAction::goalCB(JointTractoryActionServer::GoalHandle & gh)
 {
   ROS_INFO("Received new goal");
 
+  // reject all goals as long as we haven't heard from the remote controller
+  if (!trajectory_state_recvd_)
+  {
+    ROS_ERROR("Joint trajectory action rejected: waiting for (initial) feedback from controller");
+    control_msgs::FollowJointTrajectoryResult rslt;
+    rslt.error_code = control_msgs::FollowJointTrajectoryResult::INVALID_GOAL;
+    gh.setRejected(rslt, "Waiting for (initial) feedback from controller");
+
+    // no point in continuing: already rejected
+    return;
+  }
+
   if (!gh.getGoal()->trajectory.points.empty())
   {
     if (industrial_utils::isSimilar(joint_names_, gh.getGoal()->trajectory.joint_names))
