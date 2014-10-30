@@ -42,6 +42,7 @@
 
 #ifdef LINUXSOCKETS
 #include "sys/socket.h"
+#include "netdb.h"		/* gethostbyname */
 #include "arpa/inet.h"
 #include "string.h"
 #include "unistd.h"
