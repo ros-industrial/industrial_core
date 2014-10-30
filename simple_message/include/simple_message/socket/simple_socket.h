@@ -69,6 +69,7 @@
 #endif
 #define INET_ADDR(str) inet_addr(str)
 #define SOCKLEN_T socklen_t
+#define GETHOSTBYNAME(str) gethostbyname(str)
 
 #endif
 
@@ -110,6 +111,7 @@ extern "C" STATUS setsockopt (   /* remove "extern C", if you're using C instead
 #define HTONS(num) mpHtons(num)
 #define INET_ADDR(str) mpInetAddr(str)
 #define SOCKLEN_T unsigned int
+#define GETHOSTBYNAME(str) NULL
 
 #endif
 

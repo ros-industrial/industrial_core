@@ -72,14 +72,18 @@ bool TcpClient::init(char *buff, int port_num)
       LOG_WARN("Failed to set no socket delay, sending data can be delayed by up to 250ms");
     }
 
-
     // Initialize address data structure
     memset(&this->sockaddr_, 0, sizeof(this->sockaddr_));
     this->sockaddr_.sin_family = AF_INET;
-    if (NULL != (ent = gethostbyname(buff))) {
+
+    // Check for 'buff' as hostname, and use that, otherwise assume IP address
+    if (NULL != (ent = GETHOSTBYNAME(buff)))
+    {
       in_a = (struct in_addr *) ent->h_addr_list[0];
       this->sockaddr_.sin_addr.s_addr = in_a->s_addr;
-    } else {
+    }
+    else 
+    {
       this->sockaddr_.sin_addr.s_addr = INET_ADDR(buff);
     }
     this->sockaddr_.sin_port = HTONS(port_num);
