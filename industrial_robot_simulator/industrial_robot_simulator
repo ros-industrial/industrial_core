@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-import roslib; roslib.load_manifest('industrial_robot_simulator')
 import rospy
 import copy
 import threading
