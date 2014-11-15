@@ -38,15 +38,15 @@ class MotionControllerSimulator():
 
         # Motion loop update rate (higher update rates result in smoother simulated motion)
         self.update_rate = update_rate
-        rospy.loginfo("Setting motion update rate (hz): %f", self.update_rate)
+        rospy.logdebug("Setting motion update rate (hz): %f", self.update_rate)
 
         # Initialize joint position
         self.joint_positions = initial_joint_state
-        rospy.loginfo("Setting initial joint state: %s", str(initial_joint_state))
+        rospy.logdebug("Setting initial joint state: %s", str(initial_joint_state))
 
         # Initialize motion buffer (contains joint position lists)
         self.motion_buffer = Queue.Queue(buffer_size)
-        rospy.loginfo("Setting motion buffer size: %i", buffer_size)
+        rospy.logdebug("Setting motion buffer size: %i", buffer_size)
 
         # Shutdown signal
         self.sig_shutdown = False
@@ -79,14 +79,14 @@ class MotionControllerSimulator():
 
     """
     """
-    def shutdown(self): 
+    def shutdown(self):
         self.sig_shutdown = True
-        rospy.loginfo('Motion_Controller shutdown signaled')
+        rospy.logdebug('Motion_Controller shutdown signaled')
 
     """
     """
     def stop(self):
-        rospy.loginfo('Motion_Controller stop signaled')
+        rospy.logdebug('Motion_Controller stop signaled')
         with self.lock:
             self._clear_buffer()
             self.sig_stop = True
@@ -116,13 +116,13 @@ class MotionControllerSimulator():
                 self.joint_positions = point.positions[:]
                 #rospy.loginfo('Moved to position: %s in %s', str(self.joint_positions), str(dur))
             else:
-                rospy.loginfo('Stoping motion immediately, clearing stop signal')
+                rospy.logdebug('Stopping motion immediately, clearing stop signal')
                 self.sig_stop = False
 
     """
     """
     def _motion_worker(self):
-        rospy.loginfo('Starting motion worker in motion controller simulator')
+        rospy.logdebug('Starting motion worker in motion controller simulator')
         move_duration = rospy.Duration()
         if self.update_rate <> 0.:
             update_duration = rospy.Duration(1./self.update_rate)
@@ -156,7 +156,7 @@ class MotionControllerSimulator():
             except Exception as e:
                 rospy.logerr('Unexpected exception: %s', e)
 
-        rospy.loginfo("Shutting down motion controller")
+        rospy.logdebug("Shutting down motion controller")
 
 
 
@@ -165,7 +165,7 @@ class MotionControllerSimulator():
 IndustrialRobotSimulator
 
 This class simulates an industrial robot controller.  The simulator
-adheres to the ROS-Industrial robot driver specification: 
+adheres to the ROS-Industrial robot driver specification:
 
 http://www.ros.org/wiki/Industrial/Industrial_Robot_Driver_Spec
 
@@ -189,14 +189,14 @@ class IndustrialRobotSimulatorNode():
 
         # Publish rate (hz)
         self.pub_rate = rospy.get_param('pub_rate', 10.0)
-        rospy.loginfo("Setting publish rate (hz) based on parameter: %f", self.pub_rate)
+        rospy.logdebug("Setting publish rate (hz) based on parameter: %f", self.pub_rate)
 
         # Joint names
-        def_joint_names = ["joint_1", "joint_2", "joint_3", "joint_4", "joint_5", "joint_6"] 
+        def_joint_names = ["joint_1", "joint_2", "joint_3", "joint_4", "joint_5", "joint_6"]
         self.joint_names = rospy.get_param('controller_joint_names', def_joint_names)
         if len(self.joint_names) == 0:
             rospy.logwarn("Joint list is empty, did you set controller_joint_name?")
-        rospy.loginfo("Setting joint names based on parameter: %s", str(self.joint_names))
+        rospy.loginfo("Simulating manipulator with %d joints: %s", len(self.joint_names), ", ".join(self.joint_names))
 
         # Setup initial joint positions
         num_joints = len(self.joint_names)
@@ -207,29 +207,30 @@ class IndustrialRobotSimulatorNode():
             initial_joint_state = [0]*num_joints
             rospy.logwarn("Invalid initial_joint_state parameter, defaulting to all-zeros "
                 "(len: %s, types: %s).", same_len, all_num)
+        rospy.loginfo("Using initial joint state: %s", str(initial_joint_state))
 
         # retrieve update rate
         motion_update_rate = rospy.get_param('motion_update_rate', 100.);  #set param to 0 to ignore interpolated motion
         self.motion_ctrl = MotionControllerSimulator(num_joints, initial_joint_state, update_rate = motion_update_rate)
 
         # Published to joint states
-        rospy.loginfo("Creating joint state publisher")
+        rospy.logdebug("Creating joint state publisher")
         self.joint_state_pub = rospy.Publisher('joint_states', JointState)
 
         # Published to joint feedback
-        rospy.loginfo("Creating joint feedback publisher")
+        rospy.logdebug("Creating joint feedback publisher")
         self.joint_feedback_pub = rospy.Publisher('feedback_states', FollowJointTrajectoryFeedback)
 
-        rospy.loginfo("Creating robot status publisher")
+        rospy.logdebug("Creating robot status publisher")
         self.robot_status_pub = rospy.Publisher('robot_status', RobotStatus)
 
         # Subscribe to a joint trajectory
-        rospy.loginfo("Creating joint trajectory subscriber")
+        rospy.logdebug("Creating joint trajectory subscriber")
         self.joint_path_sub = rospy.Subscriber('joint_path_command', JointTrajectory, self.trajectory_callback)
 
         # JointStates timed task (started automatically)
         period = rospy.Duration(1.0/self.pub_rate)
-        rospy.loginfo('Setting up joint state publish worker with period (sec): %s', str(period.to_sec()))
+        rospy.logdebug('Setting up publish worker with period (sec): %s', str(period.to_sec()))
         rospy.Timer(period, self.publish_worker)
 
         # Clean up init
@@ -254,7 +255,7 @@ class IndustrialRobotSimulatorNode():
             joint_state_msg = JointState()
             joint_fb_msg = FollowJointTrajectoryFeedback()
             time = rospy.Time.now()
-            
+
             with self.lock:
                 #Joint states
                 joint_state_msg.header.stamp = time
@@ -313,13 +314,13 @@ class IndustrialRobotSimulatorNode():
     """
     def trajectory_callback(self, msg_in):
         try:
-            rospy.loginfo('Received trajectory with %s points, executing callback', str(len(msg_in.points)))
+            rospy.logdebug('Received trajectory with %s points, executing callback', str(len(msg_in.points)))
 
             if self.motion_ctrl.is_in_motion():
                 if len(msg_in.points) > 0:
                     rospy.logerr('Received trajectory while still in motion, trajectory splicing not supported')
                 else:
-                    rospy.loginfo('Received empty trajectory while still in motion, stopping current trajectory')
+                    rospy.logdebug('Received empty trajectory while still in motion, stopping current trajectory')
                 self.motion_ctrl.stop()
 
             else:
@@ -330,7 +331,7 @@ class IndustrialRobotSimulatorNode():
         except Exception as e:
             rospy.logerr('Unexpected exception: %s', e)
 
-        rospy.loginfo('Exiting trajectory callback')
+        rospy.logdebug('Exiting trajectory callback')
 
 
     """
@@ -368,7 +369,7 @@ class IndustrialRobotSimulatorNode():
 
 if __name__ == '__main__':
     try:
-        rospy.loginfo('Executing joint_controller_simulator')
+        rospy.loginfo('Starting joint_controller_simulator')
         controller = IndustrialRobotSimulatorNode()
         rospy.spin()
     except rospy.ROSInterruptException:
