@@ -112,6 +112,7 @@ bool UdpServer::makeConnect()
   char sendHS = this->CONNECT_HANDSHAKE;
   char recvHS = 0;
   int bytesRcvd = 0;
+  const int timeout = 1000;  // Time (ms) between handshake sends
   bool rtn = false;
   
   send.load((void*)&sendHS, sizeof(sendHS));
@@ -126,13 +127,16 @@ bool UdpServer::makeConnect()
     {
       ByteArray recv;
       recvHS = 0;
-      bytesRcvd = this->rawReceiveBytes(this->buffer_, 0);
-      
-      if (bytesRcvd > 0)
+      if (this->isReadyReceive(timeout))
       {
-        LOG_DEBUG("UDP server received %d bytes while waiting for handshake", bytesRcvd);
-        recv.init(&this->buffer_[0], bytesRcvd);
-        recv.unload((void*)&recvHS, sizeof(recvHS));
+        bytesRcvd = this->rawReceiveBytes(this->buffer_, 0);
+        
+        if (bytesRcvd > 0)
+        {
+          LOG_DEBUG("UDP server received %d bytes while waiting for handshake", bytesRcvd);
+          recv.init(&this->buffer_[0], bytesRcvd);
+          recv.unload((void*)&recvHS, sizeof(recvHS));
+        }
       }
       
     }

@@ -156,6 +156,14 @@ public:
     return connected_;
   }
   
+  // Internally set the state of the connection to be disconnected.
+  // This is needed in UDP connections to signal when a timeout has occurred 
+  // and the connection needs to be reestablished using the handshake protocol.
+  virtual void setDisconnected()
+  {
+    setConnected(false);
+  }
+  
   /**
    * \brief returns true if socket data is ready to receive
    *
@@ -166,7 +174,8 @@ public:
   bool isReadyReceive(int timeout)
   {
     bool r, e;
-    return poll(timeout, r, e);
+    rawPoll(timeout, r, e);
+    return r;
   }
 
 protected:
@@ -216,28 +225,12 @@ protected:
   {
     this->sock_handle_ = sock_handle_;
   }
-  
-  virtual void setConnected(bool connected)
-  {
-    this->connected_ = connected;
-  }
 
   void logSocketError(const char* msg, int rc)
   {
     int errno_ = errno;
     LOG_ERROR("%s, rc: %d. Error: '%s' (errno: %d)", msg, rc, strerror(errno_), errno_);
   }
-  
-  /**
-   * \brief polls socket for data or error
-   *
-   * \param timeout (ms) negative or zero values result in blocking
-   * \param ready true if ready
-   * \param except true if exception
-   *
-   * \return true if function DID NOT timeout (must check flags)
-   */
-  bool poll(int timeout, bool & ready, bool & error);
   
   // Send/Receive functions (inherited classes should override raw methods
   // Virtual
@@ -249,6 +242,20 @@ protected:
       industrial::shared_types::shared_int num_bytes)=0;
   virtual int rawReceiveBytes(char *buffer,
       industrial::shared_types::shared_int num_bytes)=0;
+  /**
+   * \brief polls socket for data or error
+   *
+   * \param timeout (ms) negative or zero values result in blocking
+   * \param ready true if ready
+   * \param except true if exception
+   *
+   * \return true if function DID NOT timeout (must check flags)
+   */
+  virtual bool rawPoll(int timeout, bool & ready, bool & error)=0;
+  virtual void setConnected(bool connected)
+  {
+    this->connected_ = connected;
+  }
 
 };
 

@@ -72,6 +72,7 @@ private:
       industrial::shared_types::shared_int num_bytes);
   int rawReceiveBytes(char *buffer,
       industrial::shared_types::shared_int num_bytes);
+  bool rawPoll(int timeout, bool & ready, bool & error);
 
 };
 
