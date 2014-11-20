@@ -14,8 +14,11 @@ from industrial_msgs.msg import RobotStatus
 from trajectory_msgs.msg import JointTrajectory
 from trajectory_msgs.msg import JointTrajectoryPoint
 
+# Services
+from industrial_msgs.srv import GetRobotInfo, GetRobotInfoResponse
+
 # Reference
-from industrial_msgs.msg import TriState, RobotMode
+from industrial_msgs.msg import TriState, RobotMode, ServiceReturnCode, DeviceInfo
 
 
 
@@ -233,8 +236,20 @@ class IndustrialRobotSimulatorNode():
         rospy.logdebug('Setting up publish worker with period (sec): %s', str(period.to_sec()))
         rospy.Timer(period, self.publish_worker)
 
+        # GetRobotInfo service server and pre-cooked svc response
+        self.get_robot_info_response = self._init_robot_info_response()
+        self.svc_get_robot_info = rospy.Service('get_robot_info', GetRobotInfo, self.cb_svc_get_robot_info)
+
         # Clean up init
         rospy.on_shutdown(self.motion_ctrl.shutdown)
+
+
+    """
+    Service callback for GetRobotInfo() service. Returns fake information.
+    """
+    def cb_svc_get_robot_info(self, req):
+        # return cached response instance
+        return self.get_robot_info_response
 
 
     """
@@ -365,6 +380,48 @@ class IndustrialRobotSimulatorNode():
             pass
 
         return ordered_values
+
+    """
+    Constructs a GetRobotInfoResponse instance with either default data,
+    or data provided by the user.
+    """
+    def _init_robot_info_response(self):
+        if not rospy.has_param('~robot_info'):
+            # if user did not provide data, we generate some
+            import rospkg
+            rp = rospkg.RosPack()
+            irs_version = rp.get_manifest('industrial_robot_simulator').version
+            robot_info = dict(
+                controller=dict(
+                    model='Industrial Robot Simulator Controller',
+                    serial_number='0123456789',
+                    sw_version=irs_version),
+                robots=[
+                    dict(
+                        model='Industrial Robot Simulator Manipulator',
+                        serial_number='9876543210',
+                        sw_version=irs_version)
+                ])
+        else:
+            # otherwise use only the data user has provided (and nothing more)
+            robot_info = rospy.get_param('~robot_info')
+
+        resp = GetRobotInfoResponse()
+        resp.controller = DeviceInfo(**robot_info['controller'])
+
+        # add info on controlled robot / motion group
+        if len(robot_info['robots']) > 0:
+            robot = robot_info['robots'][0]
+            resp.robots.append(DeviceInfo(**robot))
+
+        if len(robot_info['robots']) > 1:
+            # simulator simulates a single robot / motion group
+            rospy.logwarn("Multiple robots / motion groups defined in "
+                "'robot_info' parameter, ignoring all but first element")
+
+        # always successfull
+        resp.code.val = ServiceReturnCode.SUCCESS
+        return resp
 
 
 if __name__ == '__main__':

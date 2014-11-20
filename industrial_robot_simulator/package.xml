@@ -16,6 +16,7 @@
   <build_depend>trajectory_msgs</build_depend>
   <build_depend>industrial_robot_client</build_depend>
   <build_depend>industrial_msgs</build_depend>
+  <build_depend>python-rospkg</build_depend>
   <run_depend>roscpp</run_depend>
   <run_depend>std_msgs</run_depend>
   <run_depend>sensor_msgs</run_depend>
@@ -23,4 +24,5 @@
   <run_depend>trajectory_msgs</run_depend>
   <run_depend>industrial_robot_client</run_depend>
   <run_depend>industrial_msgs</run_depend>
+  <run_depend>python-rospkg</run_depend>
 </package>
