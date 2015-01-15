@@ -214,18 +214,18 @@ class IndustrialRobotSimulatorNode():
 
         # retrieve update rate
         motion_update_rate = rospy.get_param('motion_update_rate', 100.);  #set param to 0 to ignore interpolated motion
-        self.motion_ctrl = MotionControllerSimulator(num_joints, initial_joint_state, update_rate = motion_update_rate)
+        self.motion_ctrl = MotionControllerSimulator(num_joints, initial_joint_state, update_rate=motion_update_rate)
 
         # Published to joint states
         rospy.logdebug("Creating joint state publisher")
-        self.joint_state_pub = rospy.Publisher('joint_states', JointState)
+        self.joint_state_pub = rospy.Publisher('joint_states', JointState, queue_size=1)
 
         # Published to joint feedback
         rospy.logdebug("Creating joint feedback publisher")
-        self.joint_feedback_pub = rospy.Publisher('feedback_states', FollowJointTrajectoryFeedback)
+        self.joint_feedback_pub = rospy.Publisher('feedback_states', FollowJointTrajectoryFeedback, queue_size=1)
 
         rospy.logdebug("Creating robot status publisher")
-        self.robot_status_pub = rospy.Publisher('robot_status', RobotStatus)
+        self.robot_status_pub = rospy.Publisher('robot_status', RobotStatus, queue_size=1)
 
         # Subscribe to a joint trajectory
         rospy.logdebug("Creating joint trajectory subscriber")
