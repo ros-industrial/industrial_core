@@ -152,7 +152,7 @@ bool UdpSocket::rawPoll(int timeout, bool & ready, bool & error)
       }
     }
   } else {
-    this->logSocketError("Socket select function failed", rc);
+    this->logSocketError("Socket select function failed", rc, errno);
     rtn = false;
   }
   return rtn;

@@ -65,7 +65,7 @@ namespace industrial
           else
           {
             rtn = false;
-            logSocketError("Socket sendBytes failed", rc);
+            logSocketError("Socket sendBytes failed", rc, errno);
           }
 
         }
@@ -127,7 +127,7 @@ namespace industrial
               rc = rawReceiveBytes(this->buffer_, remainBytes);
               if (this->SOCKET_FAIL == rc)
               {
-                this->logSocketError("Socket received failed", rc);
+                this->logSocketError("Socket received failed", rc, errno);
 		        remainBytes = 0;
                 rtn = false;
                 break;

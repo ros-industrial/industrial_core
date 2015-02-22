@@ -226,10 +226,29 @@ protected:
     this->sock_handle_ = sock_handle_;
   }
 
+  /**
+   * \deprecated This could report the wrong error number.  The method that takes
+   * errno as an argument should be used instead.
+   * \brief Logs message to error log and reports associated socket system error
+   * \param msg custom message prefixed to system error
+   * \param rc return code from socket
+   */
+  __attribute__((deprecated(
+                   "Please use: logSocketError(const char* msg, const int rc, const int error_no)")))
   void logSocketError(const char* msg, int rc)
   {
-    int errno_ = errno;
-    LOG_ERROR("%s, rc: %d. Error: '%s' (errno: %d)", msg, rc, strerror(errno_), errno_);
+    logSocketError(msg, rc, errno);
+  }
+
+  /**
+   * \brief Logs message to error log and reports associated socket system error
+   * \param msg custom message prefixed to system error
+   * \param rc return code from socket
+   * \param error_no errno value see (http://man7.org/linux/man-pages/man3/errno.3.html )
+   */
+  void logSocketError(const char* msg, const int rc, const int error_no)
+  {
+    LOG_ERROR("%s, rc: %d. Error: '%s' (errno: %d)", msg, rc, strerror(error_no), error_no);
   }
   
   // Send/Receive functions (inherited classes should override raw methods
