@@ -239,7 +239,8 @@ TEST(ByteArraySuite, copy)
 }
 
 // Need access to protected members for testing
-class TestTcpClient : public TcpClient
+#ifndef UDP_TEST
+class TestClient : public TcpClient
 {
   public:
   bool sendBytes(ByteArray & buffer)
@@ -247,7 +248,7 @@ class TestTcpClient : public TcpClient
     return TcpClient::sendBytes(buffer);
   };
 };
-class TestTcpServer : public TcpServer
+class TestServer : public TcpServer
 {
   public:
   bool receiveBytes(ByteArray & buffer, shared_int num_bytes)
@@ -255,43 +256,72 @@ class TestTcpServer : public TcpServer
     return TcpServer::receiveBytes(buffer, num_bytes);
   }
 };
+#else
+class TestClient : public UdpClient
+{
+  public:
+  bool sendBytes(ByteArray & buffer)
+  {
+    return UdpClient::sendBytes(buffer);
+  };
+};
+class TestServer : public UdpServer
+{
+  public:
+  bool receiveBytes(ByteArray & buffer, shared_int num_bytes)
+  {
+    return UdpServer::receiveBytes(buffer, num_bytes);
+  }
+};
+#endif
+
+void*
+connectServerFunc(void* arg)
+{
+  TestServer* server = (TestServer*)arg;  
+  server->makeConnect();
+  return NULL;
+}
+
 TEST(SocketSuite, read)
 {
-  const int tcpPort = TEST_PORT_BASE;
+  const int port = TEST_PORT_BASE;
   char ipAddr[] = "127.0.0.1";
 
-  TestTcpClient tcpClient;
-  TestTcpServer tcpServer;
+  TestClient client;
+  TestServer server;
   ByteArray send, recv;
   shared_int DATA = 99;
   shared_int TWO_INTS = 2 * sizeof(shared_int);
   shared_int ONE_INTS = 1 * sizeof(shared_int);
 
   // Construct server
-  ASSERT_TRUE(tcpServer.init(tcpPort));
+  ASSERT_TRUE(server.init(port));
 
   // Construct a client
-  ASSERT_TRUE(tcpClient.init(&ipAddr[0], tcpPort));
-  ASSERT_TRUE(tcpClient.makeConnect());
+  ASSERT_TRUE(client.init(&ipAddr[0], port));
+  pthread_t serverConnectThrd;
+  pthread_create(&serverConnectThrd, NULL, connectServerFunc, &server);
 
-  ASSERT_TRUE(tcpServer.makeConnect());
+  ASSERT_TRUE(client.makeConnect());
+  pthread_join(serverConnectThrd, NULL);
 
   ASSERT_TRUE(send.load(DATA));
 
   // Send just right amount
-  ASSERT_TRUE(tcpClient.sendBytes(send));
-  ASSERT_TRUE(tcpClient.sendBytes(send));
-  ASSERT_TRUE(tcpServer.receiveBytes(recv, TWO_INTS));
+  ASSERT_TRUE(client.sendBytes(send));
+  ASSERT_TRUE(client.sendBytes(send));
+  sleep(2);
+  ASSERT_TRUE(server.receiveBytes(recv, TWO_INTS));
   ASSERT_EQ(TWO_INTS, recv.getBufferSize());
-
 
   // Send too many bytes
-  ASSERT_TRUE(tcpClient.sendBytes(send));
-  ASSERT_TRUE(tcpClient.sendBytes(send));
-  ASSERT_TRUE(tcpClient.sendBytes(send));
-  ASSERT_TRUE(tcpServer.receiveBytes(recv, TWO_INTS));
+  ASSERT_TRUE(client.sendBytes(send));
+  ASSERT_TRUE(client.sendBytes(send));
+  ASSERT_TRUE(client.sendBytes(send));
+  ASSERT_TRUE(server.receiveBytes(recv, TWO_INTS));
   ASSERT_EQ(TWO_INTS, recv.getBufferSize());
-  ASSERT_TRUE(tcpServer.receiveBytes(recv, ONE_INTS));
+  ASSERT_TRUE(server.receiveBytes(recv, ONE_INTS));
   ASSERT_EQ(ONE_INTS, recv.getBufferSize());
 }
 
@@ -300,7 +330,7 @@ TEST(SocketSuite, read)
 void*
 spinSender(void* arg)
 {
-  TestTcpClient* client = (TestTcpClient*)arg;  
+  TestClient* client = (TestClient*)arg;  
   ByteArray send;
   const int DATA = 256;
 
@@ -309,32 +339,34 @@ spinSender(void* arg)
   while(true)
   {
     client->sendBytes(send);
-    sleep(2);
+    sleep(0.1);
   }
 }
 
 TEST(SocketSuite, splitPackets)
 {
-  const int tcpPort = TEST_PORT_BASE + 1;
+  const int port = TEST_PORT_BASE + 1;
   char ipAddr[] = "127.0.0.1";
   const int RECV_LENGTH = 64;
 
-  TestTcpClient tcpClient;
-  TestTcpServer tcpServer;
+  TestClient client;
+  TestServer server;
   ByteArray recv;
 // Construct server
-  ASSERT_TRUE(tcpServer.init(tcpPort));
+  ASSERT_TRUE(server.init(port));
 
   // Construct a client
-  ASSERT_TRUE(tcpClient.init(&ipAddr[0], tcpPort));
-  ASSERT_TRUE(tcpClient.makeConnect());
+  ASSERT_TRUE(client.init(&ipAddr[0], port));
+  pthread_t serverConnectThrd;
+  pthread_create(&serverConnectThrd, NULL, connectServerFunc, &server);
 
-  ASSERT_TRUE(tcpServer.makeConnect());
+  ASSERT_TRUE(client.makeConnect());
+  pthread_join(serverConnectThrd, NULL);
 
   pthread_t senderThrd;
-  pthread_create(&senderThrd, NULL, spinSender, &tcpClient);
+  pthread_create(&senderThrd, NULL, spinSender, &client);
 
-  ASSERT_TRUE(tcpServer.receiveBytes(recv, RECV_LENGTH));
+  ASSERT_TRUE(server.receiveBytes(recv, RECV_LENGTH));
   ASSERT_EQ(RECV_LENGTH, recv.getBufferSize());
 
   pthread_cancel(senderThrd);
@@ -400,9 +432,9 @@ TEST(PingMessageSuite, toMessage)
 TEST(PingHandlerSuite, init)
 {
   PingHandler handler;
-  UdpClient udp;
+  TestClient client;
 
-  ASSERT_TRUE(handler.init(&udp));
+  ASSERT_TRUE(handler.init(&client));
   EXPECT_EQ(StandardMsgTypes::PING, handler.getMsgType());
 
   EXPECT_FALSE(handler.init(NULL));
@@ -412,9 +444,9 @@ TEST(PingHandlerSuite, init)
 TEST(MessageManagerSuite, init)
 {
   MessageManager manager;
-  UdpClient udp;
+  TestClient client;
 
-  EXPECT_TRUE(manager.init(&udp));
+  EXPECT_TRUE(manager.init(&client));
   EXPECT_FALSE(manager.init(NULL));
 
 }
@@ -422,16 +454,16 @@ TEST(MessageManagerSuite, init)
 TEST(MessageManagerSuite, addHandler)
 {
   MessageManager manager;
-  UdpClient udp;
+  TestClient client;
   PingHandler handler;
 
   EXPECT_EQ(0, (int)manager.getNumHandlers());
 
-  ASSERT_TRUE(manager.init(&udp));
+  ASSERT_TRUE(manager.init(&client));
   EXPECT_EQ(1, (int)manager.getNumHandlers());
   EXPECT_FALSE(manager.add(NULL));
 
-  ASSERT_TRUE(handler.init(&udp));
+  ASSERT_TRUE(handler.init(&client));
   EXPECT_FALSE(manager.add(&handler));
 }
 
@@ -445,53 +477,15 @@ spinFunc(void* arg)
   return NULL;
 }
 
-TEST(DISABLED_MessageManagerSuite, udp)
-{
-  const int udpPort = TEST_PORT_BASE + 100;
-  char ipAddr[] = "127.0.0.1";
-
-  UdpClient* udpClient = new UdpClient();
-  UdpServer udpServer;
-  SimpleMessage pingRequest, pingReply;
-  MessageManager udpManager;
-
-  ASSERT_TRUE(pingRequest.init(StandardMsgTypes::PING, CommTypes::SERVICE_REQUEST, ReplyTypes::INVALID));
-
-  // UDP Socket testing
-  // Construct server and start in a thread
-  ASSERT_TRUE(udpServer.init(udpPort));
-  ASSERT_TRUE(udpManager.init(&udpServer));
-  //boost::thread udpSrvThrd(boost::bind(&MessageManager::spin, &udpManager));
-  pthread_t udpSrvThrd;
-  pthread_create(&udpSrvThrd, NULL, spinFunc, &udpManager);
-
-  // Construct a client and try to ping the server
-  ASSERT_TRUE(udpClient->init(&ipAddr[0], udpPort));
-  ASSERT_TRUE(udpClient->makeConnect());
-  ASSERT_TRUE(udpClient->sendMsg(pingRequest));
-  ASSERT_TRUE(udpClient->receiveMsg(pingReply));
-  ASSERT_TRUE(udpClient->sendAndReceiveMsg(pingRequest, pingReply));
-
-  // Delete client and try to reconnect
-  delete udpClient;
-  udpClient = new UdpClient();
-  ASSERT_TRUE(udpClient->init(&ipAddr[0], udpPort));
-  ASSERT_TRUE(udpClient->makeConnect());
-  ASSERT_TRUE(udpClient->sendAndReceiveMsg(pingRequest, pingReply));
-
-  pthread_cancel(udpSrvThrd);
-  pthread_join(udpSrvThrd, NULL);
-}
-
 TEST(DISABLED_MessageManagerSuite, tcp)
 {
-  const int tcpPort = TEST_PORT_BASE + 101;
+  const int port = TEST_PORT_BASE + 201;
   char ipAddr[] = "127.0.0.1";
 
-  TcpClient* tcpClient = new TcpClient();
-  TcpServer tcpServer;
+  TestClient* client = new TestClient();
+  TestServer server;
   SimpleMessage pingRequest, pingReply;
-  MessageManager tcpManager;
+  MessageManager msgManager;
 
   // MessageManager uses ros::ok, which needs ros spinner
   ros::AsyncSpinner spinner(0);
@@ -502,42 +496,47 @@ TEST(DISABLED_MessageManagerSuite, tcp)
   // TCP Socket testing
 
   // Construct server
-  ASSERT_TRUE(tcpServer.init(tcpPort));
+  ASSERT_TRUE(server.init(port));
 
   // Construct a client
-  ASSERT_TRUE(tcpClient->init(&ipAddr[0], tcpPort));
-  ASSERT_TRUE(tcpClient->makeConnect());
+  ASSERT_TRUE(client->init(&ipAddr[0], port));
+
+  // Connect server and client
+  pthread_t serverConnectThrd;
+  pthread_create(&serverConnectThrd, NULL, connectServerFunc, &server);
+
+  ASSERT_TRUE(client->makeConnect());
+  pthread_join(serverConnectThrd, NULL);
 
   // Listen for client connection, init manager and start thread
-  ASSERT_TRUE(tcpServer.makeConnect());
-  ASSERT_TRUE(tcpManager.init(&tcpServer));
+  ASSERT_TRUE(msgManager.init(&server));
 
   // TODO: The message manager is not thread safe (threads are used for testing,
   // but running the message manager in a thread results in errors when the
   // underlying connection is deconstructed before the manager
-  //boost::thread tcpSrvThrd(boost::bind(&MessageManager::spin, &tcpManager));
-  pthread_t tcpSrvThrd;
-  pthread_create(&tcpSrvThrd, NULL, spinFunc, &tcpManager);
+  //boost::thread spinSrvThrd(boost::bind(&MessageManager::spin, &msgManager));
+  pthread_t spinSrvThrd;
+  pthread_create(&spinSrvThrd, NULL, spinFunc, &msgManager);
 
   // Ping the server
-  ASSERT_TRUE(tcpClient->sendMsg(pingRequest));
-  ASSERT_TRUE(tcpClient->receiveMsg(pingReply));
-  ASSERT_TRUE(tcpClient->sendAndReceiveMsg(pingRequest, pingReply));
+  ASSERT_TRUE(client->sendMsg(pingRequest));
+  ASSERT_TRUE(client->receiveMsg(pingReply));
+  ASSERT_TRUE(client->sendAndReceiveMsg(pingRequest, pingReply));
 
   // Delete client and try to reconnect
 
-  delete tcpClient;
+  delete client;
   sleep(10); //Allow time for client to destruct and free up port
-  tcpClient = new TcpClient();
+  client = new TestClient();
 
-  ASSERT_TRUE(tcpClient->init(&ipAddr[0], tcpPort));
-  ASSERT_TRUE(tcpClient->makeConnect());
-  ASSERT_TRUE(tcpClient->sendAndReceiveMsg(pingRequest, pingReply));
+  ASSERT_TRUE(client->init(&ipAddr[0], port));
+  ASSERT_TRUE(client->makeConnect());
+  ASSERT_TRUE(client->sendAndReceiveMsg(pingRequest, pingReply));
 
-  pthread_cancel(tcpSrvThrd);
-  pthread_join(tcpSrvThrd, NULL);
+  pthread_cancel(spinSrvThrd);
+  pthread_join(spinSrvThrd, NULL);
 
-  delete tcpClient;
+  delete client;
 }
 
 // Run all the tests that were declared with TEST()

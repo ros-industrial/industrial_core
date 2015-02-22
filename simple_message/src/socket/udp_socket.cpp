@@ -55,6 +55,9 @@ UdpSocket::UdpSocket()
 {
   this->setSockHandle(this->SOCKET_FAIL);
   memset(&this->sockaddr_, 0, sizeof(this->sockaddr_));
+  memset(&this->udp_read_buffer_, 0, sizeof(this->udp_read_buffer_));
+  udp_read_head_ = this->udp_read_buffer_;
+  udp_read_len_ = 0;
 
 }
 
@@ -63,57 +66,6 @@ UdpSocket::~UdpSocket()
 // Closes socket
 {
   CLOSE(this->getSockHandle());
-}
-
-bool UdpSocket::receiveMsg(SimpleMessage & message)
-{
-  ByteArray msgBuffer;
-
-  bool rtn = false;
-  shared_int size = 0;
-
-  rtn = this->receiveBytes(msgBuffer, 0);
-
-  if (rtn)
-  {
-    LOG_DEBUG("Receive message bytes: %u", msgBuffer.getBufferSize());
-    if (msgBuffer.getBufferSize() >= sizeof(shared_int))
-    {
-	    LOG_DEBUG("Unloading message length from front of the buffer");
-	    msgBuffer.unloadFront((void*)(&size), sizeof(shared_int));
-
-	    if ( size != (shared_int) msgBuffer.getBufferSize() )
-	    {
-	      LOG_WARN("readBytes returned a message other than the expected size");
-	    }
-	    rtn = message.init(msgBuffer);
-
-	    if (rtn)
-	    {
-	      rtn = true;
-	    }
-	    else
-	    {
-	      LOG_ERROR("Failed to initialize message");
-	      rtn = false;
-	    }
-     }
-     else
-     {
-        LOG_ERROR("Receive bytes returned small: %d message", rtn);
-        LOG_ERROR("Possible handshake or other connection issue, setting disconnected");
-        this->setConnected(false);
-        rtn = false;
-     }
-
-  }
-  else
-  {
-    LOG_ERROR("Failed to receive message");
-    rtn = false;
-  }
-
-  return rtn;
 }
 
 int UdpSocket::rawSendBytes(char *buffer, shared_int num_bytes)
@@ -129,17 +81,82 @@ int UdpSocket::rawSendBytes(char *buffer, shared_int num_bytes)
 
 int UdpSocket::rawReceiveBytes(char *buffer, shared_int num_bytes)
 {
-  int rc = this->SOCKET_FAIL;
-  SOCKLEN_T addrSize = 0;
+  int rc, len_cpy;
+  SOCKLEN_T addrSize;
 
-  addrSize = sizeof(this->sockaddr_);
+  if(udp_read_len_ == 0) {
+    // there is currently no data in the temporary buffer, do a socket read
+    addrSize = sizeof(this->sockaddr_);
 
-  rc = RECV_FROM(this->getSockHandle(), &this->buffer_[0], this->MAX_BUFFER_SIZE,
-      0, (sockaddr *)&this->sockaddr_, &addrSize);
-  
-  return rc;
+    rc = RECV_FROM(this->getSockHandle(), &this->udp_read_buffer_[0], this->MAX_BUFFER_SIZE,
+        0, (sockaddr *)&this->sockaddr_, &addrSize);
+    if(rc <= 0)
+      return 0; // either we had an error or read no data, don't update the buffer
+    udp_read_head_ = this->udp_read_buffer_;
+    udp_read_len_ = rc;
+  }
+  if(num_bytes == 0 || num_bytes >= udp_read_len_) // read all data available
+    len_cpy = udp_read_len_;
+  else
+    len_cpy = num_bytes;
+  memcpy(buffer, udp_read_head_, len_cpy);
+  udp_read_head_ += len_cpy; // shift pointer in buffer
+  udp_read_len_ -= len_cpy;
+  return len_cpy;
 }
 
+bool UdpSocket::rawPoll(int timeout, bool & ready, bool & error)
+{
+  if(udp_read_len_ > 0) {
+    // we still have data in the buffer, we can read without socket calls
+    ready = true;
+    error = false;
+    return true;
+  }
+
+  timeval time;
+  fd_set read, write, except;
+  int rc = this->SOCKET_FAIL;
+  bool rtn = false;
+  ready = false;
+  error = false;
+
+  // The select function uses the timeval data structure
+  time.tv_sec = timeout / 1000;
+  time.tv_usec = (timeout % 1000) * 1000;
+
+  FD_ZERO(&read);
+  FD_ZERO(&write);
+  FD_ZERO(&except);
+
+  FD_SET(this->getSockHandle(), &read);
+  FD_SET(this->getSockHandle(), &except);
+
+  rc = SELECT(this->getSockHandle() + 1, &read, &write, &except, &time);
+
+  if (this->SOCKET_FAIL != rc) {
+    if (0 == rc)
+      rtn = false;
+    else {
+      if (FD_ISSET(this->getSockHandle(), &read)) {
+        ready = true;
+        rtn = true;
+      }
+      else if(FD_ISSET(this->getSockHandle(), &except)) {
+        error = true;
+        rtn = true;
+      }
+      else {
+        LOG_WARN("Select returned, but no flags are set");
+        rtn = false;
+      }
+    }
+  } else {
+    this->logSocketError("Socket select function failed", rc);
+    rtn = false;
+  }
+  return rtn;
+}
 
 } //udp_socket
 } //industrial

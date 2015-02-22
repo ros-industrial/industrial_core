@@ -42,6 +42,7 @@
 
 #ifdef LINUXSOCKETS
 #include "sys/socket.h"
+#include "netdb.h"
 #include "arpa/inet.h"
 #include "string.h"
 #include "unistd.h"
@@ -71,6 +72,7 @@ private:
       industrial::shared_types::shared_int num_bytes);
   int rawReceiveBytes(char *buffer,
       industrial::shared_types::shared_int num_bytes);
+  bool rawPoll(int timeout, bool & ready, bool & error);
 
 };
 
