@@ -2,22 +2,23 @@ cmake_minimum_required(VERSION 2.8.3)
 
 project(industrial_robot_simulator)
 
-find_package(catkin REQUIRED COMPONENTS roscpp std_msgs sensor_msgs 
-  control_msgs trajectory_msgs industrial_robot_client)
+find_package(catkin REQUIRED COMPONENTS std_msgs sensor_msgs
+  control_msgs trajectory_msgs)
 
 catkin_package(
-    CATKIN_DEPENDS roscpp std_msgs sensor_msgs control_msgs trajectory_msgs industrial_robot_client
+    CATKIN_DEPENDS std_msgs sensor_msgs control_msgs trajectory_msgs
 )
 
 ##########
 ## Test ##
 ##########
 
-# ROS launch testing
-## ROS launch testing should be re-enabled when the roslaunch script is officially
-## released (see https://github.com/ros/ros_comm/pull/333)
-##find_package(roslaunch)
-##roslaunch_add_file_check(launch)
+if (CATKIN_ENABLE_TESTING)
+  find_package(roslaunch REQUIRED)
+  roslaunch_add_file_check(launch
+    DEPENDENCIES
+      joint_trajectory_action)
+endif()
 
 #############
 ## Install ##
