@@ -58,6 +58,7 @@ UdpSocket::UdpSocket()
   memset(&this->udp_read_buffer_, 0, sizeof(this->udp_read_buffer_));
   udp_read_head_ = this->udp_read_buffer_;
   udp_read_len_ = 0;
+  this->setConnected(false);
 
 }
 
