@@ -75,10 +75,14 @@ namespace StandardMsgTypes
 
  // Begin vendor specific message types (only define the beginning enum value,
  // specific enum values should be defined locally, within in the range reserved
- // here.  Each vendor can reserve up 1000 types
+ // here.  Each vendor can reserve up 100 types
 
- SWRI_MSG_BEGIN = 1000,
- MOTOMAN_MSG_BEGIN = 2000
+ SWRI_MSG_BEGIN     = 1000,
+ UR_MSG_BEGIN       = 1100,
+ ADEPT_MSG_BEGIN    = 1200,
+ ABB_MSG_BEGIN      = 1300,
+ FANUC_MSG_BEGIN    = 1400,
+ MOTOMAN_MSG_BEGIN  = 2000
   };
 }
 typedef StandardMsgTypes::StandardMsgType StandardMsgType;
