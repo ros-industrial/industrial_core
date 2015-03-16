@@ -17,7 +17,7 @@ if (CATKIN_ENABLE_TESTING)
   find_package(roslaunch REQUIRED)
   roslaunch_add_file_check(launch
     DEPENDENCIES
-      industrial_core)
+      joint_trajectory_action)
 endif()
 
 #############
