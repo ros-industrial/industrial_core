@@ -144,7 +144,12 @@ public:
   /**
      * \brief Constructor
      */
-  SimpleSocket(){}
+  SimpleSocket()
+  {
+    this->setSockHandle(this->SOCKET_FAIL);
+    memset(&this->sockaddr_, 0, sizeof(this->sockaddr_));
+    this->setConnected(false);
+  }
 
   /**
      * \brief Destructor

@@ -52,16 +52,10 @@ namespace tcp_socket
 {
 
 TcpSocket::TcpSocket()
-// Constructor for UDP socket object
 {
-  this->setSockHandle(this->SOCKET_FAIL);
-  memset(&this->sockaddr_, 0, sizeof(this->sockaddr_));
-  this->setConnected(false);
-
 }
 
 TcpSocket::~TcpSocket()
-// Destructor for UDP socket object
 // Closes socket
 {
   LOG_DEBUG("Destructing TCPSocket");
