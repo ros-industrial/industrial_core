@@ -2,6 +2,25 @@
 Changelog for package industrial_robot_simulator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Fixed roslaunch test dependency and build depends for robot simulator package
+* Corrected roslaunch test and added rospy depends to industrial_robot_simulator package
+* Removed extraneous dependencies.  Re-enable launch test
+* robot_simulator: add TU Delft copyright as well.
+* robot_simulator: add BSD license header. Fix `#90 <https://github.com/shaun-edwards/industrial_core/issues/90>`_.
+* robot_simulator: set explicit queue size in Publishers. Fix `#99 <https://github.com/shaun-edwards/industrial_core/issues/99>`_.
+  Queue size of 1 is most likely sufficient for these topics.
+* robot_simulator: add GetRobotInfo svc server.
+* robot_simulator: quiet down node (use logdebug()).
+* Merge pull request `#88 <https://github.com/shaun-edwards/industrial_core/issues/88>`_ from gavanderhoorn/rob_sim_robot_status
+  Add RobotStatus publishing to robot simulator node
+* robot_simulator: remove redundant load_manifest(). Fix `#63 <https://github.com/shaun-edwards/industrial_core/issues/63>`_.
+* robot_simulator: update manifest (depend on industrial_msgs).
+* robot_simulator: publish RobotStatus msgs as well.
+* robot_simulator: make initial joint state configurable. Fix `#73 <https://github.com/shaun-edwards/industrial_core/issues/73>`_.
+* Contributors: Shaun Edwards, gavanderhoorn
+
 0.3.4 (2014-01-21)
 ------------------
 * No change

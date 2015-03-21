@@ -2,6 +2,10 @@
 Changelog for package industrial_deprecated
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* No changes
+
 0.3.4 (2014-01-21)
 ------------------
 * No change

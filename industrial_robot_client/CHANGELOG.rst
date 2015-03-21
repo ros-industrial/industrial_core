@@ -2,6 +2,20 @@
 Changelog for package industrial_robot_client
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Fill stamp of the RobotStatus message Fix: `#97 <https://github.com/shaun-edwards/industrial_core/issues/97>`_
+  Just edited on a github didn't test it.
+* Only accept goals after reception of controller feedback. Fix `#85 <https://github.com/shaun-edwards/industrial_core/issues/85>`_.
+* robot_client: workaround for `#46 <https://github.com/shaun-edwards/industrial_core/issues/46>`_. Fix `#67 <https://github.com/shaun-edwards/industrial_core/issues/67>`_.
+  This is an updated version of the workaround committed in 9df46977. Instead
+  of requiring dependent packages to invoke the function defined in the
+  CFG_EXTRAS cmake snippet, the snippet now sets up the linker path directly.
+  Dependent packages now only need to remember to explicitly list their
+  dependency on `industrial_robot_client` and `simple_message` in their
+  `add_library(..)` statements.
+* Contributors: Libor Wagner, gavanderhoorn
+
 0.3.4 (2014-01-21)
 ------------------
 * robot_client: workaround for `#46 <https://github.com/shaun-edwards/industrial_core/issues/46>`_. Fix `#67 <https://github.com/shaun-edwards/industrial_core/issues/67>`_.
