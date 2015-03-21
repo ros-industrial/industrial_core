@@ -1,6 +1,6 @@
 <package>
   <name>industrial_utils</name>
-  <version>0.3.4</version>
+  <version>0.4.0</version>
   <description>Industrial utils is a library package that captures common funcitonality for the ROS-Industrial distribution.</description>
 
   <maintainer email="sedwards@swri.org">Shaun Edwards</maintainer>

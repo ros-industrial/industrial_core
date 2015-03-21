@@ -2,8 +2,8 @@
 Changelog for package industrial_utils
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.4.0 (2015-03-21)
+------------------
 * Silent warnings
 * Contributors: Victor Lamoine
 

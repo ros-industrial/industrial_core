@@ -2,8 +2,8 @@
 Changelog for package industrial_robot_simulator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.4.0 (2015-03-21)
+------------------
 * Fixed roslaunch test dependency and build depends for robot simulator package
 * Corrected roslaunch test and added rospy depends to industrial_robot_simulator package
 * Removed extraneous dependencies.  Re-enable launch test

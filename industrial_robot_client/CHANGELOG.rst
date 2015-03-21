@@ -2,8 +2,8 @@
 Changelog for package industrial_robot_client
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.4.0 (2015-03-21)
+------------------
 * Fill stamp of the RobotStatus message Fix: `#97 <https://github.com/shaun-edwards/industrial_core/issues/97>`_
   Just edited on a github didn't test it.
 * Only accept goals after reception of controller feedback. Fix `#85 <https://github.com/shaun-edwards/industrial_core/issues/85>`_.

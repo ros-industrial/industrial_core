@@ -2,8 +2,8 @@
 Changelog for package simple_message
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.4.0 (2015-03-21)
+------------------
 * Moved common socket contstructor code to simple_socket base class
 * Updated simple message header to reflect vendor ranges specified in REP-I0004
 * Correctly initialized connected state for udp connections
