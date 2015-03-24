@@ -7,8 +7,8 @@ Changelog for package simple_message
 * Moved common socket contstructor code to simple_socket base class
 * Updated simple message header to reflect vendor ranges specified in REP-I0004
 * Correctly initialized connected state for udp connections
-* Fixed issue `#48 <https://github.com/shaun-edwards/industrial_core/issues/48>`_, logSocketError is now passed errno
-* Merge pull request `#70 <https://github.com/shaun-edwards/industrial_core/issues/70>`_ from gt-ros-pkg/hydro-devel
+* Fixed issue `#48 <https://github.com/ros-industrial/industrial_core/issues/48>`_, logSocketError is now passed errno
+* Merge pull request `#70 <https://github.com/ros-industrial/industrial_core/issues/70>`_ from gt-ros-pkg/hydro-devel
   Fixing receiveBytes for UDP
 * Macro'ed out GETHOSTBYNAME, and fixed if-statement braces to be on a new line for consistency
 * Added support for gethostbyname, for passing host names in addition to IP addresses.
@@ -18,7 +18,7 @@ Changelog for package simple_message
   This should now make UDP sockets act almost exactly like the
   TCP sockets.
 * Fixing receiveBytes for UDP
-* robot_client: workaround for `#46 <https://github.com/shaun-edwards/industrial_core/issues/46>`_. Fix `#67 <https://github.com/shaun-edwards/industrial_core/issues/67>`_.
+* robot_client: workaround for `#46 <https://github.com/ros-industrial/industrial_core/issues/46>`_. Fix `#67 <https://github.com/ros-industrial/industrial_core/issues/67>`_.
   This is an updated version of the workaround committed in 9df46977. Instead
   of requiring dependent packages to invoke the function defined in the
   CFG_EXTRAS cmake snippet, the snippet now sets up the linker path directly.
@@ -29,7 +29,7 @@ Changelog for package simple_message
 
 0.3.4 (2014-01-21)
 ------------------
-* robot_client: workaround for `#46 <https://github.com/shaun-edwards/industrial_core/issues/46>`_. Fix `#67 <https://github.com/shaun-edwards/industrial_core/issues/67>`_.
+* robot_client: workaround for `#46 <https://github.com/ros-industrial/industrial_core/issues/46>`_. Fix `#67 <https://github.com/ros-industrial/industrial_core/issues/67>`_.
   This is an updated version of the workaround committed in 9df46977. Instead
   of requiring dependent packages to invoke the function defined in the
   CFG_EXTRAS cmake snippet, the snippet now sets up the linker path directly.
@@ -53,4 +53,4 @@ Changelog for package simple_message
 * Removed library export from catkin macro.  Packages that depend on these must declare library dependencies explicitly (by name)
 * Add error message to socket errors (instead of just errno).
 * Converted to catkin
-* Contributors: Christina Gomez, JeremyZoss, ROS, Shaun Edwards, gavanderhoorn, jrgnicho, kphawkins, shaun-edwards
+* Contributors: Christina Gomez, JeremyZoss, ROS, Shaun Edwards, gavanderhoorn, jrgnicho, kphawkins, ros-industrial
