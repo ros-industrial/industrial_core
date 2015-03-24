@@ -2,8 +2,8 @@
 Changelog for package industrial_deprecated
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.4.1 (2015-03-23)
+------------------
 * Fixed changelog links to point to main repo
 * Contributors: Shaun Edwards
 
