@@ -2,6 +2,10 @@
 Changelog for package industrial_core
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* No changes
+
 0.4.0 (2015-03-21)
 ------------------
 * No changes

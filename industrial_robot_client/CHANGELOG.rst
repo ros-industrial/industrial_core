@@ -2,6 +2,11 @@
 Changelog for package industrial_robot_client
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Fixed changelog links to point to main repo
+* Contributors: Shaun Edwards
+
 0.4.0 (2015-03-21)
 ------------------
 * Fill stamp of the RobotStatus message Fix: `#97 <https://github.com/ros-industrial/industrial_core/issues/97>`_

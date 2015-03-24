@@ -2,6 +2,11 @@
 Changelog for package industrial_robot_simulator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Fixed changelog links to point to main repo
+* Contributors: Shaun Edwards
+
 0.4.0 (2015-03-21)
 ------------------
 * Fixed roslaunch test dependency and build depends for robot simulator package
