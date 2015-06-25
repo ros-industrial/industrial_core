@@ -104,6 +104,11 @@ private:
   ros::Timer watchdog_timer_;
 
   /**
+    * \brief Controller was alive during the last watchdog interval
+    */
+  bool controller_alive_;
+
+  /**
    * \brief Indicates action has an active goal
    */
   bool has_active_goal_;
@@ -145,12 +150,6 @@ private:
   control_msgs::FollowJointTrajectoryFeedbackConstPtr last_trajectory_state_;
 
   /**
-   * \brief Indicates trajectory state has been received.  Used by
-   * watchdog to determine if the robot driver is responding.
-   */
-  bool trajectory_state_recvd_;
-
-  /**
    * \brief Cache of the last subscribed status message
    */
   industrial_msgs::RobotStatusConstPtr last_robot_status_;
@@ -164,7 +163,7 @@ private:
   /**
    * \brief The watchdog period (seconds)
    */
-  static const double WATCHD0G_PERIOD_;// = 1.0;
+  static const double WATCHDOG_PERIOD_;// = 1.0;
 
   /**
    * \brief Watch dog callback, used to detect robot driver failures
