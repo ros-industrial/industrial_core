@@ -133,28 +133,16 @@ void JointTrajectoryAction::goalCB(JointTractoryActionServer::GoalHandle & gh)
         ROS_WARN("Received new goal, canceling current goal");
         abortGoal();
       }
+      
+      gh.setAccepted();
+      active_goal_ = gh;
+      has_active_goal_ = true;
 
-      // Sends the trajectory along to the controller
-      if (withinGoalConstraints(last_trajectory_state_, gh.getGoal()->trajectory))
-      {
+      ROS_INFO("Publishing trajectory");
 
-        ROS_INFO_STREAM("Already within goal constraints, setting goal succeeded");
-        gh.setAccepted();
-        gh.setSucceeded();
-        has_active_goal_ = false;
-
-      }
-      else
-      {
-        gh.setAccepted();
-        active_goal_ = gh;
-        has_active_goal_ = true;
-
-        ROS_INFO("Publishing trajectory");
-
-        current_traj_ = active_goal_.getGoal()->trajectory;
-        pub_trajectory_command_.publish(current_traj_);
-      }
+      current_traj_ = active_goal_.getGoal()->trajectory;
+      pub_trajectory_command_.publish(current_traj_);
+    
     }
     else
     {
