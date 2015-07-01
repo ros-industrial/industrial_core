@@ -57,7 +57,11 @@ namespace industrial
         if (this->MAX_BUFFER_SIZE > (int)buffer.getBufferSize())
         {
 
-          rc = rawSendBytes(buffer.getRawDataPtr(), buffer.getBufferSize());
+          // copy to local array, since ByteArray no longer supports
+          // direct pointer-access to data values
+          std::vector<char> localBuffer;
+          buffer.copyTo(localBuffer);
+          rc = rawSendBytes(&localBuffer[0], localBuffer.size());
           if (this->SOCKET_FAIL != rc)
           {
             rtn = true;
@@ -104,10 +108,9 @@ namespace industrial
 
       memset(&this->buffer_, 0, sizeof(this->buffer_));
 
-      // Doing a sanity check to determine if the byte array buffer is larger than
-      // what can be sent in the socket.  This should not happen and might be indicative
-      // of some code synchronization issues between the client and server base.
-      if (this->MAX_BUFFER_SIZE < (int)buffer.getMaxBufferSize())
+      // Doing a sanity check to determine if the byte array buffer is smaller than
+      // what can be received by the socket.
+      if (this->MAX_BUFFER_SIZE > buffer.getMaxBufferSize())
       {
         LOG_WARN("Socket buffer max size: %u, is larger than byte array buffer: %u",
             this->MAX_BUFFER_SIZE, buffer.getMaxBufferSize());

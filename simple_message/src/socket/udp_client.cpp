@@ -101,12 +101,18 @@ bool UdpClient::makeConnect()
     this->setConnected(false);
     send.load((void*)&sendHS, sizeof(sendHS));
   
+    // copy to local array, since ByteArray no longer supports
+    // direct pointer-access to data values
+    const int sendLen = send.getBufferSize();
+    char      localBuffer[sendLen];
+    send.unload(localBuffer, sendLen);
+
     do
     {
       ByteArray recv;
       recvHS = 0;
       LOG_DEBUG("UDP client sending handshake");
-      this->rawSendBytes(send.getRawDataPtr(), send.getBufferSize());
+      this->rawSendBytes(localBuffer, sendLen);
       if (this->isReadyReceive(timeout))
       {
         bytesRcvd = this->rawReceiveBytes(this->buffer_, 0);

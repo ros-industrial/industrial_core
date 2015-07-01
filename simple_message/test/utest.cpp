@@ -53,6 +53,7 @@
 // threads 
 //#include <boost/thread/thread.hpp>
 #include <pthread.h>
+#include <limits>
 
 using namespace industrial::simple_message;
 using namespace industrial::byte_array;
@@ -85,9 +86,6 @@ TEST(ByteArraySuite, init)
   const shared_int SIZE = 100;
 
   ByteArray bytes;
-  shared_int TOO_BIG = bytes.getMaxBufferSize()+1;
-
-  char bigBuffer[TOO_BIG];
   char buffer[SIZE];
 
   // Valid byte arrays
@@ -95,8 +93,16 @@ TEST(ByteArraySuite, init)
   EXPECT_EQ((shared_int)bytes.getBufferSize(), SIZE);
 
   // Invalid init (too big)
-  // Invalid buffers
-  EXPECT_FALSE(bytes.init(&bigBuffer[0], TOO_BIG));
+  if (bytes.getMaxBufferSize() < std::numeric_limits<shared_int>::max())
+  {
+      shared_int TOO_BIG = bytes.getMaxBufferSize()+1;
+      char bigBuffer[TOO_BIG];
+      EXPECT_FALSE(bytes.init(&bigBuffer[0], TOO_BIG));
+  }
+  else
+      std::cout << std::string(15, ' ')
+                << "ByteArray.MaxSize==INT_MAX.  Skipping TOO_BIG tests" << std::endl;
+
 }
 
 TEST(ByteArraySuite, loading)
@@ -219,11 +225,6 @@ TEST(ByteArraySuite, copy)
   // Copy
   ByteArray copyFrom;
   ByteArray copyTo;
-  ByteArray tooBig;
-
-
-  shared_int TOO_BIG = tooBig.getMaxBufferSize()-1;
-  char bigBuffer[TOO_BIG];
 
   EXPECT_TRUE(copyFrom.init(&buffer[0], SIZE));
   EXPECT_TRUE(copyTo.load(copyFrom));
@@ -232,10 +233,20 @@ TEST(ByteArraySuite, copy)
   EXPECT_EQ((shared_int)copyTo.getBufferSize(), 2*SIZE);
 
   // Copy too large
-  EXPECT_TRUE(tooBig.init(&bigBuffer[0], TOO_BIG));
-  EXPECT_FALSE(copyTo.load(tooBig));
-  // A failed load should not change the buffer.
-  EXPECT_EQ((shared_int)copyTo.getBufferSize(), 2*SIZE);
+  ByteArray tooBig;
+  if (tooBig.getMaxBufferSize()-1 <= std::numeric_limits<shared_int>::max())
+  {
+      shared_int TOO_BIG = tooBig.getMaxBufferSize()-1;
+      char bigBuffer[TOO_BIG];
+
+      EXPECT_TRUE(tooBig.init(&bigBuffer[0], TOO_BIG));
+      EXPECT_FALSE(copyTo.load(tooBig));
+      // A failed load should not change the buffer.
+      EXPECT_EQ((shared_int)copyTo.getBufferSize(), 2*SIZE);
+  }
+  else
+      std::cout << std::string(15, ' ')
+                << "ByteArray.MaxSize==INT_MAX.  Skipping TOO_BIG tests" << std::endl;
 }
 
 // Need access to protected members for testing
