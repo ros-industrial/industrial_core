@@ -119,7 +119,7 @@ void SimpleMessage::toByteArray(ByteArray & msg)
   msg.load(this->getReplyCode());
   if (this->data_.getBufferSize() > 0 )
   {
-    msg.load(this->getData().getRawDataPtr(), this->data_.getBufferSize());
+    msg.load(this->data_);
   }
 
 }

@@ -1,7 +1,7 @@
 ﻿/*
  * Software License Agreement (BSD License)
  *
- * Copyright (c) 2011, Southwest Research Institute
+ * Copyright (c) 2015, Southwest Research Institute
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -38,6 +38,8 @@
 #include "shared_types.h"
 #endif
 
+#include <deque>
+#include <vector>
 #include "string.h"
 
 namespace industrial
@@ -55,7 +57,7 @@ namespace byte_array
 {
 
 /**
- * \brief The byte array wraps a traditional, fixed size, array of bytes (i.e. char*).
+ * \brief The byte array wraps a dynamic array of bytes (i.e. char).
  *
  * It  provides convenient methods for loading and unloading
  * data types to and from the byte array.  The class acts as an
@@ -63,12 +65,13 @@ namespace byte_array
  * raw data changes).  It's intended use is for socket communications.
  *
  * By default data using the load/unload methods is appended/removed from the end
- * of the array.  As long as the standard load/unload methods are uses, this is
+ * of the array.  Methods are also provided to load/unload from the front of the
+ * array.  As long as the matching load/unload methods are used, this is
  * transparent to the user.
  *
- * A fixed size array is used for simplicity (i.e. avoiding re-implementing
- * the STL vector class for those systems that don't have access to the STL,
- * i.e. Motoman robotics Motoplus compiler.
+ * The internals of ByteArray have been updated to use a dynamically-allocated
+ * STL class, for safety and performance reasons.  This may limit cross-platform
+ * usage of this class (e.g. in the MotoPlus compiler).
  *
  * THIS CLASS IS NOT THREAD-SAFE
  *
@@ -98,7 +101,7 @@ public:
   /**
    * \brief Initializes or Reinitializes an empty buffer.
    *
-   * This method sets all values to 0 and resets the buffer size.
+   * This method resets the buffer size to zero (empty).
    *
    */
   void init();
@@ -110,9 +113,7 @@ public:
    * in buffer (up to byteSize)
    *
    * \param buffer pointer to byte buffer
-   * \param byte_size size of buffer to copy.  If the byte size is greater
-   * than the max buffer size then only the max buffer amount of bytes is
-   * copied
+   * \param byte_size size of buffer to copy.
    *
    * \return true on success, false otherwise (max array size exceeded).
    */
@@ -128,6 +129,16 @@ public:
    *
    */
   void copyFrom(ByteArray & buffer);
+
+  /**
+   * \brief Copy to std::vector, for raw-ptr access
+   *
+   * This method copies the ByteArray data to a std::vector.
+   *
+   * \param out vector to copy into
+   *
+   */
+  void copyTo(std::vector<char> & out);
 
   /**
    * \brief loads a boolean into the byte array
@@ -257,8 +268,6 @@ public:
   /**
    * \brief unloads a double value from the beginning of the byte array.
    * If byte swapping is enabled, then the bytes are swapped.
-   * WARNING: This method performs a memmove every time it is called (this is
-   * expensive).
    *
    * \param value value to unload
    *
@@ -269,8 +278,6 @@ public:
   /**
    * \brief unloads an integer value from the beginning of the byte array.
    * If byte swapping is enabled, then the bytes are swapped
-   * WARNING: This method performs a memmove every time it is called (this is
-   * expensive).
    *
    * \param value value to unload
    *
@@ -280,8 +287,6 @@ public:
 
   /**
    * \brief unloads a void* (treated as char*) from the beginning of the array.
-   * WARNING: This method performs a memmove every time it is called (this is
-   * expensive).
    * WARNING: Byte swapping is not performed in this function.
    *
    * \param value to unload
@@ -295,14 +300,12 @@ public:
    * \brief returns a char* pointer to the raw data.
    * WARNING: This method is meant for read-only operations
    *
-   * This function returns a pointer to the actual raw data stored within
-   * the class.  Care should be taken not to modified the data oustide of
-   * the class.  This method of providing a reference to private class data
-   * is used in order to avoid dynamic memory allocation that would be required
-   * to return a copy.
+   * \deprecated This is unsafe with dynamic buffer sizing.
+   * Use copyTo(vector<char>) instead.
    *
    * \return char* pointer to the raw data
    */
+   __attribute__((deprecated("This ptr will be invalid once buffer is changed.  Please use: copyTo(vector<char>) instead.")))
   char* getRawDataPtr();
 
   /**
@@ -329,25 +332,16 @@ public:
   static bool isByteSwapEnabled();
 
 private:
-  /**
-   * \brief maximum array size (WARNING: THIS VALUE SHOULD NOT EXCEED THE MAX
-   * 32-BIT INTEGER SIZE)
-   *
-   * The byte array class uses shared 32-bit types, so the buffer size cannot
-   * be larger than this.  Ideally this value would be relatively small as passing
-   * large amounts of data is not desired.
-   */
-  static const industrial::shared_types::shared_int MAX_SIZE = 1024;
 
   /**
    * \brief internal data buffer
    */
-  char buffer_[MAX_SIZE];
-
+  std::deque<char> buffer_;
+  
   /**
-   * \brief current buffer size
+   * \brief temporary continuous buffer for getRawDataPtr() use
    */
-  industrial::shared_types::shared_int buffer_size_;
+   std::vector<char> getRawDataPtr_buffer_;
 
 #ifdef BYTE_SWAPPING
   /**
@@ -359,52 +353,6 @@ private:
    */
   void swap(void *value, industrial::shared_types::shared_int byteSize);
 #endif
-
-  /**
-   * \brief sets current buffer size
-   *
-   * \param size new size
-   *
-   * \return true on success, false otherwise (new size is too large)
-   */
-  bool setBufferSize(const industrial::shared_types::shared_int size);
-
-  /**
-   * \brief extends current buffer size
-   *
-   * \param number of bytes to extend
-   *
-   * \return true on success, false otherwise (new size is too large)
-   */
-  bool extendBufferSize(const industrial::shared_types::shared_int size);
-
-  /**
-   * \brief shortens current buffer size
-   *
-   * \param number of bytes to shorten
-   *
-   * \return true on success, false otherwise (new size is less than 0)
-   */
-  bool shortenBufferSize(industrial::shared_types::shared_int size);
-
-  /**
-   * \brief gets pointer to unload location (buffer_size + 1)
-   *
-   * \param size new size
-   *
-   * \return pointer to load location (NULL if array is at max size)
-   */
-  char* getLoadPtr();
-
-  /**
-   * \brief gets pointer to unload location (buffer_size - num_bytes)
-   *
-   * The unload location is the beginning of the data item that is to
-   * be unloaded.
-   *
-   * \return pointer to load location (NULL is num_bytes > buffer_size_)
-   */
-  char* getUnloadPtr(const industrial::shared_types::shared_int num_bytes);
 
 };
 

@@ -142,8 +142,14 @@ bool UdpServer::makeConnect()
     }
     while(recvHS != sendHS);
     
+    // copy to local array, since ByteArray no longer supports
+    // direct pointer-access to data values
+    const int sendLen = send.getBufferSize();
+    char      localBuffer[sendLen];
+    send.unload(localBuffer, sendLen);
+
     // Send a reply handshake
-    this->rawSendBytes(send.getRawDataPtr(), send.getBufferSize());
+    this->rawSendBytes(localBuffer, sendLen);
     this->setConnected(true);
     rtn = true;
     
