@@ -143,6 +143,8 @@ void JointTrajectoryAction::goalCB(JointTractoryActionServer::GoalHandle & gh)
       gh.setAccepted();
       active_goal_ = gh;
       has_active_goal_ = true;
+      time_to_check_ = ros::Time::now() + 
+          ros::Duration(active_goal_.getGoal()->trajectory.points.back().time_from_start.toSec() / 2.0);
 
       ROS_INFO("Publishing trajectory");
 
@@ -222,6 +224,12 @@ void JointTrajectoryAction::controllerStateCB(const control_msgs::FollowJointTra
   if (!industrial_utils::isSimilar(joint_names_, msg->joint_names))
   {
     ROS_ERROR("Joint names from the controller don't match our joint names.");
+    return;
+  }
+
+  if (ros::Time::now() < time_to_check_)
+  {
+    ROS_DEBUG("Waiting to check for goal completion until halfway through trajectory");
     return;
   }
 
