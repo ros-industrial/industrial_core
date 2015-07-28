@@ -155,6 +155,12 @@ private:
   industrial_msgs::RobotStatusConstPtr last_robot_status_;
 
   /**
+   * \brief Time at which to start checking for completion of current 
+   * goal, if one is active
+   */
+  ros::Time time_to_check_;
+
+  /**
    * \brief The watchdog period (seconds)
    */
   static const double WATCHDOG_PERIOD_;// = 1.0;
