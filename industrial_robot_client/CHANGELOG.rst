@@ -2,8 +2,8 @@
 Changelog for package industrial_robot_client
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.4.2 (2015-10-21)
+------------------
 * Forces the action to wait for half of the duration of the trajectory
   before it begins to check for completition. This prevents the action
   for returning immediately for trajectories that end near the start

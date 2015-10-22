@@ -2,8 +2,8 @@
 Changelog for package industrial_utils
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.4.2 (2015-10-21)
+------------------
 * No change
 
 0.4.1 (2015-03-23)
