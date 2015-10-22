@@ -2,6 +2,10 @@
 Changelog for package industrial_trajectory_filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* No change
+
 0.4.1 (2015-03-23)
 ------------------
 * No changes

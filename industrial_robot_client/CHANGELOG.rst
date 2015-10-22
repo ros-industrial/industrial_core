@@ -2,6 +2,15 @@
 Changelog for package industrial_robot_client
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Forces the action to wait for half of the duration of the trajectory
+  before it begins to check for completition. This prevents the action
+  for returning immediately for trajectories that end near the start
+  point and are slow to start moving.
+* Fix rejected actions when goal requests arrive in between watchdog reset und arrival of next status package
+* Contributors: Jonathan Meyer, Shaun Edwards, Simon Schmeisser (isys vision)
+
 0.4.1 (2015-03-23)
 ------------------
 * Fixed changelog links to point to main repo

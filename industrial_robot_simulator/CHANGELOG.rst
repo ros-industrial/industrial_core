@@ -2,6 +2,10 @@
 Changelog for package industrial_robot_simulator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* No change
+
 0.4.1 (2015-03-23)
 ------------------
 * Fixed changelog links to point to main repo

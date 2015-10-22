@@ -2,6 +2,10 @@
 Changelog for package industrial_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* No changes
+
 0.4.1 (2015-03-23)
 ------------------
 * Fixed changelog links to point to main repo
