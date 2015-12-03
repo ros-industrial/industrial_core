@@ -45,7 +45,7 @@ const double JointTrajectoryAction::DEFAULT_GOAL_THRESHOLD_ = 0.01;
 JointTrajectoryAction::JointTrajectoryAction() :
     action_server_(node_, "joint_trajectory_action", boost::bind(&JointTrajectoryAction::goalCB, this, _1),
                    boost::bind(&JointTrajectoryAction::cancelCB, this, _1), false), has_active_goal_(false),
-                       controller_alive_(false)
+                       controller_alive_(false), has_moved_once_(false)
 {
   ros::NodeHandle pn("~");
 
@@ -74,6 +74,7 @@ JointTrajectoryAction::~JointTrajectoryAction()
 void JointTrajectoryAction::robotStatusCB(const industrial_msgs::RobotStatusConstPtr &msg)
 {
   last_robot_status_ = msg; //caching robot status for later use.
+  has_moved_once_ = has_moved_once_ ? true : (last_robot_status_->in_motion.val == industrial_msgs::TriState::TRUE);
 }
 
 void JointTrajectoryAction::watchdog(const ros::TimerEvent &e)
@@ -139,6 +140,7 @@ void JointTrajectoryAction::goalCB(JointTractoryActionServer::GoalHandle & gh)
       has_active_goal_ = true;
       time_to_check_ = ros::Time::now() + 
           ros::Duration(active_goal_.getGoal()->trajectory.points.back().time_from_start.toSec() / 2.0);
+      has_moved_once_ = false;
 
       ROS_INFO("Publishing trajectory");
 
@@ -224,7 +226,7 @@ void JointTrajectoryAction::controllerStateCB(const control_msgs::FollowJointTra
     return;
   }
 
-  if (ros::Time::now() < time_to_check_)
+  if (!has_moved_once_ && (ros::Time::now() < time_to_check_))
   {
     ROS_DEBUG("Waiting to check for goal completion until halfway through trajectory");
     return;

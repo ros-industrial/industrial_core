@@ -114,6 +114,12 @@ private:
   bool has_active_goal_;
 
   /**
+   * \brief Indicates that the robot has been in a moving state at least once since
+   * starting the current active trajectory
+   */
+  bool has_moved_once_;
+
+  /**
    * \brief Cache of the current active goal
    */
   JointTractoryActionServer::GoalHandle active_goal_;
