@@ -1,3 +1,0 @@
-[submodule ".ci_config"]
-	path = .ci_config
-	url = https://github.com/ros-industrial/industrial_ci.git
