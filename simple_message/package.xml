@@ -1,6 +1,6 @@
 <package>
   <name>simple_message</name>
-  <version>0.4.2</version>
+  <version>0.4.3</version>
   <description>
 	simple_message defines a simple messaging connection and protocol for communicating 
 	with an industrial robot controller.  Additional handler and manager classes are 
