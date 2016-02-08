@@ -2,6 +2,10 @@
 Changelog for package simple_message
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* No changes
+
 0.4.2 (2015-10-21)
 ------------------
 * No change
