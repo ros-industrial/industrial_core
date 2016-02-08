@@ -2,8 +2,8 @@
 Changelog for package industrial_robot_client
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.4.3 (2016-02-07)
+------------------
 * Start checking for trajectory completion as soon as the first moving status arrives
 * Contributors: Simon Schmeisser
 
