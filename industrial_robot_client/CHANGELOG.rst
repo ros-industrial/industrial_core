@@ -2,8 +2,8 @@
 Changelog for package industrial_robot_client
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.5.0 (2016-02-22)
+------------------
 * Start checking for trajectory completion as soon as the first moving status arrives
 * Forces the action to wait for half of the duration of the trajectory
   before it begins to check for completition. This prevents the action

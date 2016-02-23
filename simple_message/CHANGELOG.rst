@@ -2,8 +2,8 @@
 Changelog for package simple_message
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.5.0 (2016-02-22)
+------------------
 * Switch ByteArray to <deque> for internal buffer
   - enables dynamic sizing, for larger messages
   * up to INT_MAX, which is unadvised

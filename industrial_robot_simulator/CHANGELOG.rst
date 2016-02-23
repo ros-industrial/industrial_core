@@ -2,8 +2,8 @@
 Changelog for package industrial_robot_simulator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.5.0 (2016-02-22)
+------------------
 * Added industrial_robot_client test depends as a workaround to test failures
 * Updated industrial_robot_simulator package.xml to version 2 format
 * Contributors: Shaun Edwards
