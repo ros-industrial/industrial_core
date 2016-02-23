@@ -2,6 +2,18 @@
 Changelog for package simple_message
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Switch ByteArray to <deque> for internal buffer
+  - enables dynamic sizing, for larger messages
+  * up to INT_MAX, which is unadvised
+  - allows efficient data access at front/rear of msgs
+  - maintains same external API
+  * getRawDataPtr() is deprecated (not contiguous memory)
+  - bugFix: SimpleSocket::receiveBytes() buffer-size check
+  - update unit tests to handle ByteArray.MaxSize==INT_MAX
+* Contributors: Jeremy Zoss
+
 0.4.3 (2016-02-07)
 ------------------
 * No changes

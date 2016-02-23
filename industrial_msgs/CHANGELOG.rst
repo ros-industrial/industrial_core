@@ -2,6 +2,10 @@
 Changelog for package industrial_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* No changes
+
 0.4.3 (2016-02-07)
 ------------------
 * No changes
