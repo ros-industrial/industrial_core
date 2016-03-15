@@ -34,7 +34,12 @@
 import rospy
 import copy
 import threading
-import Queue
+
+import sys
+if sys.version_info.major == 2:
+    import Queue
+else:
+    import queue as Queue
 
 # Publish
 from sensor_msgs.msg import JointState
@@ -158,7 +163,7 @@ class MotionControllerSimulator():
     def _motion_worker(self):
         rospy.logdebug('Starting motion worker in motion controller simulator')
         move_duration = rospy.Duration()
-        if self.update_rate <> 0.:
+        if self.update_rate != 0.:
             update_duration = rospy.Duration(1./self.update_rate)
         last_goal_point = JointTrajectoryPoint()
 
