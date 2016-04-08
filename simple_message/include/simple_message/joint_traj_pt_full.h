@@ -53,7 +53,11 @@ namespace SpecialSeqValues
 {
 enum SpecialSeqValue
 {
-  START_TRAJECTORY_DOWNLOAD = -1, START_TRAJECOTRY_STREAMING = -2, END_TRAJECTORY = -3, STOP_TRAJECTORY = -4
+  START_TRAJECTORY_DOWNLOAD  = -1,
+  START_TRAJECOTRY_STREAMING = -2, ///< deprecated, please use START_TRAJECTORY_STREAMING instead
+  START_TRAJECTORY_STREAMING = -2,
+  END_TRAJECTORY  = -3,
+  STOP_TRAJECTORY = -4
 };
 }
 typedef SpecialSeqValues::SpecialSeqValue SpecialSeqValue;
