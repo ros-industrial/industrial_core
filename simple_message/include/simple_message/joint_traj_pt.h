@@ -53,7 +53,11 @@ namespace SpecialSeqValues
 {
 enum SpecialSeqValue
 {
-  START_TRAJECTORY_DOWNLOAD = -1, START_TRAJECOTRY_STREAMING = -2, END_TRAJECTORY = -3, STOP_TRAJECTORY = -4
+  START_TRAJECTORY_DOWNLOAD  = -1, ///< Downloading drivers only: signal start of trajectory
+  START_TRAJECOTRY_STREAMING = -2, ///< deprecated, please use START_TRAJECTORY_STREAMING instead
+  START_TRAJECTORY_STREAMING = -2, ///< Streaming drivers only: signal start of trajectory
+  END_TRAJECTORY  = -3, ///< Downloading drivers only: signal end of trajectory
+  STOP_TRAJECTORY = -4  ///< Server should stop the current motion (if any) as soon as possible
 };
 }
 typedef SpecialSeqValues::SpecialSeqValue SpecialSeqValue;
