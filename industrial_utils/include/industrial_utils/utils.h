@@ -75,7 +75,7 @@ bool isSame(const std::vector<std::string> & lhs, const std::vector<std::string>
  *
  * \return true if successful, false if error occurred (e.g. branching tree)
  */
-bool findChainJointNames(const boost::shared_ptr<const urdf::Link> &link, bool ignore_fixed,
+bool findChainJointNames(const urdf::LinkConstSharedPtr &link, bool ignore_fixed,
 		                 std::vector<std::string> &joint_names);
 
 } //industrial_utils
