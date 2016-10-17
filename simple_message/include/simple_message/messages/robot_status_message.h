@@ -110,8 +110,38 @@ public:
   {
     return this->status_.byteLength();
   }
+  
+  /**
+   * \brief Gets the communication type of the message
+   * 
+   * \return the value of the comm_type parameter (refer to simple_message::CommTypes::CommType)
+   */
+  int getCommType() const
+  {
+    return comm_type_;
+  }
+  
 
   industrial::robot_status::RobotStatus status_;
+  
+protected:
+
+  /**
+   * \brief Sets the communication type of the message
+   *
+   * \param comm_type: value of the comm_type parameter (refer to simple_message::CommTypes::CommType)
+   */
+  void setCommType(int comm_type = industrial::simple_message::CommTypes::INVALID)
+  {
+    this->comm_type_ = comm_type;
+  }
+  
+private:
+  
+  /**
+   * \brief Communications type (see simple_message::CommTypes::CommType)
+   */
+  industrial::shared_types::shared_int comm_type_;
 
 
 };
