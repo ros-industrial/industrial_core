@@ -130,25 +130,45 @@ public:
     		industrial::simple_message::ReplyTypes::INVALID, data);
   }
   /**
-     * \brief gets message type (enumeration)
-     *
-     * \return message type
-     */
+   * \brief gets message type (enumeration)
+   *
+   * \return message type
+   */
   int getMessageType() const
   {
     return message_type_;
   }
+  
+  /**
+   * \brief Gets the communication type of the message
+   * 
+   * \return the value of the comm_type parameter (refer to simple_message::CommTypes::CommType)
+   */
+  int getCommType() const
+  {
+    return comm_type_;
+  }
 
 protected:
 
-/**
-     * \brief sets message type
-     *
-     * \return message type
-     */
+  /**
+   * \brief sets message type
+   *
+   * \return message type
+   */
   void setMessageType(int message_type = industrial::simple_message::StandardMsgTypes::INVALID)
   {
     this->message_type_ = message_type;
+  }
+  
+  /**
+   * \brief Sets the communication type of the message
+   *
+   * \param comm_type: value of the comm_type parameter (refer to simple_message::CommTypes::CommType)
+   */
+  void setCommType(int comm_type = industrial::simple_message::CommTypes::INVALID)
+  {
+    this->comm_type_ = comm_type;
   }
 
 private:
@@ -158,6 +178,11 @@ private:
    */
 
   int message_type_;
+    
+  /**
+   * \brief Communications type (see simple_message::CommTypes::CommType)
+   */
+  int comm_type_;
 
 };
 
