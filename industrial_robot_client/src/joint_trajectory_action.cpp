@@ -51,6 +51,7 @@ JointTrajectoryAction::JointTrajectoryAction() :
 
   pn.param("constraints/goal_threshold", goal_threshold_, DEFAULT_GOAL_THRESHOLD_);
 
+
   if (!industrial_utils::param::getJointNames("controller_joint_names", "robot_description", joint_names_))
     ROS_ERROR("Failed to initialize joint_names.");
 
@@ -171,7 +172,7 @@ void JointTrajectoryAction::goalCB(JointTractoryActionServer::GoalHandle gh)
   }
   if (!gh.getGoal()->goal_tolerance.empty())
   {
-    ROS_WARN_STREAM(
+    ROS_ERROR_STREAM(
         "Ignoring goal tolerance in action, using paramater tolerance of " << goal_threshold_ << " instead");
   }
   if (!gh.getGoal()->path_tolerance.empty())
