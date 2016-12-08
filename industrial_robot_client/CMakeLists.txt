@@ -133,7 +133,6 @@ add_executable(joint_trajectory_action
   src/joint_trajectory_action.cpp)
 target_link_libraries(joint_trajectory_action 
   industrial_robot_client ${catkin_LIBRARIES})
-add_dependencies(joint_trajectory_action industrial_robot_client_gencpp)
 
 ##########
 ## Test ##
