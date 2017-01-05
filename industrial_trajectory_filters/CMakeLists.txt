@@ -2,6 +2,11 @@ cmake_minimum_required(VERSION 2.8.3)
 
 project(industrial_trajectory_filters)
 
+if(CMAKE_COMPILER_IS_GNUCXX)
+    set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
+endif()
+
+
 find_package(catkin REQUIRED COMPONENTS moveit_ros_planning trajectory_msgs)
 
 catkin_package(
