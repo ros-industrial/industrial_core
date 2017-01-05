@@ -34,7 +34,12 @@
 import rospy
 import copy
 import threading
-import Queue
+
+import sys
+if sys.version_info.major == 2:
+    import Queue
+else:
+    import queue as Queue
 
 # Publish
 from sensor_msgs.msg import JointState
@@ -158,7 +163,7 @@ class MotionControllerSimulator():
     def _motion_worker(self):
         rospy.logdebug('Starting motion worker in motion controller simulator')
         move_duration = rospy.Duration()
-        if self.update_rate <> 0.:
+        if self.update_rate != 0.:
             update_duration = rospy.Duration(1./self.update_rate)
         last_goal_point = JointTrajectoryPoint()
 
@@ -229,7 +234,7 @@ class IndustrialRobotSimulatorNode():
         def_joint_names = ["joint_1", "joint_2", "joint_3", "joint_4", "joint_5", "joint_6"]
         self.joint_names = rospy.get_param('controller_joint_names', def_joint_names)
         if len(self.joint_names) == 0:
-            rospy.logwarn("Joint list is empty, did you set controller_joint_name?")
+            rospy.logwarn("Joint list is empty, did you set the 'controller_joint_names' parameter?")
         rospy.loginfo("Simulating manipulator with %d joints: %s", len(self.joint_names), ", ".join(self.joint_names))
 
         # Setup initial joint positions
