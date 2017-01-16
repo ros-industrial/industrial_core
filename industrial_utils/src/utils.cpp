@@ -69,11 +69,11 @@ bool isSame(const std::vector<std::string> & lhs, const std::vector<std::string>
   return rtn;
 }
 
-bool findChainJointNames(const boost::shared_ptr<const urdf::Link> &link, bool ignore_fixed,
+bool findChainJointNames(const urdf::LinkConstSharedPtr &link, bool ignore_fixed,
 		                 std::vector<std::string> &joint_names)
 {
-  typedef std::vector<boost::shared_ptr<urdf::Joint> > joint_list;
-  typedef std::vector<boost::shared_ptr<urdf::Link> > link_list;
+  typedef std::vector<urdf::JointSharedPtr > joint_list;
+  typedef std::vector<urdf::LinkSharedPtr > link_list;
   std::string found_joint, found_link;
 
   // check for joints directly connected to this link
