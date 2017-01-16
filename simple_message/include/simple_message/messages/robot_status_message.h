@@ -110,9 +110,9 @@ public:
   {
     return this->status_.byteLength();
   }
+  
 
   industrial::robot_status::RobotStatus status_;
-
 
 };
 

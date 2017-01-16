@@ -2,6 +2,20 @@
 Changelog for package industrial_robot_client
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.5.0 (2016-02-22)
+------------------
+* Start checking for trajectory completion as soon as the first moving status arrives
+* Forces the action to wait for half of the duration of the trajectory
+  before it begins to check for completition. This prevents the action
+  for returning immediately for trajectories that end near the start
+  point and are slow to start moving.
+* Merge pull request `#115 <https://github.com/shaun-edwards/industrial_core/issues/115>`_ from `Jmeyer1292/issue#114 <https://github.com/Jmeyer1292/issue/issues/114>`__start_tolerance_check
+  Issue`#114 <https://github.com/shaun-edwards/industrial_core/issues/114>`_ - Action Server withinGoalConstraints check removal
+* Revert "Revert "Merge pull request `#113 <https://github.com/shaun-edwards/industrial_core/issues/113>`_ from simonschmeisser/indigo""
+  This reverts commit fb28e26fdbd3c316941d4d66af2f1c9b5410cb0d.
+* Removed withinTolerance check from the accept function
+* Contributors: Jonathan Meyer, Shaun Edwards, Simon Schmeisser
+
 0.4.3 (2016-02-07)
 ------------------
 * Start checking for trajectory completion as soon as the first moving status arrives

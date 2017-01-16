@@ -80,7 +80,7 @@ bool RobotStatusRelayHandler::internalCB(RobotStatusMessage & in)
   this->pub_robot_status_.publish(status);
 
   // Reply back to the controller if the sender requested it.
-  if (CommTypes::SERVICE_REQUEST == in.getMessageType())
+  if (CommTypes::SERVICE_REQUEST == in.getCommType())
   {
     SimpleMessage reply;
     in.toReply(reply, rtn ? ReplyTypes::SUCCESS : ReplyTypes::FAILURE);
