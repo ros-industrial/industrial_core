@@ -6,14 +6,19 @@ find_package(catkin REQUIRED COMPONENTS roscpp urdf)
 
 find_package(Boost REQUIRED COMPONENTS system)
 
+find_package(urdfdom_headers 0.4 REQUIRED)
+
 catkin_package(
     CATKIN_DEPENDS roscpp urdf
     INCLUDE_DIRS include
     LIBRARIES ${PROJECT_NAME}
+    DEPENDS urdfdom_headers
 )
 
 include_directories(include
-  ${catkin_INCLUDE_DIRS})
+  ${catkin_INCLUDE_DIRS}
+  ${urdfdom_headers_INCLUDE_DIRS}
+  )
 
 add_library(${PROJECT_NAME} src/utils.cpp src/param_utils.cpp)
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES})
