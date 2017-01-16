@@ -2,8 +2,8 @@
 Changelog for package industrial_core
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.6.0 (2017-01-16)
+------------------
 * Added C++ 11 compile option
 * Contributors: Victor Lamoine
 
