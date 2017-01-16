@@ -2,6 +2,12 @@
 Changelog for package industrial_trajectory_filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Fix issue `#127 <https://github.com/ros-industrial/industrial_core/issues/127>`_
+  Changed all relevant ROS_INFO_STREAM macros to ROS_DEBUG_STREAM macros. Now the filter only outputs the summary at the end.
+* Contributors: Mart (mmj)
+
 0.5.0 (2016-02-22)
 ------------------
 * No changes

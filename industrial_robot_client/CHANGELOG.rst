@@ -2,6 +2,12 @@
 Changelog for package industrial_robot_client
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* robot_status: missing reply to SERVICE_REQUEST. Fix in robot_status_message and relay_handler.
+* industrial_robot_client: Fix signature of goal and cancel callbacks.
+* Contributors: Alberto Marini, Maarten de Vries
+
 0.5.0 (2016-02-22)
 ------------------
 * Start checking for trajectory completion as soon as the first moving status arrives

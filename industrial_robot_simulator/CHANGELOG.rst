@@ -2,6 +2,12 @@
 Changelog for package industrial_robot_simulator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* robot_simulator: clarify err msg when controller_joint_names is missing.
+* Make industrial_robot_simulator python3 compatible.
+* Contributors: G.A. vd. Hoorn, Maarten de Vries
+
 0.5.0 (2016-02-22)
 ------------------
 * Added industrial_robot_client test depends as a workaround to test failures

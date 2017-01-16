@@ -2,6 +2,16 @@
 Changelog for package simple_message
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Temporary fix, commented out disabled test to remove unstable build status
+* Changed test port numbers to unused range in linux.  utest_message now uses port range defined by macros (addresses failure to init server socket)
+* Amend to pull request `#153 <https://github.com/ros-industrial/industrial_core/issues/153>`_ (methods moved to TypedMessage)
+* robot_status: missing reply to SERVICE_REQUEST. Fix in robot_status_message and relay_handler.
+* simple_message: add doc to SpecialSeqValue enum members.
+* simple_message: fix SpecialSeqValue typo. Fix `#130 <https://github.com/ros-industrial/industrial_core/issues/130>`_.
+* Contributors: Alberto Marini, Shaun Edwards, gavanderhoorn
+
 0.5.0 (2016-02-22)
 ------------------
 * Switch ByteArray to <deque> for internal buffer
