@@ -2,8 +2,8 @@
 Changelog for package industrial_core
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.5.1 (2017-01-15)
+------------------
 * No changes
 
 0.5.0 (2016-02-22)

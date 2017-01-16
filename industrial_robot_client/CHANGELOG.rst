@@ -2,8 +2,8 @@
 Changelog for package industrial_robot_client
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.5.1 (2017-01-15)
+------------------
 * robot_status: missing reply to SERVICE_REQUEST. Fix in robot_status_message and relay_handler.
 * industrial_robot_client: Fix signature of goal and cancel callbacks.
 * Contributors: Alberto Marini, Maarten de Vries

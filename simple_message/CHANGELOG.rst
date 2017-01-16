@@ -2,8 +2,8 @@
 Changelog for package simple_message
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.5.1 (2017-01-15)
+------------------
 * Temporary fix, commented out disabled test to remove unstable build status
 * Changed test port numbers to unused range in linux.  utest_message now uses port range defined by macros (addresses failure to init server socket)
 * Amend to pull request `#153 <https://github.com/ros-industrial/industrial_core/issues/153>`_ (methods moved to TypedMessage)
