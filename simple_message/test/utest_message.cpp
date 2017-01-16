@@ -60,7 +60,7 @@ using namespace industrial::robot_status_message;
 // Useful for checking the packing and unpacking of message data.
 void messagePassing(TypedMessage &send, TypedMessage &recv)
 {
-  const int tcpPort = 11010;
+  const int tcpPort = TEST_PORT_BASE+401;
   char ipAddr[] = "127.0.0.1";
 
   TcpClient tcpClient;
