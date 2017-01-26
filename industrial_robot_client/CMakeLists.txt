@@ -138,10 +138,12 @@ target_link_libraries(joint_trajectory_action
 ## Test ##
 ##########
 # Testing - Only performed on normal (non byte swapped library)
-catkin_add_gtest(utest_robot_client test/utest.cpp)
-target_link_libraries(utest_robot_client 
-  industrial_robot_client 
-  ${catkin_LIBRARIES})
+if(CATKIN_ENABLE_TESTING)
+    catkin_add_gtest(utest_robot_client test/utest.cpp)
+    target_link_libraries(utest_robot_client
+      industrial_robot_client
+      ${catkin_LIBRARIES})
+endif()
 
 # ROS launch testing
 ## ROS launch test should be enabled when launch parameters are supported,
