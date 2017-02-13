@@ -20,9 +20,10 @@ target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES})
 
 
 
-catkin_add_gtest(utest_inds_utils test/utest.cpp)
-target_link_libraries(utest_inds_utils ${PROJECT_NAME} ${catkin_LIBRARIES})
-
+if(CATKIN_ENABLE_TESTING)
+    catkin_add_gtest(utest_inds_utils test/utest.cpp)
+    target_link_libraries(utest_inds_utils ${PROJECT_NAME} ${catkin_LIBRARIES})
+endif()
 
 
 install(
