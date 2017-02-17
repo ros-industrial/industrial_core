@@ -34,7 +34,7 @@
 #include "industrial_utils/param_utils.h"
 #include "industrial_utils/utils.h"
 #include "ros/ros.h"
-#include "urdf/model.h"
+#include <urdf/urdfdom_compatibility.h>
 
 namespace industrial_utils
 {
@@ -135,7 +135,7 @@ bool getJointNames(const std::string joint_list_param, const std::string urdf_pa
 bool getJointVelocityLimits(const std::string urdf_param_name, std::map<std::string, double> &velocity_limits)
 {
   urdf::Model model;
-  std::map<std::string, boost::shared_ptr<urdf::Joint> >::iterator iter;
+  std::map<std::string, urdf::JointSharedPtr >::iterator iter;
 
   if (!ros::param::has(urdf_param_name) || !model.initParam(urdf_param_name))
     return false;
@@ -144,7 +144,7 @@ bool getJointVelocityLimits(const std::string urdf_param_name, std::map<std::str
   for (iter=model.joints_.begin(); iter!=model.joints_.end(); ++iter)
   {
     std::string joint_name(iter->first);
-    boost::shared_ptr<urdf::JointLimits> limits = iter->second->limits;
+    urdf::JointLimitsSharedPtr limits = iter->second->limits;
     if ( limits && (limits->velocity > 0) )
       velocity_limits.insert(std::pair<std::string,double>(joint_name,limits->velocity));
   }
