@@ -18,7 +18,7 @@ industrial_msgs/TriState e_stopped
 # for possible motion
 industrial_msgs/TriState drives_powered
 
-# Motion enabled: Ture if robot motion is possible.
+# Motion enabled: True if robot motion is possible.
 industrial_msgs/TriState motion_possible
 
 # Motion status: True if robot is in motion, otherwise false
