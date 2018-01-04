@@ -81,7 +81,6 @@ void JointTrajectoryStreamer::jointTrajectoryCB(const trajectory_msgs::JointTraj
 	this->mutex_.lock();
     trajectoryStop();
 	this->mutex_.unlock();
-    return;
   }
 
   if (msg->points.empty())

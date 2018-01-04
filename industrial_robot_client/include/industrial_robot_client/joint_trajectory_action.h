@@ -38,6 +38,8 @@
 #include <trajectory_msgs/JointTrajectory.h>
 #include <control_msgs/FollowJointTrajectoryAction.h>
 #include <control_msgs/FollowJointTrajectoryFeedback.h>
+#include <std_srvs/Trigger.h>
+#include <industrial_msgs/GetEnabledStatus.h>
 #include <industrial_msgs/RobotStatus.h>
 
 namespace industrial_robot_client
@@ -102,6 +104,28 @@ private:
    * driver is not responding.
    */
   ros::Timer watchdog_timer_;
+
+  /**
+   * \brief Service used to disable the robot controller.  When disabled,
+   * all incoming goals are ignored.
+   */
+  ros::ServiceServer disabler_;
+
+  /**
+   * \brief Service used to enable the robot controller.  When disabled, all
+   * incoming goals are ignored.
+   */
+  ros::ServiceServer enabler_;
+
+  /**
+   * \brief Service used to get the enabled/disabled state. 
+   */
+  ros::ServiceServer enabled_status_;
+
+  /**
+   * \brief Controller is disabled and ignoring incoming goals
+   */
+  bool disabled_;
 
   /**
     * \brief Controller was alive during the last watchdog interval
@@ -205,6 +229,30 @@ private:
   void controllerStateCB(const control_msgs::FollowJointTrajectoryFeedbackConstPtr &msg);
 
   /**
+   * \brief Disable the robot. Response is true if the state was flipped or
+   * false if the state has not changed.
+   *
+   */
+  bool disableRobotCB(std_srvs::Trigger::Request &req,
+                      std_srvs::Trigger::Response &res);
+
+  /**
+   * \brief Enable the robot. Response is true if the state was flipped or
+   * false if the state has not changed.
+   *
+   */
+  bool enableRobotCB(std_srvs::Trigger::Request &req,
+                     std_srvs::Trigger::Response &res);
+
+  /**
+   * \brief Get status of enabled/disabled state.
+   *
+   *
+   */
+  bool enabledStatusCB(industrial_msgs::GetEnabledStatus::Request &req,
+                     industrial_msgs::GetEnabledStatus::Response &res);
+
+  /**
    * \brief Controller status callback (executed when robot status
    *  message received)
    *
@@ -212,6 +260,7 @@ private:
    *
    */
   void robotStatusCB(const industrial_msgs::RobotStatusConstPtr &msg);
+
 
   /**
    * \brief Aborts the current action goal and sends a stop command

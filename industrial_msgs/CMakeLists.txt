@@ -16,6 +16,7 @@ add_message_files(
 add_service_files(
   FILES
   CmdJointTrajectory.srv
+  GetEnabledStatus.srv
   GetRobotInfo.srv
   SetDrivePower.srv
   SetRemoteLoggerLevel.srv
