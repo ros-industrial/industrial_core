@@ -16,7 +16,7 @@
   -->
 
   <!-- robot_ip: IP-address of the robot's socket-messaging server -->
-  <arg name="robot_ip" />
+  <arg name="robot_ip" doc="IP of controller" />
   
   <!-- copy the specified IP address to the Parameter Server, for use by nodes below -->
   <param name="/robot_ip_address" type="str" value="$(arg robot_ip)"/>
