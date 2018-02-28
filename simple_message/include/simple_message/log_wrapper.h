@@ -32,11 +32,11 @@
 #ifndef LOG_WRAPPER_H_
 #define LOG_WRAPPER_H_
 
-#ifdef ROS
+#ifdef SIMPLE_MESSAGE_USE_ROS
 #include "ros/ros.h"
 #endif
 
-#ifdef MOTOPLUS
+#ifdef SIMPLE_MESSAGE_MOTOPLUS
 #include "motoPlus.h"
 #endif
 
@@ -55,7 +55,7 @@ namespace log_wrapper
     
 
 // Define ROS if this library will execute under ROS
-#ifdef ROS
+#ifdef SIMPLE_MESSAGE_USE_ROS
 
 // The LOG_COMM redirects to debug in ROS because ROS has
 // debug filtering tools that allow the communications messages

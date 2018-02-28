@@ -60,7 +60,7 @@ enum RobotMode
   MANUAL = 1, AUTO = 2,
 };
 
-#ifdef ROS
+#ifdef SIMPLE_MESSAGE_USE_ROS
 int toROSMsgEnum(RobotModes::RobotMode mode);
 #endif
 
@@ -85,7 +85,7 @@ enum TriState
   TS_FALSE = 0,   TS_OFF = 0,  TS_DISABLED = 0,  TS_LOW = 0
 };
 
-#ifdef ROS
+#ifdef SIMPLE_MESSAGE_USE_ROS
 int toROSMsgEnum(TriStates::TriState state);
 #endif
 
