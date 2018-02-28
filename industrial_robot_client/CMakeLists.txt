@@ -8,10 +8,6 @@ find_package(catkin REQUIRED COMPONENTS roscpp std_msgs sensor_msgs
 
 find_package(Boost REQUIRED COMPONENTS system thread)
 
-# The definition is copied from the CMakeList for the simple_message package.
-add_definitions(-DROS=1)           #build using ROS libraries
-add_definitions(-DLINUXSOCKETS=1)  #build using LINUX SOCKETS libraries
-
 set(SRC_FILES src/joint_relay_handler.cpp
               src/robot_status_relay_handler.cpp
               src/joint_trajectory_downloader.cpp
@@ -31,7 +27,6 @@ catkin_package(
       industrial_utils
     INCLUDE_DIRS include
     LIBRARIES ${PROJECT_NAME}_dummy
-    CFG_EXTRAS issue46_workaround.cmake
 )
 
 
