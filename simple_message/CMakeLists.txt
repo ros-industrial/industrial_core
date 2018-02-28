@@ -9,11 +9,11 @@ set(ROS_BUILD_STATIC_LIBS true)
 set(ROS_BUILD_SHARED_LIBS false)
 
 # The simple_message library is designed to cross compile on Ubuntu
-# and various robot controllers.  This requires conditionally compiling
-# certain functions and headers.  The definition below enables compiling
-# for a ROS node.
-add_definitions(-DROS=1)           #build using ROS libraries
-add_definitions(-DLINUXSOCKETS=1)  #use linux sockets for communication
+# and various robot controllers. This requires conditionally compiling
+# certain functions and headers. The default flags in the file included
+# here enable compiling for a ROS node. This file is also exported to
+# dependent packages via the `catkin_package` commmand.
+include(cmake/platform_build_flags.cmake)
 
 set(SRC_FILES src/byte_array.cpp
 	src/simple_message.cpp
@@ -71,7 +71,7 @@ catkin_package(
     CATKIN_DEPENDS roscpp industrial_msgs
     INCLUDE_DIRS include
     LIBRARIES ${PROJECT_NAME}_dummy
-    CFG_EXTRAS issue46_workaround.cmake
+    CFG_EXTRAS platform_build_flags.cmake issue46_workaround.cmake
 )
 
 
