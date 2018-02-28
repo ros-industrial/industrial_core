@@ -37,7 +37,7 @@
 #include "log_wrapper.h"
 #endif
 
-#ifdef MOTOPLUS
+#ifdef SIMPLE_MESSAGE_MOTOPLUS
 #include "motoPlus.h"
 #endif
 

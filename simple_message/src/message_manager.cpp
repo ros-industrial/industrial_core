@@ -38,7 +38,7 @@
 #include "simple_message.h"
 #endif
 
-#ifdef ROS
+#ifdef SIMPLE_MESSAGE_USE_ROS
 #include "ros/ros.h"
 #else
 #include "unistd.h"
@@ -171,7 +171,7 @@ void MessageManager::spinOnce()
 int ms_per_clock;
 void mySleep(int sec)
 {
-#ifdef MOTOPLUS
+#ifdef SIMPLE_MESSAGE_MOTOPLUS
   if (ms_per_clock <= 0)
     ms_per_clock = mpGetRtc();
 
@@ -184,7 +184,7 @@ void mySleep(int sec)
 void MessageManager::spin()
 {
   LOG_INFO("Entering message manager spin loop");
-#ifdef ROS
+#ifdef SIMPLE_MESSAGE_USE_ROS
   while (ros::ok())
 #else
   while (true)
