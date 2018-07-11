@@ -71,23 +71,25 @@ void JointTrajectoryStreamer::jointTrajectoryCB(const trajectory_msgs::JointTraj
   int state = this->state_;
 
   ROS_DEBUG("Current state is: %d", state);
-  if (TransferStates::IDLE != state)
-  {
-    if (msg->points.empty())
-      ROS_INFO("Empty trajectory received, canceling current trajectory");
-    else
-      ROS_ERROR("Trajectory splicing not yet implemented, stopping current motion.");
 
-	this->mutex_.lock();
-    trajectoryStop();
-	this->mutex_.unlock();
-    return;
-  }
-
+  // always stop the current trajectory if an empty trajectory is received
   if (msg->points.empty())
   {
-    ROS_INFO("Empty trajectory received while in IDLE state, nothing is done");
-    return;
+    ROS_INFO("Empty trajectory received while in state: %d. Canceling current trajectory.", state);
+
+    this->mutex_.lock();
+      trajectoryStop();
+    this->mutex_.unlock();
+      return;
+  }
+  else if (TransferStates::IDLE != state)
+  {
+    ROS_ERROR("Trajectory splicing not yet implemented, stopping current motion.");
+
+    this->mutex_.lock();
+      trajectoryStop();
+    this->mutex_.unlock();
+      return;
   }
 
   // calc new trajectory
