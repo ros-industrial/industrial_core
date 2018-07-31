@@ -121,10 +121,8 @@ bool getJointNames(const std::string joint_list_param, const std::string urdf_pa
 
   // 3) Raise an error
   ROS_ERROR_STREAM(
-      "Unable to find user-specified joint names in '"
-      << joint_list_param << "'. Also, unable to find URDF joint names in '"
-      << urdf_param
-      << "'. Must specify joint names.");
+      "Cannot find user-specified joint names. Tried ROS parameter '" << joint_list_param << "'"
+      << " and the URDF in '" << urdf_param << "'.");
   return false;
 }
 
