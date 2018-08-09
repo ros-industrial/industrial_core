@@ -34,4 +34,5 @@
   <run_depend>urdf</run_depend>
   <run_depend>industrial_msgs</run_depend>
   <run_depend>industrial_utils</run_depend>
+  <build_depend>roslaunch</build_depend>
 </package>

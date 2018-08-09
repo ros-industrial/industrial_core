@@ -145,6 +145,11 @@ if (CATKIN_ENABLE_TESTING)
     ${catkin_LIBRARIES})
 endif()
 
+if (CATKIN_ENABLE_TESTING)
+  find_package(roslaunch REQUIRED)
+  roslaunch_add_file_check(test/roslaunch_test.xml)
+endif()
+
 # ROS launch testing
 ## ROS launch test should be enabled when launch parameters are supported,
 ## see details below:
