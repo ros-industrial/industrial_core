@@ -2,12 +2,9 @@ cmake_minimum_required(VERSION 2.8.12)
 
 project(industrial_robot_simulator)
 
-find_package(catkin REQUIRED COMPONENTS std_msgs sensor_msgs
-  control_msgs trajectory_msgs)
+find_package(catkin REQUIRED)
 
-catkin_package(
-    CATKIN_DEPENDS std_msgs sensor_msgs control_msgs trajectory_msgs
-)
+catkin_package()
 
 ##########
 ## Test ##
