@@ -57,8 +57,8 @@ bool TcpClient::init(char *buff, int port_num)
   int rc;
   bool rtn;
   int disableNodeDelay = 1;
-  struct hostent *ent;
-  struct in_addr *in_a;
+  addrinfo *result;
+  addrinfo hints = {};
 
   rc = SOCKET(AF_INET, SOCK_STREAM, 0);
   if (this->SOCKET_FAIL != rc)
@@ -77,10 +77,16 @@ bool TcpClient::init(char *buff, int port_num)
     this->sockaddr_.sin_family = AF_INET;
 
     // Check for 'buff' as hostname, and use that, otherwise assume IP address
-    if (NULL != (ent = GETHOSTBYNAME(buff)))
+    hints.ai_family = AF_INET;  // Allow IPv4
+    hints.ai_socktype = SOCK_STREAM;  // TCP socket
+    hints.ai_flags = 0;  // No flags
+    hints.ai_protocol = 0;  // Any protocol
+    hints.ai_canonname = NULL;
+    hints.ai_addr = NULL;
+    hints.ai_next = NULL;
+    if (0 == GETADDRINFO(buff, NULL, &hints, &result))
     {
-      in_a = (struct in_addr *) ent->h_addr_list[0];
-      this->sockaddr_.sin_addr.s_addr = in_a->s_addr;
+      this->sockaddr_ = *((sockaddr_in *)result->ai_addr);
     }
     else 
     {

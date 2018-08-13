@@ -53,8 +53,8 @@
 
 #define SOCKET(domain, type, protocol) socket(domain, type, protocol)
 #define BIND(sockfd, addr, addrlen) bind(sockfd, addr, addrlen)
-#define SET_NO_DELAY(sockfd, val) setsockopt(sockfd, IPPROTO_TCP, TCP_NODELAY, &val, sizeof(val))
-#define SET_REUSE_ADDR(sockfd, val) setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &val, sizeof(val))
+#define SET_NO_DELAY(sockfd, val) setsockopt(sockfd, IPPROTO_TCP, TCP_NODELAY, &(val), sizeof(val))
+#define SET_REUSE_ADDR(sockfd, val) setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &(val), sizeof(val))
 #define LISTEN(sockfd, n) listen(sockfd, n)
 #define ACCEPT(sockfd, addr, addrlen) accept(sockfd, addr, addrlen)
 #define CONNECT(sockfd, dest_addr ,addrlen) connect(sockfd, dest_addr, addrlen)
@@ -69,7 +69,7 @@
 #endif
 #define INET_ADDR(str) inet_addr(str)
 #define SOCKLEN_T socklen_t
-#define GETHOSTBYNAME(str) gethostbyname(str)
+#define GETADDRINFO(node, service, hints, results) getaddrinfo(node, service, hints, results)
 
 #endif
 
