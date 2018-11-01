@@ -186,7 +186,9 @@ void JointTrajectoryAction::goalCB(JointTractoryActionServer::GoalHandle gh)
   {
     control_msgs::FollowJointTrajectoryResult rslt;
     rslt.error_code = control_msgs::FollowJointTrajectoryResult::INVALID_GOAL;
-    gh.setRejected(rslt, "Robot has been disabled.  Goals will be ignored until the service is called to enable the robot.");
+    std::string warning_msg = "Robot has been disabled.  Goals will be ignored until the enable_robot service is called to enable the robot.";
+    ROS_WARN_STREAM(warning_msg);
+    gh.setRejected(rslt, warning_msg);
     return;
   }
 
