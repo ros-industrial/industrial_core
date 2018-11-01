@@ -76,12 +76,11 @@ void JointTrajectoryStreamer::jointTrajectoryCB(const trajectory_msgs::JointTraj
     if (msg->points.empty())
       ROS_INFO("Empty trajectory received, canceling current trajectory");
     else
-      ROS_ERROR("Trajectory splicing not yet implemented, stopping current motion.");
+      ROS_ERROR("Trajectory splicing not yet implemented, stopping current motion and attempting new one.");
 
 	this->mutex_.lock();
     trajectoryStop();
 	this->mutex_.unlock();
-    return;
   }
 
   if (msg->points.empty())
