@@ -44,7 +44,7 @@ const double JointTrajectoryAction::DEFAULT_GOAL_THRESHOLD_ = 0.01;
 
 JointTrajectoryAction::JointTrajectoryAction() :
     action_server_(node_, "joint_trajectory_action", boost::bind(&JointTrajectoryAction::goalCB, this, _1),
-                   boost::bind(&JointTrajectoryAction::cancelCB, this, _1), false), has_active_goal_(false),
+                   boost::bind(&JointTrajectoryAction::cancelCB, this, _1), false), has_active_goal_(false), disabled_(false),
                        controller_alive_(false), has_moved_once_(false)
 {
   ros::NodeHandle pn("~");
@@ -64,6 +64,13 @@ JointTrajectoryAction::JointTrajectoryAction() :
   sub_robot_status_ = node_.subscribe("robot_status", 1, &JointTrajectoryAction::robotStatusCB, this);
 
   watchdog_timer_ = node_.createTimer(ros::Duration(WATCHDOG_PERIOD_), &JointTrajectoryAction::watchdog, this, true);
+
+  disabler_ = node_.advertiseService("disable_robot", &JointTrajectoryAction::disableRobotCB, this);
+
+  enabler_ = node_.advertiseService("enable_robot", &JointTrajectoryAction::enableRobotCB, this);
+
+  enabled_status_ = node_.advertiseService("get_enabled_status", &JointTrajectoryAction::enabledStatusCB, this);
+
   action_server_.start();
 }
 
@@ -76,6 +83,58 @@ void JointTrajectoryAction::robotStatusCB(const industrial_msgs::RobotStatusCons
   last_robot_status_ = msg; //caching robot status for later use.
   has_moved_once_ = has_moved_once_ ? true : (last_robot_status_->in_motion.val == industrial_msgs::TriState::TRUE);
 }
+
+
+bool JointTrajectoryAction::disableRobotCB(std_srvs::Trigger::Request &req,
+                                           std_srvs::Trigger::Response &res)
+{
+  res.success = !disabled_;
+  disabled_ = true;
+
+  if (has_active_goal_)
+    cancelCB(active_goal_);
+
+  if (!res.success)
+    res.message="Robot was already ";
+  else
+    res.message="Robot is now ";
+
+  res.message += "disabled";
+
+  if (res.success)
+    ROS_WARN("Robot has been disabled by request.  Incoming goals will be ignored");
+
+  return true;
+
+}
+
+bool JointTrajectoryAction::enableRobotCB(std_srvs::Trigger::Request &req,
+                                          std_srvs::Trigger::Response &res)
+{
+  res.success = disabled_;
+  disabled_ = false;
+
+  if (!res.success)
+    res.message="Robot was already ";
+  else
+    res.message="Robot is now ";
+
+  res.message += "enabled";
+
+  if (res.success)
+    ROS_WARN("Robot has been enabled by request.  Incoming goals will be processed.");
+
+  return true;
+
+}
+
+
+bool JointTrajectoryAction::enabledStatusCB(industrial_msgs::GetEnabledStatus::Request &req, industrial_msgs::GetEnabledStatus::Response &res)
+{
+  res.enabled = !disabled_;
+  return true;
+}
+
 
 void JointTrajectoryAction::watchdog(const ros::TimerEvent &e)
 {
@@ -120,6 +179,16 @@ void JointTrajectoryAction::goalCB(JointTractoryActionServer::GoalHandle gh)
     gh.setRejected(rslt, "Waiting for (initial) feedback from controller");
 
     // no point in continuing: already rejected
+    return;
+  }
+
+  if (disabled_)
+  {
+    control_msgs::FollowJointTrajectoryResult rslt;
+    rslt.error_code = control_msgs::FollowJointTrajectoryResult::INVALID_GOAL;
+    std::string warning_msg = "Robot has been disabled.  Goals will be ignored until the enable_robot service is called to enable the robot.";
+    ROS_WARN_STREAM(warning_msg);
+    gh.setRejected(rslt, warning_msg);
     return;
   }
 
