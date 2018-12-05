@@ -37,7 +37,7 @@
 #include "ros/console.h"
 #include "ros/ros.h"
 #include <moveit/planning_request_adapter/planning_request_adapter.h>
-#include <class_loader/class_loader.h>
+#include <class_loader/class_loader.hpp>
 
 namespace industrial_trajectory_filters
 {

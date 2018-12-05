@@ -35,7 +35,7 @@
 /* Author: Chris Lewis */
 
 #include <moveit/planning_request_adapter/planning_request_adapter.h>
-#include <class_loader/class_loader.h>
+#include <class_loader/class_loader.hpp>
 
 #include <industrial_trajectory_filters/smoothing_trajectory_filter.h>
 #include <ros/ros.h>  // required for NodeHandle
