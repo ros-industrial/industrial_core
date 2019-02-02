@@ -145,6 +145,11 @@ if (CATKIN_ENABLE_TESTING)
     ${catkin_LIBRARIES})
 endif()
 
+if (CATKIN_ENABLE_TESTING)
+  find_package(roslaunch REQUIRED)
+  roslaunch_add_file_check(test/roslaunch_test.xml)
+endif()
+
 # ROS launch testing
 ## ROS launch test should be enabled when launch parameters are supported,
 ## see details below:
@@ -156,7 +161,9 @@ endif()
 
 install(
     TARGETS industrial_robot_client industrial_robot_client_bswap
-    LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION})
+    ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+    LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+    RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
 
 install(TARGETS 
         robot_state 

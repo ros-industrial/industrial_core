@@ -34,3 +34,12 @@ Older releases may be found in the old ROS-Industrial [subversion repository][].
 [ROS-Industrial]: http://wiki.ros.org/Industrial
 [ROS wiki]: http://wiki.ros.org/industrial_core
 [subversion repository]: https://github.com/ros-industrial/swri-ros-pkg
+
+## Docker 
+
+Industrial Core is also available as a Docker image from the [ROS-Industrial Docker Hub](https://hub.docker.com/u/rosindustrial).
+
+Example usage:
+```
+docker run -it --rm rosindustrial/core:kinetic rosmsg show industrial_msgs/RobotStatus
+```

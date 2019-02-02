@@ -58,6 +58,8 @@ bool UdpClient::init(char *buff, int port_num)
 
   int rc;
   bool rtn;
+  addrinfo *result;
+  addrinfo hints = {};
 
   /* Create a socket using:
    * AF_INET - IPv4 internet protocol
@@ -72,7 +74,23 @@ bool UdpClient::init(char *buff, int port_num)
     // Initialize address data structure
     memset(&this->sockaddr_, 0, sizeof(this->sockaddr_));
     this->sockaddr_.sin_family = AF_INET;
-    this->sockaddr_.sin_addr.s_addr = INET_ADDR(buff);
+
+    // Check for 'buff' as hostname, and use that, otherwise assume IP address
+    hints.ai_family = AF_INET;  // Allow IPv4
+    hints.ai_socktype = SOCK_DGRAM;  // UDP socket
+    hints.ai_flags = 0;  // No flags
+    hints.ai_protocol = 0;  // Any protocol
+    hints.ai_canonname = NULL;
+    hints.ai_addr = NULL;
+    hints.ai_next = NULL;
+    if (0 == GETADDRINFO(buff, NULL, &hints, &result))
+    {
+      this->sockaddr_ = *((sockaddr_in *)result->ai_addr);
+    }
+    else
+    {
+      this->sockaddr_.sin_addr.s_addr = INET_ADDR(buff);
+    }
     this->sockaddr_.sin_port = HTONS(port_num);
 
     rtn = true;
