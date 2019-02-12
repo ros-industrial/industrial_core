@@ -2,6 +2,13 @@
 Changelog for package industrial_trajectory_filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Fix Melodic pluginlib incompatibility Fix `#204 <https://github.com/ros-industrial/industrial_core/issues/204>`_.
+* Fixed compiler warning while including class_loader.h (change to class_loader.hpp)
+* Updated filter base to return false when the update method returns false. Fix `#217 <https://github.com/ros-industrial/industrial_core/issues/217>`_.
+* Contributors: Austin Deric, Levi Armstrong, Michael Ripperger
+
 0.6.0 (2017-01-16)
 ------------------
 * Added C++ 11 compile option
