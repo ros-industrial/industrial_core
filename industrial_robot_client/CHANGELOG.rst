@@ -2,8 +2,8 @@
 Changelog for package industrial_robot_client
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.7.0 (2019-02-12)
+------------------
 * Decrease idle wait time.  250 ms is too slow. Fix `#214 <https://github.com/ros-industrial/industrial_core/issues/214>`_.
 * robot_client: add roslaunch testing. Fix `#208 <https://github.com/ros-industrial/industrial_core/issues/208>`_.
 * Removed `robot_state_visualization.launch`, as that would introduce a dependency on `rviz`. Fix `ros-industrial/ros_industrial_issues#50 <https://github.com/ros-industrial/ros_industrial_issues/issues/50>`_.

@@ -2,8 +2,8 @@
 Changelog for package industrial_robot_simulator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.7.0 (2019-02-12)
+------------------
 * Added in better simluation when velocities are provided for trajectory
 * robot_simulator: review and fix buildscript and manifest. Fix `#207 <https://github.com/ros-industrial/industrial_core/issues/207>`_.
 * Fix for issue `#157 <https://github.com/ros-industrial/industrial_core/issues/157>`_: don't depend on non-existing targets in ind_rob_sim build file

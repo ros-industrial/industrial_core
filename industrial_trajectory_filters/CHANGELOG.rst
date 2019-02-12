@@ -2,8 +2,8 @@
 Changelog for package industrial_trajectory_filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.7.0 (2019-02-12)
+------------------
 * Fix Melodic pluginlib incompatibility Fix `#204 <https://github.com/ros-industrial/industrial_core/issues/204>`_.
 * Fixed compiler warning while including class_loader.h (change to class_loader.hpp)
 * Updated filter base to return false when the update method returns false. Fix `#217 <https://github.com/ros-industrial/industrial_core/issues/217>`_.

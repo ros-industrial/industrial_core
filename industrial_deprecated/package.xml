@@ -1,6 +1,6 @@
 <package>
   <name>industrial_deprecated</name>
-  <version>0.6.0</version>
+  <version>0.7.0</version>
   <description>
   The Industrial deprecated package contains nodes, launch files, etc... that are slated for 
   deprecation.  This package is the last place something will end up before being deleted.  

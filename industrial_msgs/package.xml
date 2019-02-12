@@ -1,6 +1,6 @@
 <package>
   <name>industrial_msgs</name>
-  <version>0.6.0</version>
+  <version>0.7.0</version>
   <description>
 	The industrial message package containes industrial specific messages 
 	definitions. This package is part of the ROS-Industrial program.

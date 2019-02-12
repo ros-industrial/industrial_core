@@ -2,8 +2,8 @@
 Changelog for package simple_message
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.7.0 (2019-02-12)
+------------------
 * Updated the libraries install tags to follow the official documentation Fix `#193 <https://github.com/ros-industrial/industrial_core/issues/193>`_
 * simple_message: get rid of obsolete gethostbyname. Fix `#197 <https://github.com/ros-industrial/industrial_core/issues/197>`_
 * Added missed test dependencies to rosunit Fix `#205 <https://github.com/ros-industrial/industrial_core/issues/205>`_

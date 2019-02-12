@@ -2,8 +2,8 @@
 Changelog for package industrial_utils
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.7.0 (2019-02-12)
+------------------
 * Added missed test dependencies to rosunit. Fix `#205 <https://github.com/ros-industrial/industrial_core/issues/205>`_
 * Reworded error displayed when joints cannot be found Fix `#180 <https://github.com/ros-industrial/industrial_core/issues/180>`_
 * Use urdf::*SharedPtr instead of boost::shared_ptr `#170 <https://github.com/ros-industrial/industrial_core/issues/170>`_

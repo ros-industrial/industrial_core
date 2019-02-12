@@ -1,6 +1,6 @@
 <package>
   <name>industrial_core</name>
-  <version>0.6.0</version>
+  <version>0.7.0</version>
   <description>ROS-Industrial core stack contains packages and libraries for supporing industrial systems</description>
 
   <maintainer email="sedwards@swri.org">Shaun Edwards</maintainer>
