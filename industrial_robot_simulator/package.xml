@@ -10,21 +10,19 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
-  <depend>control_msgs</depend>
-  <depend>industrial_msgs</depend>
-  <depend>sensor_msgs</depend>
-  <depend>std_msgs</depend>
-  <depend>trajectory_msgs</depend>
-
+  <exec_depend>control_msgs</exec_depend>
+  <exec_depend>industrial_msgs</exec_depend>
   <exec_depend>industrial_robot_client</exec_depend>
   <exec_depend>python-rospkg</exec_depend>
   <exec_depend>rospy</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>trajectory_msgs</exec_depend>
 
-  <test_depend version_gte="1.9.55">roslaunch</test_depend>
   <!--
   industrial_robot_client is included as a work-around for:
   https://github.com/catkin/catkin_tools/issues/285, once
   this issue is fixed and released, it can be removed
   -->
   <test_depend>industrial_robot_client</test_depend>
+  <test_depend version_gte="1.9.55">roslaunch</test_depend>
 </package>

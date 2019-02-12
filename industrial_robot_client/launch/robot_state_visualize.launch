@@ -14,8 +14,8 @@
 	robot_state_visualize.launch robot_ip:=192.168.1.10 urdf_path:= urdf/M16iB20.urdf
  -->
 
-	<arg name="robot_ip" />
-	<arg name="urdf_path" />
+	<arg name="robot_ip" doc="IP of the controller" />
+	<arg name="urdf_path" doc="Path to the robot description file" />
 	
 	<!-- Populate parameters -->
 	<param name="robot_description" textfile="$(arg urdf_path)" />
