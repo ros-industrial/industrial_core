@@ -3,10 +3,10 @@
   <version>0.5.1</version>
   <description>ROS-Industrial core stack contains packages and libraries for supporing industrial systems</description>
 
-  <maintainer email="sedwards@swri.org">Shaun Edwards</maintainer>
+  <maintainer email="shaun.edwards@gmail.com">Shaun Edwards</maintainer>
   <license>BSD</license>
   <url type="website">http://ros.org/wiki/industrial_core</url>
-  <author email="sedwards@swri.org">Shaun Edwards</author>
+  <author>Shaun Edwards</author>
 
   <buildtool_depend>catkin</buildtool_depend>
   <run_depend>simple_message</run_depend>

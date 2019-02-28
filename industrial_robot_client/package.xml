@@ -6,7 +6,7 @@
      simple message protocol.
   </description>
 
-  <maintainer email="sedwards@swri.org">Shaun Edwards</maintainer>
+  <maintainer email="shaun.edwards@gmail.com">Shaun Edwards</maintainer>
   <license>BSD</license>
   <url type="website">http://ros.org/wiki/industrial_robot_client</url>
   <author>Jeremy Zoss</author>
