@@ -7,7 +7,7 @@
 	included for handling connection limited systems.  This package is part of the ROS-Industrial 
 	program.
   </description>
-  <maintainer email="sedwards@swri.org">Shaun Edwards</maintainer>
+  <maintainer email="shaun.edwards@gmail.com">Shaun Edwards</maintainer>
   <license>BSD</license>
   <url type="website">http://ros.org/wiki/simple_message</url>
   <author>Shaun Edwards</author>

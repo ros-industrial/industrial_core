@@ -7,10 +7,10 @@
   If you are missing a package/node and find it's contents here, then you should consider 
   a replacement.
   </description>
-  <maintainer email="sedwards@swri.org">Shaun Edwards</maintainer>
+  <maintainer email="shaun.edwards@gmail.com">Shaun Edwards</maintainer>
   <license>BSD</license>
   <url type="website">http://ros.org/wiki/industrial_deprecated</url>
-  <author>Shaun M. Edwards</author>
+  <author>Shaun Edwards</author>
 
   <buildtool_depend>catkin</buildtool_depend>
 </package>

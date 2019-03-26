@@ -10,9 +10,9 @@
      and moveit plugins for filtering robot trajectories.
    </p>
   </description>
-  <author email="sedwards@swri.org">Shaun Edwards</author>
+  <author>Shaun Edwards</author>
   <author email="jnicho@swri.org">Jorge Nicho</author>
-  <maintainer email="sedwards@swri.org">Shaun Edwards</maintainer>
+  <maintainer email="shaun.edwards@gmail.com">Shaun Edwards</maintainer>
   <license>BSD</license>
   <url type="website">http://ros.org/wiki/industrial_trajectory_filters</url>
   <url type="bugtracker">https://github.com/ros-industrial/industrial_core/issues</url>
