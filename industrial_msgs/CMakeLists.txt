@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.12)
 
 project(industrial_msgs)
 
-find_package(catkin REQUIRED COMPONENTS std_msgs trajectory_msgs genmsg message_generation)
+find_package(catkin REQUIRED COMPONENTS std_msgs trajectory_msgs message_generation)
 
 add_message_files(
   FILES
@@ -27,5 +27,5 @@ generate_messages(
 )
 
 catkin_package(
-    CATKIN_DEPENDS message_runtime std_msgs trajectory_msgs genmsg
+    CATKIN_DEPENDS message_runtime std_msgs trajectory_msgs
 )
