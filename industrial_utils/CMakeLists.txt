@@ -15,7 +15,7 @@ catkin_package(
 include_directories(include
   ${catkin_INCLUDE_DIRS})
 
-add_library(${PROJECT_NAME} src/utils.cpp src/param_utils.cpp)
+add_library(${PROJECT_NAME} src/param_utils.cpp src/utils.cpp)
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES})
 
 
