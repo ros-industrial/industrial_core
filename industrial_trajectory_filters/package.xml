@@ -21,8 +21,6 @@
   <buildtool_depend>catkin</buildtool_depend>
 
   <build_depend>trajectory_msgs</build_depend>
-  <build_depend>pluginlib</build_depend>
-  <build_depend>moveit_core</build_depend>
   <build_depend>moveit_ros_planning</build_depend>
   <build_depend>orocos_kdl</build_depend>
 
