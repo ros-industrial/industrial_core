@@ -167,7 +167,7 @@ void JointTrajectoryStreamer::streamingThread()
     switch (this->state_)
     {
       case TransferStates::IDLE:
-        ros::Duration(0.250).sleep();  //  slower loop while waiting for new trajectory
+        ros::Duration(0.010).sleep();  //  loop while waiting for new trajectory
         break;
 
       case TransferStates::STREAMING:
@@ -191,9 +191,9 @@ void JointTrajectoryStreamer::streamingThread()
         ROS_DEBUG("Sending joint trajectory point");
         if (this->connection_->sendAndReceiveMsg(msg, reply, false))
         {
+          this->current_point_++;
           ROS_INFO("Point[%d of %d] sent to controller",
                    this->current_point_, (int)this->current_traj_.size());
-          this->current_point_++;
         }
         else
           ROS_WARN("Failed sent joint point, will try again");

@@ -37,7 +37,7 @@
 #include "ros/console.h"
 #include "ros/ros.h"
 #include <moveit/planning_request_adapter/planning_request_adapter.h>
-#include <class_loader/class_loader.h>
+#include <class_loader/class_loader.hpp>
 
 namespace industrial_trajectory_filters
 {
@@ -241,7 +241,10 @@ template<typename T>
         trajectory_in.request.trajectory = robot_trajectory_in.joint_trajectory;
 
         // applying arm navigation filter to planned trajectory
-        p->update(trajectory_in, trajectory_out);
+        if(!p->update(trajectory_in, trajectory_out))
+        {
+          return false;
+        }
 
         // saving filtered trajectory into moveit message.
         robot_trajectory_out.joint_trajectory = trajectory_out.request.trajectory;

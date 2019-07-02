@@ -3,7 +3,7 @@
   <version>0.5.1</version>
   <description>The industrial robot simulator is a stand in for industrial robot driver node(s).  It adheres to the driver specification for industrial robot controllers.</description>
 
-  <maintainer email="sedwards@swri.org">Shaun Edwards</maintainer>
+  <maintainer email="shaun.edwards@gmail.com">Shaun Edwards</maintainer>
   <license>BSD</license>
   <url type="website">http://ros.org/wiki/industrial_robot_simulator</url>
   <author>Shaun Edwards</author>
