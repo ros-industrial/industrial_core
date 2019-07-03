@@ -1,4 +1,6 @@
-<package>
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format2.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="2">
   <name>simple_message</name>
   <version>0.5.1</version>
   <description>
@@ -7,15 +9,15 @@
 	included for handling connection limited systems.  This package is part of the ROS-Industrial 
 	program.
   </description>
+  <author>Shaun Edwards</author>
   <maintainer email="shaun.edwards@gmail.com">Shaun Edwards</maintainer>
   <license>BSD</license>
   <url type="website">http://ros.org/wiki/simple_message</url>
-  <author>Shaun Edwards</author>
 
   <buildtool_depend>catkin</buildtool_depend>
-  <build_depend>roscpp</build_depend> 
-  <build_depend>industrial_msgs</build_depend>
-  <run_depend>roscpp</run_depend>
-  <run_depend>industrial_msgs</run_depend>
+
+  <depend>roscpp</depend>
+  <depend>industrial_msgs</depend>
+
   <test_depend>rosunit</test_depend>
 </package>
