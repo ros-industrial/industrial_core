@@ -71,6 +71,11 @@ private:
   typedef actionlib::ActionServer<control_msgs::FollowJointTrajectoryAction> JointTractoryActionServer;
 
   /**
+   * \brief Name of this class, for logging namespacing
+   */
+  std::string name_;
+
+  /**
    * \brief Internal ROS node handle
    */
   ros::NodeHandle node_;
@@ -161,7 +166,7 @@ private:
   industrial_msgs::RobotStatusConstPtr last_robot_status_;
 
   /**
-   * \brief Time at which to start checking for completion of current 
+   * \brief Time at which to start checking for completion of current
    * goal, if one is active
    */
   ros::Time time_to_check_;
