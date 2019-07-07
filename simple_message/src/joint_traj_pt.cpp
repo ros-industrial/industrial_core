@@ -178,4 +178,3 @@ bool JointTrajPt::unload(industrial::byte_array::ByteArray *buffer)
 
 }
 }
-

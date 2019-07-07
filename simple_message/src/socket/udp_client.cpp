@@ -137,4 +137,3 @@ bool UdpClient::makeConnect()
 }
 } //udp_client
 } //industrial
-

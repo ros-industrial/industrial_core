@@ -141,6 +141,20 @@ class MotionControllerSimulator():
 
     """
     """
+    def accelerate(self, last_pt, current_pt, current_time, delta_time):
+        intermediate_pt = JointTrajectoryPoint()
+        for last_joint, current_joint, last_vel, current_vel in zip(last_pt.positions, current_pt.positions, last_pt.velocities, current_pt.velocities):
+            delta_x = current_joint-last_joint
+            dv = current_vel+last_vel
+            a1 = 6*delta_x/pow(delta_time,2) - 2*(dv+last_vel)/delta_time
+            a2 = -12*delta_x/pow(delta_time,3) + 6*dv/pow(delta_time,2)
+            current_pos = last_joint + last_vel*current_time + a1*pow(current_time,2)/2 +a2*pow(current_time,3)/6
+            intermediate_pt.positions.append(current_pos)
+        intermediate_pt.time_from_start = last_pt.time_from_start + rospy.Duration(current_time)
+        return intermediate_pt
+
+    """
+    """
     def _clear_buffer(self):
         with self.motion_buffer.mutex:
             self.motion_buffer.queue.clear()
@@ -183,8 +197,13 @@ class MotionControllerSimulator():
                     # Provide an exception to this rule: if update rate is <=0, do not add interpolated points
                     move_duration = current_goal_point.time_from_start - last_goal_point.time_from_start
                     if self.update_rate > 0:
+                        starting_goal_point = copy.deepcopy(last_goal_point)
+                        full_duration = move_duration.to_sec()
                         while update_duration < move_duration:
-                            intermediate_goal_point = self.interpolate(last_goal_point, current_goal_point, update_duration.to_sec()/move_duration.to_sec())
+                            if not starting_goal_point.velocities or not current_goal_point.velocities:
+                                intermediate_goal_point = self.interpolate(last_goal_point, current_goal_point, update_duration.to_sec()/move_duration.to_sec())
+                            else:
+                                intermediate_goal_point = self.accelerate(starting_goal_point, current_goal_point, full_duration-move_duration.to_sec()+update_duration.to_sec(), full_duration)
                             self._move_to(intermediate_goal_point, update_duration.to_sec()) #TODO should this use min(update_duration, 0.5*move_duration) to smooth timing?
                             last_goal_point = copy.deepcopy(intermediate_goal_point)
                             move_duration = current_goal_point.time_from_start - intermediate_goal_point.time_from_start
@@ -400,6 +419,8 @@ class IndustrialRobotSimulatorNode():
         #rospy.loginfo('to controller order, keys: %s, point: %s', str(keys), str(point))
         pt_rtn = copy.deepcopy(point)
         pt_rtn.positions = self._remap_order(self.joint_names, keys, point.positions)
+        if point.velocities:
+            pt_rtn.velocities = self._remap_order(self.joint_names, keys, point.velocities)
 
         return pt_rtn
 

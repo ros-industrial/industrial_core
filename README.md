@@ -22,6 +22,10 @@ Status: [![Build Status](https://travis-ci.org/ros-industrial/industrial_core.sv
 [ROS-Industrial][] core meta-package. See the [ROS wiki][] page for more
 information.
 
+## License
+
+[![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
+
 ## Contents
 
 Branch naming follows the ROS distribution they are compatible with. `-devel`
@@ -34,3 +38,12 @@ Older releases may be found in the old ROS-Industrial [subversion repository][].
 [ROS-Industrial]: http://wiki.ros.org/Industrial
 [ROS wiki]: http://wiki.ros.org/industrial_core
 [subversion repository]: https://github.com/ros-industrial/swri-ros-pkg
+
+## Docker 
+
+Industrial Core is also available as a Docker image from the [ROS-Industrial Docker Hub](https://hub.docker.com/u/rosindustrial).
+
+Example usage:
+```
+docker run -it --rm rosindustrial/core:kinetic rosmsg show industrial_msgs/RobotStatus
+```

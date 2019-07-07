@@ -133,4 +133,3 @@ bool TcpClient::makeConnect()
 
 } //tcp_client
 } //industrial
-
