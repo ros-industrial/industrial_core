@@ -15,6 +15,10 @@ set(ROS_BUILD_SHARED_LIBS false)
 add_definitions(-DROS=1)           #build using ROS libraries
 add_definitions(-DLINUXSOCKETS=1)  #use linux sockets for communication
 
+if (WIN32)
+  set(SIMPLE_MESSAGE_EXTRA_LIBRARIES Ws2_32.lib)
+endif ()
+
 set(SRC_FILES src/byte_array.cpp
 	src/simple_message.cpp
 	src/smpl_msg_connection.cpp
@@ -98,19 +102,19 @@ install(TARGETS ${PROJECT_NAME}_dummy DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATI
 
 # DEFAULT LIBRARY (SAME ENDIAN)
 add_library(simple_message ${SRC_FILES})
-target_link_libraries(simple_message ${catkin_LIBRARIES})
+target_link_libraries(simple_message ${catkin_LIBRARIES} ${SIMPLE_MESSAGE_EXTRA_LIBRARIES})
 add_dependencies(simple_message ${industrial_msgs_EXPORTED_TARGETS})
 
 # ALTERNATIVE LIBRARY (DIFFERENT ENDIAN)
 add_library(simple_message_bswap ${SRC_FILES})
 set_target_properties(simple_message_bswap PROPERTIES COMPILE_DEFINITIONS "BYTE_SWAPPING")
-target_link_libraries(simple_message_bswap ${catkin_LIBRARIES})
+target_link_libraries(simple_message_bswap ${catkin_LIBRARIES} ${SIMPLE_MESSAGE_EXTRA_LIBRARIES})
 add_dependencies(simple_message_bswap ${industrial_msgs_EXPORTED_TARGETS})
 
 # ALTERNATIVE LIBRARY (64-bit floats)
 add_library(simple_message_float64 ${SRC_FILES})
 set_target_properties(simple_message_float64 PROPERTIES COMPILE_DEFINITIONS "FLOAT64")
-target_link_libraries(simple_message_float64 ${catkin_LIBRARIES})
+target_link_libraries(simple_message_float64 ${catkin_LIBRARIES} ${SIMPLE_MESSAGE_EXTRA_LIBRARIES})
 add_dependencies(simple_message_float64 ${industrial_msgs_EXPORTED_TARGETS})
 
 if(CATKIN_ENABLE_TESTING)

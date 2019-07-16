@@ -41,11 +41,20 @@
 #endif
 
 #ifdef LINUXSOCKETS
+#ifndef _WIN32
 #include "sys/socket.h"
 #include "netdb.h"
 #include "arpa/inet.h"
-#include "string.h"
 #include "unistd.h"
+#else
+#include <ws2tcpip.h>
+typedef int socklen_t;
+static int close(int socket)
+{
+  return closesocket(socket);
+}
+#endif
+#include "string.h"
 #endif
 
 #ifdef MOTOPLUS

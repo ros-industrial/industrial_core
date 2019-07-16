@@ -44,6 +44,10 @@
 #include "unistd.h"
 #endif
 
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
 using namespace industrial::smpl_msg_connection;
 using namespace industrial::message_handler;
 using namespace industrial::simple_message;
@@ -176,6 +180,8 @@ void mySleep(int sec)
     ms_per_clock = mpGetRtc();
 
   mpTaskDelay(sec * 1000 / ms_per_clock);
+#elif _WIN32
+  Sleep(sec);
 #else
   sleep(sec);
 #endif
