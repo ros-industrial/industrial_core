@@ -56,7 +56,7 @@ bool TcpClient::init(char *buff, int port_num)
   addrinfo *result;
   addrinfo hints = {};
 
-  if (!_connectSocketHandle())
+  if (!connectSocketHandle())
   {
     return false;
   }
@@ -89,10 +89,6 @@ bool TcpClient::init(char *buff, int port_num)
 
 bool TcpClient::makeConnect()
 {
-  bool rtn = false;
-  int rc = this->SOCKET_FAIL;
-  SOCKLEN_T addrSize = 0;
-
   if (isConnected())
   {
     LOG_WARN("Tried to connect when socket already in connected state");
@@ -118,7 +114,7 @@ bool TcpClient::makeConnect()
   return true;
 }
 
-bool TcpClient::_connectSocketHandle()
+bool TcpClient::connectSocketHandle()
 {
   if (isConnected())
   {
