@@ -76,6 +76,9 @@ public:
     // Overrides
     bool makeConnect();
 
+private:
+    bool connectSocketHandle();
+
 
 };
 
