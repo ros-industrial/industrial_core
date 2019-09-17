@@ -2,6 +2,20 @@
 Changelog for package simple_message
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.7.0 (2019-02-12)
+------------------
+* Updated the libraries install tags to follow the official documentation Fix `#193 <https://github.com/ros-industrial/industrial_core/issues/193>`_
+* simple_message: get rid of obsolete gethostbyname. Fix `#197 <https://github.com/ros-industrial/industrial_core/issues/197>`_
+* Added missed test dependencies to rosunit Fix `#205 <https://github.com/ros-industrial/industrial_core/issues/205>`_
+* Fixed issue 157 regarding non-existing targets
+* simple_message: build unit tests conditionally `#182 <https://github.com/ros-industrial/industrial_core/issues/182>`_
+* Contributors: Alexander Rössler, Dmitry Rozhkov, Levi Armstrong, Nadia Hammoudeh García, Shaun Edwards
+
+0.6.0 (2017-01-16)
+------------------
+* Added C++ 11 compile option
+* Contributors: Victor Lamoine
+
 0.5.1 (2017-01-15)
 ------------------
 * Temporary fix, commented out disabled test to remove unstable build status

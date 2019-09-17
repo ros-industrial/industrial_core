@@ -2,7 +2,7 @@
 <?xml-model href="http://download.ros.org/schema/package_format2.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="2">
   <name>industrial_utils</name>
-  <version>0.5.1</version>
+  <version>0.7.0</version>
   <description>Industrial utils is a library package that captures common funcitonality for the ROS-Industrial distribution.</description>
   <author>Shaun Edwards</author>
   <maintainer email="shaun.edwards@gmail.com">Shaun Edwards</maintainer>

@@ -2,7 +2,7 @@
 <?xml-model href="http://download.ros.org/schema/package_format2.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="2">
   <name>simple_message</name>
-  <version>0.5.1</version>
+  <version>0.7.0</version>
   <description>
 	simple_message defines a simple messaging connection and protocol for communicating 
 	with an industrial robot controller.  Additional handler and manager classes are 
