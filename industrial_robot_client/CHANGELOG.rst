@@ -2,6 +2,25 @@
 Changelog for package industrial_robot_client
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.7.0 (2019-02-12)
+------------------
+* Decrease idle wait time.  250 ms is too slow. Fix `#214 <https://github.com/ros-industrial/industrial_core/issues/214>`_.
+* robot_client: add roslaunch testing. Fix `#208 <https://github.com/ros-industrial/industrial_core/issues/208>`_.
+* Removed `robot_state_visualization.launch`, as that would introduce a dependency on `rviz`. Fix `ros-industrial/ros_industrial_issues#50 <https://github.com/ros-industrial/ros_industrial_issues/issues/50>`_.
+* robot_client: add missing dependency on RSP. Fix `#209 <https://github.com/ros-industrial/industrial_core/issues/209>`_.
+* Updated the libraries install tags- follow the official documentation. Fix `#193 <https://github.com/ros-industrial/industrial_core/issues/193>`_.
+* Added missed test dependencies to rosunit. Fix `#205 <https://github.com/ros-industrial/industrial_core/issues/205>`_.
+* Using the 'doc' attribute on 'arg' elements. Added doc strings to all launch file args.
+* Merge branch 'kinetic-devel' into urdfdom_headers_fix
+* robot_client: make indenting consistent.
+* client: build unit tests conditionally
+* Contributors: Dmitry Rozhkov, G.A. vd. Hoorn, Harsh Deshpande, Levi Armstrong, Nadia Hammoudeh García, Patrick Beeson, Shaun Edwards, gavanderhoorn
+
+0.6.0 (2017-01-16)
+------------------
+* Added C++ 11 compile option
+* Contributors: Victor Lamoine
+
 0.5.1 (2017-01-15)
 ------------------
 * robot_status: missing reply to SERVICE_REQUEST. Fix in robot_status_message and relay_handler.

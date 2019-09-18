@@ -2,6 +2,19 @@
 Changelog for package industrial_robot_simulator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.7.0 (2019-02-12)
+------------------
+* Added in better simluation when velocities are provided for trajectory
+* robot_simulator: review and fix buildscript and manifest. Fix `#207 <https://github.com/ros-industrial/industrial_core/issues/207>`_.
+* Fix for issue `#157 <https://github.com/ros-industrial/industrial_core/issues/157>`_: don't depend on non-existing targets in ind_rob_sim build file
+* robot_sim: don't depend on targets that don't exist. Fix `#157 <https://github.com/ros-industrial/industrial_core/issues/157>`_.
+* Contributors: Levi Armstrong, Nadia Hammoudeh García, Patrick Beeson, Shaun Edwards, gavanderhoorn
+
+0.6.0 (2017-01-16)
+------------------
+* Added C++ 11 compile option
+* Contributors: Victor Lamoine
+
 0.5.1 (2017-01-15)
 ------------------
 * robot_simulator: clarify err msg when controller_joint_names is missing.

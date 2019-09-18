@@ -2,6 +2,21 @@
 Changelog for package industrial_utils
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.7.0 (2019-02-12)
+------------------
+* Added missed test dependencies to rosunit. Fix `#205 <https://github.com/ros-industrial/industrial_core/issues/205>`_
+* Reworded error displayed when joints cannot be found Fix `#180 <https://github.com/ros-industrial/industrial_core/issues/180>`_
+* Use urdf::*SharedPtr instead of boost::shared_ptr `#170 <https://github.com/ros-industrial/industrial_core/issues/170>`_
+* Fixed issue with urdfdom headers
+* Make building unit tests for client and utils conditional. Fix `#171 <https://github.com/ros-industrial/industrial_core/issues/171>`_.
+* Switched to urdf::*SharedPtr instead of boost::shared_ptr to stay compatible.
+* Contributors: Dmitry Rozhkov, G.A. vd. Hoorn, Jochen Sprickerhof, Levi Armstrong, Nadia Hammoudeh García, Shaun Edwards, ridhwanluthra
+
+0.6.0 (2017-01-16)
+------------------
+* Added C++ 11 compile option
+* Contributors: Victor Lamoine
+
 0.5.1 (2017-01-15)
 ------------------
 * No changes
