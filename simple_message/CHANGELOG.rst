@@ -2,8 +2,8 @@
 Changelog for package simple_message
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.7.1 (2019-09-19)
+------------------
 * Fix incorrect return value if deserializing duration fails on ``joint_traj_pt`` (`#226 <https://github.com/ros-industrial/industrial_core/issues/226>`_)
 * Updated all package xml files to version 2 (`#232 <https://github.com/ros-industrial/industrial_core/issues/232>`_)
 * all: update maintainer email addresses (`#222 <https://github.com/ros-industrial/industrial_core/issues/222>`_)

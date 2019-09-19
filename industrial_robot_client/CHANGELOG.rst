@@ -2,8 +2,8 @@
 Changelog for package industrial_robot_client
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.7.1 (2019-09-19)
+------------------
 * Updated all package xml files to version 2 (`#232 <https://github.com/ros-industrial/industrial_core/issues/232>`_)
 * all: update maintainer email addresses (`#222 <https://github.com/ros-industrial/industrial_core/issues/222>`_)
 * Add namespacing to all ``joint_trajectory_action`` log messages (`#192 <https://github.com/ros-industrial/industrial_core/issues/192>`_)
