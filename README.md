@@ -22,6 +22,10 @@ Status: [![Build Status](https://travis-ci.org/ros-industrial/industrial_core.sv
 [ROS-Industrial][] core meta-package. See the [ROS wiki][] page for more
 information.
 
+## License
+
+[![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
+
 ## Contents
 
 Branch naming follows the ROS distribution they are compatible with. `-devel`

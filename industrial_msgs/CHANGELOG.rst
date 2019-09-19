@@ -2,6 +2,13 @@
 Changelog for package industrial_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.7.1 (2019-09-19)
+------------------
+* Updated all package xml files to version 2 (`#232 <https://github.com/ros-industrial/industrial_core/issues/232>`_)
+* all: update maintainer email addresses (`#222 <https://github.com/ros-industrial/industrial_core/issues/222>`_)
+* remove unneeded genmsg dependency (`#223 <https://github.com/ros-industrial/industrial_core/issues/223>`_)
+* Contributors: Jeremy Zoss, Jorge Nicho, gavanderhoorn
+
 0.7.0 (2019-02-12)
 ------------------
 * msgs: fix minor typo in RobotStatus comment. Fix `#186 <https://github.com/ros-industrial/industrial_core/issues/186>`_.
@@ -54,4 +61,4 @@ Changelog for package industrial_msgs
 * Remove obsolete export tags. Fix `#43 <https://github.com/ros-industrial/industrial_core/issues/43>`_.
 * add joint_path_command service to Industrial Robot Client
 * Converted to catkin
-* Contributors: JeremyZoss, Shaun Edwards, gavanderhoorn, ros-industrial
+* Contributors: JeremyZoss, Shaun Edwards, gavanderhoorn

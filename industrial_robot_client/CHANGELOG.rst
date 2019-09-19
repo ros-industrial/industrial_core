@@ -2,6 +2,14 @@
 Changelog for package industrial_robot_client
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.7.1 (2019-09-19)
+------------------
+* Updated all package xml files to version 2 (`#232 <https://github.com/ros-industrial/industrial_core/issues/232>`_)
+* all: update maintainer email addresses (`#222 <https://github.com/ros-industrial/industrial_core/issues/222>`_)
+* Add namespacing to all ``joint_trajectory_action`` log messages (`#192 <https://github.com/ros-industrial/industrial_core/issues/192>`_)
+* Correct off-by-one on debug output (`#229 <https://github.com/ros-industrial/industrial_core/issues/229>`_)
+* Contributors: Dave Coleman, Gonzalo Casas, Jeremy Zoss, Jorge Nicho, gavanderhoorn
+
 0.7.0 (2019-02-12)
 ------------------
 * Decrease idle wait time.  250 ms is too slow. Fix `#214 <https://github.com/ros-industrial/industrial_core/issues/214>`_.

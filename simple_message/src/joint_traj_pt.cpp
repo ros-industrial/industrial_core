@@ -108,7 +108,6 @@ bool JointTrajPt::load(industrial::byte_array::ByteArray *buffer)
           rtn = false;
           LOG_ERROR("Failed to load joint traj pt. duration");
         }
-        rtn = true;
       }
       else
       {

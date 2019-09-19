@@ -1,21 +1,23 @@
-<package>
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format2.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="2">
   <name>industrial_core</name>
-  <version>0.7.0</version>
+  <version>0.7.1</version>
   <description>ROS-Industrial core stack contains packages and libraries for supporing industrial systems</description>
-
-  <maintainer email="sedwards@swri.org">Shaun Edwards</maintainer>
+  <author>Shaun Edwards</author>
+  <maintainer email="shaun.edwards@gmail.com">Shaun Edwards</maintainer>
   <license>BSD</license>
   <url type="website">http://ros.org/wiki/industrial_core</url>
-  <author email="sedwards@swri.org">Shaun Edwards</author>
-
+  
   <buildtool_depend>catkin</buildtool_depend>
-  <run_depend>simple_message</run_depend>
-  <run_depend>industrial_msgs</run_depend>
-  <run_depend>industrial_robot_client</run_depend>
-  <run_depend>industrial_robot_simulator</run_depend>
-  <run_depend>industrial_deprecated</run_depend>
-  <run_depend>industrial_utils</run_depend>
-  <run_depend>industrial_trajectory_filters</run_depend>
+
+  <exec_depend>simple_message</exec_depend>
+  <exec_depend>industrial_msgs</exec_depend>
+  <exec_depend>industrial_robot_client</exec_depend>
+  <exec_depend>industrial_robot_simulator</exec_depend>
+  <exec_depend>industrial_deprecated</exec_depend>
+  <exec_depend>industrial_utils</exec_depend>
+  <exec_depend>industrial_trajectory_filters</exec_depend>
 
   <export>
     <metapackage/>
