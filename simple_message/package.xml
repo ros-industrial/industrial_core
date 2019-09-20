@@ -10,7 +10,8 @@
 	program.
   </description>
   <author>Shaun Edwards</author>
-  <maintainer email="shaun.edwards@gmail.com">Shaun Edwards</maintainer>
+  <maintainer email="g.a.vanderhoorn@tudelft.nl">G.A. vd. Hoorn (TU Delft Robotics Institute)</maintainer>
+  <maintainer email="levi.armstrong@swri.org">Levi Armstrong (Southwest Research Institute)</maintainer>
   <license>BSD</license>
   <url type="website">http://ros.org/wiki/simple_message</url>
 
