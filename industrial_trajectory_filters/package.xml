@@ -14,7 +14,8 @@
   </description>
   <author>Shaun Edwards</author>
   <author email="jnicho@swri.org">Jorge Nicho</author>
-  <maintainer email="shaun.edwards@gmail.com">Shaun Edwards</maintainer>
+  <maintainer email="g.a.vanderhoorn@tudelft.nl">G.A. vd. Hoorn (TU Delft Robotics Institute)</maintainer>
+  <maintainer email="levi.armstrong@swri.org">Levi Armstrong (Southwest Research Institute)</maintainer>
   <license>BSD</license>
   <url type="website">http://ros.org/wiki/industrial_trajectory_filters</url>
   <url type="bugtracker">https://github.com/ros-industrial/industrial_core/issues</url>
