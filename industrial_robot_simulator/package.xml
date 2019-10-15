@@ -2,10 +2,11 @@
 <?xml-model href="http://download.ros.org/schema/package_format2.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="2">
   <name>industrial_robot_simulator</name>
-  <version>0.7.0</version>
+  <version>0.7.1</version>
   <description>The industrial robot simulator is a stand in for industrial robot driver node(s).  It adheres to the driver specification for industrial robot controllers.</description>
 
-  <maintainer email="shaun.edwards@gmail.com">Shaun Edwards</maintainer>
+  <maintainer email="g.a.vanderhoorn@tudelft.nl">G.A. vd. Hoorn (TU Delft Robotics Institute)</maintainer>
+  <maintainer email="levi.armstrong@swri.org">Levi Armstrong (Southwest Research Institute)</maintainer>
   <license>BSD</license>
   <url type="website">http://ros.org/wiki/industrial_robot_simulator</url>
   <author>Shaun Edwards</author>

@@ -2,6 +2,13 @@
 Changelog for package simple_message
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.7.1 (2019-09-19)
+------------------
+* Fix incorrect return value if deserializing duration fails on ``joint_traj_pt`` (`#226 <https://github.com/ros-industrial/industrial_core/issues/226>`_)
+* Updated all package xml files to version 2 (`#232 <https://github.com/ros-industrial/industrial_core/issues/232>`_)
+* all: update maintainer email addresses (`#222 <https://github.com/ros-industrial/industrial_core/issues/222>`_)
+* Contributors: Gonzalo Casas, Jeremy Zoss, Jorge Nicho, gavanderhoorn
+
 0.7.0 (2019-02-12)
 ------------------
 * Updated the libraries install tags to follow the official documentation Fix `#193 <https://github.com/ros-industrial/industrial_core/issues/193>`_
@@ -102,4 +109,4 @@ Changelog for package simple_message
 * Removed library export from catkin macro.  Packages that depend on these must declare library dependencies explicitly (by name)
 * Add error message to socket errors (instead of just errno).
 * Converted to catkin
-* Contributors: Christina Gomez, JeremyZoss, ROS, Shaun Edwards, gavanderhoorn, jrgnicho, kphawkins, ros-industrial
+* Contributors: Christina Gomez, JeremyZoss, ROS, Shaun Edwards, gavanderhoorn, jrgnicho, kphawkins
