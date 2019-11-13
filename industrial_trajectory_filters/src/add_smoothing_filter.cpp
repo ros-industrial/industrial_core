@@ -123,7 +123,12 @@ public:
     }// end of if successful plan
     return result;
   };
-  
+
+  /*!
+   * Empty implementation of (later) pure virtual function
+   */
+  virtual void initialize(const ros::NodeHandle& node_handle) {};
+
 
 private:
   ros::NodeHandle nh_;

@@ -172,6 +172,11 @@ template<typename T>
     }
     ; // original FilterBase method
 
+    /**
+     * Empty implementation of (later) pure virtual function
+     */
+    virtual void initialize(const ros::NodeHandle& node_handle) {}
+
   protected:
 
     /**
