@@ -222,7 +222,7 @@ protected:
   /**
    * \brief socket ready polling timeout (ms)
    */
-  static const int SOCKET_POLL_TO = 1000;
+  static const int SOCKET_POLL_TO = 10;
 
   /**
    * \brief internal data buffer for receiving
