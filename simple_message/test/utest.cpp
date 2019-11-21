@@ -264,7 +264,12 @@ class TestServer : public TcpServer
   public:
   bool receiveBytes(ByteArray & buffer, shared_int num_bytes)
   {
-    return TcpServer::receiveBytes(buffer, num_bytes);
+    return TcpServer::receiveBytes(buffer, num_bytes, -1);
+  }
+
+  bool receiveBytes(ByteArray & buffer, shared_int num_bytes, shared_int timeoutMs)
+  {
+    return TcpServer::receiveBytes(buffer, num_bytes, timeoutMs);
   }
 };
 #else
@@ -281,7 +286,12 @@ class TestServer : public UdpServer
   public:
   bool receiveBytes(ByteArray & buffer, shared_int num_bytes)
   {
-    return UdpServer::receiveBytes(buffer, num_bytes);
+    return UdpServer::receiveBytes(buffer, num_bytes, -1);
+  }
+
+  bool receiveBytes(ByteArray & buffer, shared_int num_bytes, shared_int timeoutMs)
+  {
+    return UdpServer::receiveBytes(buffer, num_bytes, timeoutMs);
   }
 };
 #endif
@@ -289,7 +299,7 @@ class TestServer : public UdpServer
 void*
 connectServerFunc(void* arg)
 {
-  TestServer* server = (TestServer*)arg;  
+  TestServer* server = (TestServer*)arg;
   server->makeConnect();
   return NULL;
 }
@@ -336,12 +346,48 @@ TEST(SocketSuite, read)
   ASSERT_EQ(ONE_INTS, recv.getBufferSize());
 }
 
+TEST(SocketSuite, readTimeout)
+{
+  const int port = TEST_PORT_BASE;
+  char ipAddr[] = "127.0.0.1";
+
+  TestClient client;
+  TestServer server;
+  ByteArray send, recv;
+  shared_int DATA = 99;
+  shared_int TWO_INTS = 2 * sizeof(shared_int);
+  shared_int ONE_INTS = 1 * sizeof(shared_int);
+  shared_int TIMEOUT_MS = 100;
+
+  // Construct server
+  ASSERT_TRUE(server.init(port));
+
+  // Construct a client
+  ASSERT_TRUE(client.init(&ipAddr[0], port));
+  pthread_t serverConnectThrd;
+  pthread_create(&serverConnectThrd, NULL, connectServerFunc, &server);
+
+  ASSERT_TRUE(client.makeConnect());
+  pthread_join(serverConnectThrd, NULL);
+
+  ASSERT_TRUE(send.load(DATA));
+
+  // Try a read without sending anything
+  ASSERT_FALSE(server.receiveBytes(recv, TWO_INTS, TIMEOUT_MS));
+  ASSERT_EQ(0, recv.getBufferSize());
+
+  // Send too few bytes
+  ASSERT_TRUE(client.sendBytes(send));
+  sleep(2);
+  ASSERT_FALSE(server.receiveBytes(recv, TWO_INTS, TIMEOUT_MS));
+  ASSERT_EQ(ONE_INTS, recv.getBufferSize());
+}
 
 // Utility for running tcp client in sending loop
 void*
 spinSender(void* arg)
 {
-  TestClient* client = (TestClient*)arg;  
+  TestClient* client = (TestClient*)arg;
   ByteArray send;
   const int DATA = 256;
 
@@ -560,4 +606,3 @@ int main(int argc, char **argv)
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }
-
