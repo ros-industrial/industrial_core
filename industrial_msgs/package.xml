@@ -23,4 +23,7 @@
   <depend>std_msgs</depend>
   <depend>trajectory_msgs</depend>
 
+  <export>
+    <architecture_independent />
+  </export>
 </package>
