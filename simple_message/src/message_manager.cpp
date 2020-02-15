@@ -44,6 +44,9 @@
 #include "unistd.h"
 #endif
 
+#include <thread>
+#include <chrono>
+
 using namespace industrial::smpl_msg_connection;
 using namespace industrial::message_handler;
 using namespace industrial::simple_message;
@@ -177,7 +180,7 @@ void mySleep(int sec)
 
   mpTaskDelay(sec * 1000 / ms_per_clock);
 #else
-  sleep(sec);
+  std::this_thread::sleep_for(std::chrono::seconds(sec));
 #endif
 }
 

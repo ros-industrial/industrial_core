@@ -44,17 +44,21 @@
 
 #ifdef LINUXSOCKETS
 
+#ifndef _WIN32
 #include "sys/socket.h"
 #include "arpa/inet.h"
-#include "string.h"
 #include "unistd.h"
 #include "netinet/tcp.h"
+#else
+#include <ws2tcpip.h>
+#endif
+#include "string.h"
 #include "errno.h"
 
 #define SOCKET(domain, type, protocol) socket(domain, type, protocol)
 #define BIND(sockfd, addr, addrlen) bind(sockfd, addr, addrlen)
-#define SET_NO_DELAY(sockfd, val) setsockopt(sockfd, IPPROTO_TCP, TCP_NODELAY, &(val), sizeof(val))
-#define SET_REUSE_ADDR(sockfd, val) setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &(val), sizeof(val))
+#define SET_NO_DELAY(sockfd, val) setsockopt(sockfd, IPPROTO_TCP, TCP_NODELAY, reinterpret_cast<const char*>(&(val)), sizeof(val))
+#define SET_REUSE_ADDR(sockfd, val) setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, reinterpret_cast<const char*>(&(val)), sizeof(val))
 #define LISTEN(sockfd, n) listen(sockfd, n)
 #define ACCEPT(sockfd, addr, addrlen) accept(sockfd, addr, addrlen)
 #define CONNECT(sockfd, dest_addr ,addrlen) connect(sockfd, dest_addr, addrlen)
@@ -63,7 +67,11 @@
 #define RECV_FROM(sockfd, buf, len, flags, src_addr, addrlen) recvfrom(sockfd, buf, len, flags, src_addr, addrlen)
 #define RECV(sockfd, buf, len, flags) recv(sockfd, buf, len, flags)
 #define SELECT(n, readfds, writefds, exceptfds, timeval) select(n, readfds, writefds, exceptfds, timeval)
+#ifdef _WIN32
+#define CLOSE(fd) closesocket(fd)
+#else
 #define CLOSE(fd) close(fd)
+#endif
 #ifndef HTONS // OSX defines HTONS
 #define HTONS(num) htons(num)
 #endif
@@ -238,8 +246,10 @@ protected:
    * \param msg custom message prefixed to system error
    * \param rc return code from socket
    */
+#ifndef _MSC_VER
   __attribute__((deprecated(
                    "Please use: logSocketError(const char* msg, const int rc, const int error_no)")))
+#endif
   void logSocketError(const char* msg, int rc)
   {
     logSocketError(msg, rc, errno);
