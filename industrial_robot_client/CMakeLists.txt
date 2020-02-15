@@ -48,7 +48,10 @@ add_library(${PROJECT_NAME}_dummy ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}_du
 # unfortunately this will have to be installed, but the linker will remove it
 # from the library dependencies of dependent targets, as it contains no symbols
 # that can be imported from it.
-install(TARGETS ${PROJECT_NAME}_dummy DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION})
+install(TARGETS ${PROJECT_NAME}_dummy
+  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
 
 
 # This library depends on the simple_message library, which is available
@@ -66,12 +69,12 @@ install(TARGETS ${PROJECT_NAME}_dummy DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATI
 #
 
 add_library(industrial_robot_client ${SRC_FILES})
-target_link_libraries(industrial_robot_client simple_message)
+target_link_libraries(industrial_robot_client ${catkin_LIBRARIES} simple_message)
 target_compile_definitions(industrial_robot_client PUBLIC
   ${simple_message_DEFINITIONS})
 
 add_library(industrial_robot_client_bswap ${SRC_FILES})
-target_link_libraries(industrial_robot_client_bswap simple_message_bswap)
+target_link_libraries(industrial_robot_client_bswap ${catkin_LIBRARIES} simple_message_bswap)
 target_compile_definitions(industrial_robot_client_bswap PUBLIC
   ${simple_message_bswap_DEFINITIONS})
 

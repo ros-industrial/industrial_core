@@ -43,11 +43,15 @@
 #endif
 
 #ifdef SIMPLE_MESSAGE_LINUX
+#ifndef WIN32
 #include "sys/socket.h"
-#include "arpa/inet.h"
-#include "string.h"
 #include "netdb.h"
+#include "arpa/inet.h"
 #include "unistd.h"
+#else
+#include <ws2tcpip.h>
+#endif
+#include "string.h"
 #endif
 
 #ifdef SIMPLE_MESSAGE_MOTOPLUS
