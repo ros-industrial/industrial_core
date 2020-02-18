@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.0.2)
 
 project(industrial_robot_client)
 
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 find_package(catkin REQUIRED COMPONENTS roscpp std_msgs sensor_msgs 
   control_msgs trajectory_msgs simple_message actionlib_msgs actionlib 
   urdf industrial_msgs industrial_utils)
