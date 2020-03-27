@@ -49,6 +49,7 @@ from industrial_msgs.msg import RobotStatus
 # Subscribe
 from trajectory_msgs.msg import JointTrajectory
 from trajectory_msgs.msg import JointTrajectoryPoint
+from std_msgs.msg import Bool
 
 # Services
 from industrial_msgs.srv import GetRobotInfo, GetRobotInfoResponse
@@ -270,7 +271,11 @@ class IndustrialRobotSimulatorNode():
         # retrieve update rate
         motion_update_rate = rospy.get_param('motion_update_rate', 100.);  #set param to 0 to ignore interpolated motion
         self.motion_ctrl = MotionControllerSimulator(num_joints, initial_joint_state, update_rate=motion_update_rate)
-
+        
+        # React to published e-stop
+        self.e_stop_state = False
+        self.e_stop_sub = rospy.Subscriber('fake_e_stop', Bool, self.e_stop_changed_callback)
+        
         # Published to joint states
         rospy.logdebug("Creating joint state publisher")
         self.joint_state_pub = rospy.Publisher('joint_states', JointState, queue_size=1)
@@ -363,9 +368,9 @@ class IndustrialRobotSimulatorNode():
         try:
             msg = RobotStatus()
             msg.mode.val            = RobotMode.AUTO
-            msg.e_stopped.val       = TriState.FALSE
+            msg.e_stopped.val       = TriState.TRUE if self.e_stop_state else TriState.FALSE
             msg.drives_powered.val  = TriState.TRUE
-            msg.motion_possible.val = TriState.TRUE
+            msg.motion_possible.val = TriState.FALSE if self.e_stop_state else TriState.TRUE
             msg.in_motion.val       = self.motion_ctrl.is_in_motion()
             msg.in_error.val        = TriState.FALSE
             msg.error_code          = 0
@@ -392,7 +397,8 @@ class IndustrialRobotSimulatorNode():
                 else:
                     rospy.logdebug('Received empty trajectory while still in motion, stopping current trajectory')
                 self.motion_ctrl.stop()
-
+            elif self.e_stop_state:
+                rospy.logerr('Received trajectory while e-stopped, ignoring it')
             else:
                 for point in msg_in.points:
                     point = self._to_controller_order(msg_in.joint_names, point)
@@ -479,6 +485,28 @@ class IndustrialRobotSimulatorNode():
         # always successfull
         resp.code.val = ServiceReturnCode.SUCCESS
         return resp
+    
+    """
+    e-stop subscription callback (gets called whenever a new e-stop state is received).
+
+    @param msg_in: std_msg.Bool message
+    @type  msg_in: Bool
+    """
+    def e_stop_changed_callback(self, msg_in):
+        try:
+            rospy.logdebug('Received new e-stop state "%s", executing callback', 'on' if msg_in.data else 'off')
+
+            if msg_in.data and self.motion_ctrl.is_in_motion():
+                rospy.logdebug('Received e-stop while still in motion, stopping current trajectory')
+                self.motion_ctrl.stop()
+            
+            self.e_stop_state = msg_in.data
+
+        except Exception as e:
+            rospy.logerr('Unexpected exception: %s', e)
+
+        rospy.logdebug('Exiting e-stop callback')
+
 
 
 if __name__ == '__main__':
