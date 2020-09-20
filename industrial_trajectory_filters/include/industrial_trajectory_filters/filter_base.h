@@ -37,6 +37,7 @@
 #include "ros/console.h"
 #include "ros/ros.h"
 #include <moveit/planning_request_adapter/planning_request_adapter.h>
+#include <moveit/version.h>
 #include <class_loader/class_loader.hpp>
 
 namespace industrial_trajectory_filters
@@ -173,6 +174,18 @@ template<typename T>
     ; // original FilterBase method
 
   protected:
+
+#if MOVEIT_VERSION_MAJOR >= 1 && MOVEIT_VERSION_MINOR >= 1
+    /**
+     * @brief for supporting multiple planning pipelines, set parameter namespace
+     */
+    virtual void initialize(const ros::NodeHandle& node_handle) override
+    {
+      nh_ = node_handle;
+      // configuration is done lazyly later
+      configured_ = false;
+    }
+#endif
 
     /**
      * @brief FilterBase method for the sub class to configure the filter
