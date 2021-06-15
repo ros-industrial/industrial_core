@@ -20,7 +20,6 @@
 
 # Other ROS stuff
 CATKIN_IGNORE*
-compile_commands.json
 
 # Eclipse stuff
 .pydevproject
