@@ -90,7 +90,7 @@ void JointTrajectoryStreamer::jointTrajectoryCB(const trajectory_msgs::JointTraj
   // if we're currently streaming a trajectory and we're requested to stream another
   // we complain, as splicing is not supported. Cancellation of the current trajectory
   // should first be requested, then a new trajectory started.
-  else if (TransferStates::IDLE != state)
+  if (TransferStates::IDLE != state)
   {
     ROS_ERROR("Trajectory splicing not yet implemented, stopping current motion.");
 
