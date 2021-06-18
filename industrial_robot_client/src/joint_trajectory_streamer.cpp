@@ -72,7 +72,11 @@ void JointTrajectoryStreamer::jointTrajectoryCB(const trajectory_msgs::JointTraj
 
   ROS_DEBUG("Current state is: %d", state);
 
-  // always stop the current trajectory if an empty trajectory is received
+  // always request a stop of current trajectory execution if an empty trajectory
+  // is received. We handle this separately from the check below, as the server
+  // might be executing a trajectory which this client has already finished
+  // uploading (due to buffering on the server side fi), and then our local state
+  // would be "IDLE", and we'd end up not sending the stop request.
   if (msg->points.empty())
   {
     ROS_INFO("Empty trajectory received while in state: %d. Canceling current trajectory.", state);
@@ -82,6 +86,10 @@ void JointTrajectoryStreamer::jointTrajectoryCB(const trajectory_msgs::JointTraj
     this->mutex_.unlock();
       return;
   }
+
+  // if we're currently streaming a trajectory and we're requested to stream another
+  // we complain, as splicing is not supported. Cancellation of the current trajectory
+  // should first be requested, then a new trajectory started.
   else if (TransferStates::IDLE != state)
   {
     ROS_ERROR("Trajectory splicing not yet implemented, stopping current motion.");
