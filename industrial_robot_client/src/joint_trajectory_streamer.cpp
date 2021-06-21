@@ -68,7 +68,7 @@ void JointTrajectoryStreamer::jointTrajectoryCB(const trajectory_msgs::JointTraj
   ROS_INFO("Receiving joint trajectory message");
 
   // read current state value (should be atomic)
-  int state = this->state_;
+  const auto state = this->state_;
 
   ROS_DEBUG("Current state is: %d", state);
 
@@ -79,7 +79,7 @@ void JointTrajectoryStreamer::jointTrajectoryCB(const trajectory_msgs::JointTraj
   // would be "IDLE", and we'd end up not sending the stop request.
   if (msg->points.empty())
   {
-    ROS_INFO("Empty trajectory received while in state: %d. Canceling current trajectory.", state);
+    ROS_INFO_STREAM("Empty trajectory received while in state: " << TransferStates::to_string(state) << ". Canceling current trajectory.");
     this->mutex_.lock();
     trajectoryStop();
     this->mutex_.unlock();

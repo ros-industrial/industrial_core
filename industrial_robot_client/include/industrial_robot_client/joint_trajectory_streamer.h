@@ -50,6 +50,15 @@ enum TransferState
 {
   IDLE = 0, STREAMING =1 //,STARTING, //, STOPPING
 };
+
+std::string to_string(TransferState state)
+{
+  if(state == TransferState::IDLE)
+    return "IDLE";
+  if(state == TransferState::STREAMING)
+    return "STREAMING";
+  return "UNKNOWN";
+}
 }
 typedef TransferStates::TransferState TransferState;
 
