@@ -13,6 +13,6 @@ add_definitions(-DSIMPLE_MESSAGE_LINUX)
 #--------------------------------------------------------------------------
 #Old definitions (deprecated in kinetic, to be removed in lunar or melodic)
 #--------------------------------------------------------------------------
-add_definitions(-DROS)
-add_definitions(-DLINUXSOCKETS)
+#add_definitions(-DROS)
+#add_definitions(-DLINUXSOCKETS)
 #add_definitions(-DMOTOPLUS)
