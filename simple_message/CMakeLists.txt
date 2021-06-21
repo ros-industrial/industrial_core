@@ -13,6 +13,9 @@ set(ROS_BUILD_SHARED_LIBS false)
 # certain functions and headers. The default flags in the file included
 # here enable compiling for a ROS node. This file is also exported to
 # dependent packages via the `catkin_package` commmand.
+#
+# TODO: use CMake's configure_file(..) functionality instead of hard-coding
+# this here
 include(cmake/platform_build_flags.cmake)
 
 set(SRC_FILES src/byte_array.cpp
