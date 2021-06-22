@@ -68,7 +68,9 @@ catkin_package(
     CATKIN_DEPENDS roscpp industrial_msgs
     INCLUDE_DIRS include
     LIBRARIES ${PROJECT_NAME}_dummy
-    CFG_EXTRAS platform_build_flags.cmake issue46_workaround.cmake
+    CFG_EXTRAS
+      issue46_workaround.cmake
+      platform_build_flags.cmake
 )
 
 
