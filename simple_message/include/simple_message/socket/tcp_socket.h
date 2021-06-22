@@ -40,7 +40,7 @@
 #include "shared_types.h"
 #endif
 
-#ifdef LINUXSOCKETS
+#ifdef SIMPLE_MESSAGE_LINUX
 #include "sys/socket.h"
 #include "netdb.h"
 #include "arpa/inet.h"
@@ -48,7 +48,7 @@
 #include "unistd.h"
 #endif
 
-#ifdef MOTOPLUS
+#ifdef SIMPLE_MESSAGE_MOTOPLUS
 #include "motoPlus.h"
 #endif
 

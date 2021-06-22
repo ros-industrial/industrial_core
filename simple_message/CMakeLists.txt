@@ -8,13 +8,6 @@ find_package(catkin REQUIRED COMPONENTS roscpp industrial_msgs)
 set(ROS_BUILD_STATIC_LIBS true)
 set(ROS_BUILD_SHARED_LIBS false)
 
-# The simple_message library is designed to cross compile on Ubuntu
-# and various robot controllers.  This requires conditionally compiling
-# certain functions and headers.  The definition below enables compiling
-# for a ROS node.
-add_definitions(-DROS=1)           #build using ROS libraries
-add_definitions(-DLINUXSOCKETS=1)  #use linux sockets for communication
-
 set(SRC_FILES src/byte_array.cpp
 	src/simple_message.cpp
 	src/smpl_msg_connection.cpp
@@ -48,30 +41,36 @@ set(SRC_FILES src/byte_array.cpp
 					
 set(UTEST_SRC_FILES test/utest.cpp test/utest_message.cpp)
 
-# The simple message make file builds two libraries: simple_message and
-# simple_message_byte_swapping.
+# The simple message make file builds three libraries: simple_message,
+# simple_message_bswap and simple_message_float64.
 #
 # simple_message - is the default library.  This library should be used
 # when the target for the simple message is the same endian (i.e. both
 # big-endian or little-endian).  Intel based machines are little endian
 #
-# simple_message_byte_swapping - is an alternative library that can be used
+# simple_message_bswap - is an alternative library that can be used
 # when the target for simple message is a DIFFERENT endian AND when the target
 # target cannot perform byte swapping (as is the case for some industrial
 # controllers).  This library performs byte swapping at the lowest load/unload
 # levels.
-
+#
+# simple_message_float64 - another alternative which uses 8 byte floats instead
+# of 4 byte floats (ie: double precision vs single precision).
+# This variant changes the shared_float typedef everywhere to be 8 byte floats.
+#
 # NOTE: The libraries generated this package are not included in the catkin_package
 # macro because libraries must be explicitly linked in projects that depend on this
 # package.  If this is not done (and these libraries were exported), then multiple
-# library definitions (normal - simple_message and byteswapped - simple_message_bswap)
-# are both included (this is bad).
+# library definitions (normal - simple_message, byteswapped - simple_message_bswap
+# and simple_message_float64) are all included (this is bad).
 
 catkin_package(
     CATKIN_DEPENDS roscpp industrial_msgs
     INCLUDE_DIRS include
     LIBRARIES ${PROJECT_NAME}_dummy
-    CFG_EXTRAS issue46_workaround.cmake
+    CFG_EXTRAS
+      issue46_workaround.cmake
+      platform_build_flags.cmake
 )
 
 
@@ -98,37 +97,47 @@ install(TARGETS ${PROJECT_NAME}_dummy DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATI
 
 # DEFAULT LIBRARY (SAME ENDIAN)
 add_library(simple_message ${SRC_FILES})
+# NOTE: keep these in-sync with the lists in 'cmake/platform_build_flags.cmake'.
+# Yes, we could have used get_target_property(..) and then configure_file(..)
+# (or Catkin's equivalent), but there is a low probably these will ever change
+# again, so for now, manually managing it all is an OK trade-off
+target_compile_definitions(simple_message PUBLIC
+  SIMPLE_MESSAGE_USE_ROS SIMPLE_MESSAGE_LINUX)
 target_link_libraries(simple_message ${catkin_LIBRARIES})
 add_dependencies(simple_message ${industrial_msgs_EXPORTED_TARGETS})
 
 # ALTERNATIVE LIBRARY (DIFFERENT ENDIAN)
 add_library(simple_message_bswap ${SRC_FILES})
-set_target_properties(simple_message_bswap PROPERTIES COMPILE_DEFINITIONS "BYTE_SWAPPING")
+# NOTE: keep these in-sync with the lists in 'cmake/platform_build_flags.cmake'
+target_compile_definitions(simple_message_bswap PUBLIC
+  SIMPLE_MESSAGE_USE_ROS SIMPLE_MESSAGE_LINUX BYTE_SWAPPING)
 target_link_libraries(simple_message_bswap ${catkin_LIBRARIES})
 add_dependencies(simple_message_bswap ${industrial_msgs_EXPORTED_TARGETS})
 
 # ALTERNATIVE LIBRARY (64-bit floats)
 add_library(simple_message_float64 ${SRC_FILES})
-set_target_properties(simple_message_float64 PROPERTIES COMPILE_DEFINITIONS "FLOAT64")
+# NOTE: keep these in-sync with the lists in 'cmake/platform_build_flags.cmake'
+target_compile_definitions(simple_message_float64 PUBLIC
+  SIMPLE_MESSAGE_USE_ROS SIMPLE_MESSAGE_LINUX FLOAT64)
 target_link_libraries(simple_message_float64 ${catkin_LIBRARIES})
 add_dependencies(simple_message_float64 ${industrial_msgs_EXPORTED_TARGETS})
 
 if(CATKIN_ENABLE_TESTING)
 
     catkin_add_gtest(utest ${UTEST_SRC_FILES})
-    set_target_properties(utest PROPERTIES COMPILE_DEFINITIONS "TEST_PORT_BASE=11000")
+    target_compile_definitions(utest PRIVATE TEST_PORT_BASE=11000)
     target_link_libraries(utest simple_message)
 
     catkin_add_gtest(utest_byte_swapping ${UTEST_SRC_FILES})
-    set_target_properties(utest_byte_swapping PROPERTIES COMPILE_DEFINITIONS "TEST_PORT_BASE=12000")
+    target_compile_definitions(utest_byte_swapping PRIVATE TEST_PORT_BASE=12000)
     target_link_libraries(utest_byte_swapping simple_message_bswap)
 
     catkin_add_gtest(utest_float64 ${UTEST_SRC_FILES})
-    set_target_properties(utest_float64 PROPERTIES COMPILE_DEFINITIONS "TEST_PORT_BASE=13000;FLOAT64")
+    target_compile_definitions(utest_float64 PRIVATE TEST_PORT_BASE=13000 FLOAT64)
     target_link_libraries(utest_float64 simple_message_float64)
 
     catkin_add_gtest(utest_udp ${UTEST_SRC_FILES})
-    set_target_properties(utest_udp PROPERTIES COMPILE_DEFINITIONS "TEST_PORT_BASE=15000;UDP_TEST")
+    target_compile_definitions(utest_udp PRIVATE TEST_PORT_BASE=15000 UDP_TEST)
     target_link_libraries(utest_udp simple_message)
 
 endif()

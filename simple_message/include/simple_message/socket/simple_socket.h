@@ -42,7 +42,7 @@
 #include "smpl_msg_connection.h"
 #endif
 
-#ifdef LINUXSOCKETS
+#ifdef SIMPLE_MESSAGE_LINUX
 
 #include "sys/socket.h"
 #include "arpa/inet.h"
@@ -73,7 +73,7 @@
 
 #endif
 
-#ifdef MOTOPLUS
+#ifdef SIMPLE_MESSAGE_MOTOPLUS
 
 #include "motoPlus.h"
 
