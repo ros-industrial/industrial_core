@@ -8,16 +8,6 @@ find_package(catkin REQUIRED COMPONENTS roscpp industrial_msgs)
 set(ROS_BUILD_STATIC_LIBS true)
 set(ROS_BUILD_SHARED_LIBS false)
 
-# The simple_message library is designed to cross compile on Ubuntu
-# and various robot controllers. This requires conditionally compiling
-# certain functions and headers. The default flags in the file included
-# here enable compiling for a ROS node. This file is also exported to
-# dependent packages via the `catkin_package` commmand.
-#
-# TODO: use CMake's configure_file(..) functionality instead of hard-coding
-# this here
-include(cmake/platform_build_flags.cmake)
-
 set(SRC_FILES src/byte_array.cpp
 	src/simple_message.cpp
 	src/smpl_msg_connection.cpp

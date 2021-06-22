@@ -1,18 +1,17 @@
-# Flags that control the conditional compilation of this library for use on different platforms. The
-# defaults set here will be exported to dependent projects via catkin. Dependent projects can use
-# cmake's `remove_definitions` command to change these defaults if desired.
+# The simple_message library is designed to cross compile on Ubuntu
+# and various robot controllers. This requires conditionally compiling
+# certain functions and headers. The default flags in this file enable
+# compiling for a ROS node. This file is also exported to dependent packages
+# via the catkin_package(..) commmand.
 
-# Include code that interfaces with ROS
-add_definitions(-DSIMPLE_MESSAGE_USE_ROS)
+# Note: these are the same set of defines passed to target_compile_definitions(..)
+# in the simple_message/CMakeLists.txt. In order to keep things simple and
+# deterministic, they are replicated here.
 
-# Control which platform's underlying networking library is used by this package.
-# The package will not build unless one (and only one) of these definitions is set.
-add_definitions(-DSIMPLE_MESSAGE_LINUX)
-#add_definitions(-DSIMPLE_MESSAGE_MOTOPLUS)
+# with plain CMake, we'd use target_compile_definitions(..) and then
+# target_link_libraries(..) with EXPORT(..)-ed targets, but that's not possible
+# right now with Catkin, so we use this work-around.
 
-#--------------------------------------------------------------------------
-# Old definitions (deprecated in kinetic, to be removed in lunar or melodic)
-#--------------------------------------------------------------------------
-#add_definitions(-DROS)
-#add_definitions(-DLINUXSOCKETS)
-#add_definitions(-DMOTOPLUS)
+set(simple_message_DEFINITIONS         SIMPLE_MESSAGE_USE_ROS;SIMPLE_MESSAGE_LINUX)
+set(simple_message_bswap_DEFINITIONS   SIMPLE_MESSAGE_USE_ROS;SIMPLE_MESSAGE_LINUX;BYTE_SWAPPING)
+set(simple_message_float64_DEFINITIONS SIMPLE_MESSAGE_USE_ROS;SIMPLE_MESSAGE_LINUX;FLOAT64)
