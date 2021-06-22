@@ -41,24 +41,28 @@ set(SRC_FILES src/byte_array.cpp
 					
 set(UTEST_SRC_FILES test/utest.cpp test/utest_message.cpp)
 
-# The simple message make file builds two libraries: simple_message and
-# simple_message_byte_swapping.
+# The simple message make file builds three libraries: simple_message,
+# simple_message_bswap and simple_message_float64.
 #
 # simple_message - is the default library.  This library should be used
 # when the target for the simple message is the same endian (i.e. both
 # big-endian or little-endian).  Intel based machines are little endian
 #
-# simple_message_byte_swapping - is an alternative library that can be used
+# simple_message_bswap - is an alternative library that can be used
 # when the target for simple message is a DIFFERENT endian AND when the target
 # target cannot perform byte swapping (as is the case for some industrial
 # controllers).  This library performs byte swapping at the lowest load/unload
 # levels.
-
+#
+# simple_message_float64 - another alternative which uses 8 byte floats instead
+# of 4 byte floats (ie: double precision vs single precision).
+# This variant changes the shared_float typedef everywhere to be 8 byte floats.
+#
 # NOTE: The libraries generated this package are not included in the catkin_package
 # macro because libraries must be explicitly linked in projects that depend on this
 # package.  If this is not done (and these libraries were exported), then multiple
-# library definitions (normal - simple_message and byteswapped - simple_message_bswap)
-# are both included (this is bad).
+# library definitions (normal - simple_message, byteswapped - simple_message_bswap
+# and simple_message_float64) are all included (this is bad).
 
 catkin_package(
     CATKIN_DEPENDS roscpp industrial_msgs
