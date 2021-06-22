@@ -91,6 +91,10 @@ install(TARGETS ${PROJECT_NAME}_dummy DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATI
 
 # DEFAULT LIBRARY (SAME ENDIAN)
 add_library(simple_message ${SRC_FILES})
+# NOTE: keep these in-sync with the lists in 'cmake/platform_build_flags.cmake'.
+# Yes, we could have used get_target_property(..) and then configure_file(..)
+# (or Catkin's equivalent), but there is a low probably these will ever change
+# again, so for now, manually managing it all is an OK trade-off
 target_compile_definitions(simple_message PUBLIC
   SIMPLE_MESSAGE_USE_ROS SIMPLE_MESSAGE_LINUX)
 target_link_libraries(simple_message ${catkin_LIBRARIES})
@@ -98,6 +102,7 @@ add_dependencies(simple_message ${industrial_msgs_EXPORTED_TARGETS})
 
 # ALTERNATIVE LIBRARY (DIFFERENT ENDIAN)
 add_library(simple_message_bswap ${SRC_FILES})
+# NOTE: keep these in-sync with the lists in 'cmake/platform_build_flags.cmake'
 target_compile_definitions(simple_message_bswap PUBLIC
   SIMPLE_MESSAGE_USE_ROS SIMPLE_MESSAGE_LINUX BYTE_SWAPPING)
 target_link_libraries(simple_message_bswap ${catkin_LIBRARIES})
@@ -105,6 +110,7 @@ add_dependencies(simple_message_bswap ${industrial_msgs_EXPORTED_TARGETS})
 
 # ALTERNATIVE LIBRARY (64-bit floats)
 add_library(simple_message_float64 ${SRC_FILES})
+# NOTE: keep these in-sync with the lists in 'cmake/platform_build_flags.cmake'
 target_compile_definitions(simple_message_float64 PUBLIC
   SIMPLE_MESSAGE_USE_ROS SIMPLE_MESSAGE_LINUX FLOAT64)
 target_link_libraries(simple_message_float64 ${catkin_LIBRARIES})
