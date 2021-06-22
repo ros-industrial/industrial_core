@@ -305,7 +305,9 @@ public:
    *
    * \return char* pointer to the raw data
    */
+  #ifndef _MSC_VER
    __attribute__((deprecated("This ptr will be invalid once buffer is changed.  Please use: copyTo(vector<char>) instead.")))
+  #endif
   char* getRawDataPtr();
 
   /**
