@@ -27,9 +27,10 @@ catkin_package(
       industrial_utils
     INCLUDE_DIRS include
     LIBRARIES ${PROJECT_NAME}_dummy
-    CFG_EXTRAS issue46_workaround.cmake
+    CFG_EXTRAS
+      issue46_workaround.cmake
+      platform_build_flags.cmake
 )
-
 
 
 include_directories(include
