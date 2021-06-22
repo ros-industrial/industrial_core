@@ -66,9 +66,13 @@ install(TARGETS ${PROJECT_NAME}_dummy DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATI
 
 add_library(industrial_robot_client ${SRC_FILES})
 target_link_libraries(industrial_robot_client simple_message)
+target_compile_definitions(industrial_robot_client PUBLIC
+  ${simple_message_DEFINITIONS})
 
 add_library(industrial_robot_client_bswap ${SRC_FILES})
 target_link_libraries(industrial_robot_client_bswap simple_message_bswap)
+target_compile_definitions(industrial_robot_client_bswap PUBLIC
+  ${simple_message_bswap_DEFINITIONS})
 
 # The following executables(nodes) are for applications where the robot
 # controller and pc have the same byte order (i.e. byte swapping NOT
@@ -80,6 +84,8 @@ target_link_libraries(robot_state
   industrial_robot_client
   simple_message
   ${catkin_LIBRARIES})
+target_compile_definitions(robot_state PRIVATE
+  ${simple_message_DEFINITIONS})
 
 add_executable(motion_streaming_interface
   src/generic_joint_streamer_node.cpp)
@@ -87,6 +93,8 @@ target_link_libraries(motion_streaming_interface
   industrial_robot_client 
   simple_message
   ${catkin_LIBRARIES})
+target_compile_definitions(motion_streaming_interface PRIVATE
+  ${simple_message_DEFINITIONS})
 
 add_executable(motion_download_interface
   src/generic_joint_downloader_node.cpp)
@@ -94,6 +102,8 @@ target_link_libraries(motion_download_interface
   industrial_robot_client 
   simple_message
   ${catkin_LIBRARIES})
+target_compile_definitions(motion_download_interface PRIVATE
+  ${simple_message_DEFINITIONS})
 
 # The following executables(nodes) are for applications where the robot
 # controller and pc have different same byte order (i.e. byte swapping IS
@@ -105,6 +115,8 @@ target_link_libraries(robot_state_bswap
   industrial_robot_client_bswap 
   simple_message_bswap
   ${catkin_LIBRARIES})
+target_compile_definitions(robot_state_bswap PRIVATE
+  ${simple_message_bswap_DEFINITIONS})
 
 add_executable(motion_streaming_interface_bswap
   src/generic_joint_streamer_node.cpp)
@@ -112,6 +124,8 @@ target_link_libraries(motion_streaming_interface_bswap
   industrial_robot_client_bswap  
   simple_message_bswap
   ${catkin_LIBRARIES})
+target_compile_definitions(motion_streaming_interface_bswap PRIVATE
+  ${simple_message_bswap_DEFINITIONS})
 
 add_executable(motion_download_interface_bswap
   src/generic_joint_downloader_node.cpp)
@@ -119,6 +133,8 @@ target_link_libraries(motion_download_interface_bswap
   industrial_robot_client_bswap  
   simple_message_bswap
   ${catkin_LIBRARIES})
+target_compile_definitions(motion_download_interface_bswap PRIVATE
+  ${simple_message_bswap_DEFINITIONS})
 
 # The following executables(nodes) interface with the robot controller
 # at a higher level so there is no need to create two versions (one with
@@ -127,7 +143,7 @@ target_link_libraries(motion_download_interface_bswap
 add_executable(joint_trajectory_action 
   src/generic_joint_trajectory_action_node.cpp
   src/joint_trajectory_action.cpp)
-target_link_libraries(joint_trajectory_action 
+target_link_libraries(joint_trajectory_action PRIVATE
   industrial_robot_client ${catkin_LIBRARIES})
 
 ##########
