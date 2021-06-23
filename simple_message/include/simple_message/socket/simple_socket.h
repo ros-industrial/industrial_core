@@ -222,7 +222,7 @@ protected:
   /**
    * \brief socket ready polling timeout (ms)
    */
-  static const int SOCKET_POLL_TO = 1000;
+  static const int SOCKET_POLL_TO = 10;
 
   /**
    * \brief internal data buffer for receiving
@@ -265,12 +265,14 @@ protected:
   {
     LOG_ERROR("%s, rc: %d. Error: '%s' (errno: %d)", msg, rc, strerror(error_no), error_no);
   }
-  
+
   // Send/Receive functions (inherited classes should override raw methods
   // Virtual
   bool sendBytes(industrial::byte_array::ByteArray & buffer);
   bool receiveBytes(industrial::byte_array::ByteArray & buffer,
-      industrial::shared_types::shared_int num_bytes);
+      industrial::shared_types::shared_int num_bytes,
+      industrial::shared_types::shared_int timeout_ms);
+
   // Virtual
   virtual int rawSendBytes(char *buffer,
       industrial::shared_types::shared_int num_bytes)=0;
