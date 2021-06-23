@@ -5,8 +5,8 @@ project(industrial_robot_client)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(catkin REQUIRED COMPONENTS actionlib actionlib_msgs 
-  control_msgs industrial_msgs industrial_utils roscpp sensor_msgs  
+find_package(catkin REQUIRED COMPONENTS actionlib actionlib_msgs
+  control_msgs industrial_msgs industrial_utils roscpp sensor_msgs
   simple_message std_msgs trajectory_msgs urdf)
 
 find_package(Boost REQUIRED COMPONENTS system thread)
@@ -25,14 +25,14 @@ set(SRC_FILES src/joint_relay_handler.cpp
 # library definitions (normal - industrial_robot_client and byteswapped.
 # industrial_robot_client_bswap) are both included (this is bad).
 catkin_package(
-    CATKIN_DEPENDS actionlib actionlib_msgs control_msgs 
-    industrial_msgs industrial_utils roscpp sensor_msgs 
+  CATKIN_DEPENDS actionlib actionlib_msgs control_msgs
+    industrial_msgs industrial_utils roscpp sensor_msgs
     simple_message std_msgs trajectory_msgs urdf
-    INCLUDE_DIRS include
-    LIBRARIES ${PROJECT_NAME}_dummy
-    CFG_EXTRAS
-      issue46_workaround.cmake
-      platform_build_flags.cmake
+  INCLUDE_DIRS include
+  LIBRARIES ${PROJECT_NAME}_dummy
+  CFG_EXTRAS
+    issue46_workaround.cmake
+    platform_build_flags.cmake
 )
 
 
@@ -179,25 +179,25 @@ endif()
 ##roslaunch_add_file_check(launch)
 
 install(
-    TARGETS ${PROJECT_NAME} ${PROJECT_NAME}_bswap
-    ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-    LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-    RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
-
-install(TARGETS 
-        joint_trajectory_action
-        motion_download_interface
-        motion_download_interface_bswap
-        motion_streaming_interface 
-        motion_streaming_interface_bswap 
-        robot_state 
-        robot_state_bswap
-    RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+  TARGETS ${PROJECT_NAME} ${PROJECT_NAME}_bswap
+  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
 
 install(
-    DIRECTORY include/${PROJECT_NAME}/
-    DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
+  TARGETS
+    joint_trajectory_action
+    motion_download_interface
+    motion_download_interface_bswap
+    motion_streaming_interface
+    motion_streaming_interface_bswap
+    robot_state
+    robot_state_bswap
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
+install(
+  DIRECTORY include/${PROJECT_NAME}/
+  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
 foreach(dir config launch)
    install(DIRECTORY ${dir}/
       DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/${dir})
