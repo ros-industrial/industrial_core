@@ -51,28 +51,28 @@ set(SRC_FILES src/byte_array.cpp
 	src/smpl_msg_connection.cpp
 
 	src/socket/simple_socket.cpp
-	src/socket/udp_socket.cpp
-	src/socket/udp_client.cpp
-	src/socket/udp_server.cpp
-	src/socket/tcp_socket.cpp
 	src/socket/tcp_client.cpp
 	src/socket/tcp_server.cpp
+	src/socket/tcp_socket.cpp
+	src/socket/udp_client.cpp
+	src/socket/udp_server.cpp
+	src/socket/udp_socket.cpp
 
+	src/joint_data.cpp
+	src/joint_feedback.cpp
+	src/joint_traj_pt_full.cpp
+	src/joint_traj_pt.cpp
+	src/joint_traj.cpp
 	src/message_handler.cpp
 	src/message_manager.cpp
 	src/ping_handler.cpp
 	src/ping_message.cpp
-	src/joint_data.cpp
-	src/joint_feedback.cpp
-	src/joint_traj_pt.cpp
-	src/joint_traj_pt_full.cpp
-	src/joint_traj.cpp
 	src/robot_status.cpp
 
-	src/messages/joint_message.cpp
 	src/messages/joint_feedback_message.cpp
-	src/messages/joint_traj_pt_message.cpp
+	src/messages/joint_message.cpp
 	src/messages/joint_traj_pt_full_message.cpp
+	src/messages/joint_traj_pt_message.cpp
 	src/messages/robot_status_message.cpp
 
 	src/simple_comms_fault_handler.cpp
@@ -90,6 +90,7 @@ add_library(${PROJECT_NAME}_dummy ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}_du
 
 
 # DEFAULT LIBRARY (SAME ENDIAN)
+#catkin_lint: ignore_once unsorted_list
 add_library(${PROJECT_NAME} ${SRC_FILES})
 # NOTE: keep these in-sync with the lists in 'cmake/platform_build_flags.cmake'.
 # Yes, we could have used get_target_property(..) and then configure_file(..)
@@ -102,6 +103,7 @@ target_link_libraries(${PROJECT_NAME} $<$<BOOL:${WIN32}>:Ws2_32.lib>)
 add_dependencies(${PROJECT_NAME} ${industrial_msgs_EXPORTED_TARGETS})
 
 # ALTERNATIVE LIBRARY (DIFFERENT ENDIAN)
+#catkin_lint: ignore_once unsorted_list
 add_library(${PROJECT_NAME}_bswap ${SRC_FILES})
 # NOTE: keep these in-sync with the lists in 'cmake/platform_build_flags.cmake'
 target_compile_definitions(${PROJECT_NAME}_bswap PUBLIC
@@ -111,6 +113,7 @@ target_link_libraries(${PROJECT_NAME}_bswap $<$<BOOL:${WIN32}>:Ws2_32.lib>)
 add_dependencies(${PROJECT_NAME}_bswap ${industrial_msgs_EXPORTED_TARGETS})
 
 # ALTERNATIVE LIBRARY (64-bit floats)
+#catkin_lint: ignore_once unsorted_list
 add_library(${PROJECT_NAME}_float64 ${SRC_FILES})
 # NOTE: keep these in-sync with the lists in 'cmake/platform_build_flags.cmake'
 target_compile_definitions(${PROJECT_NAME}_float64 PUBLIC
