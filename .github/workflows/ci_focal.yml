@@ -20,6 +20,7 @@ jobs:
         ros_repo: [ main, testing ]
 
     env:
+      BUILDER: catkin_tools
       CCACHE_DIR: "${{ github.workspace }}/.ccache"
 
     steps:
