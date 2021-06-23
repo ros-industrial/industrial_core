@@ -4,10 +4,21 @@ project(industrial_trajectory_filters)
 
 add_compile_options(-std=c++11)
 
-find_package(catkin REQUIRED COMPONENTS moveit_ros_planning trajectory_msgs)
+find_package(catkin REQUIRED COMPONENTS
+  class_loader
+  moveit_core
+  moveit_ros_planning
+  pluginlib
+  trajectory_msgs
+)
 
 catkin_package(
-    CATKIN_DEPENDS moveit_ros_planning trajectory_msgs
+    CATKIN_DEPENDS
+      class_loader
+      moveit_core
+      moveit_ros_planning
+      pluginlib
+      trajectory_msgs
     INCLUDE_DIRS include
     LIBRARIES ${PROJECT_NAME}
 )
