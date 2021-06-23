@@ -271,7 +271,7 @@ protected:
   bool sendBytes(industrial::byte_array::ByteArray & buffer);
   bool receiveBytes(industrial::byte_array::ByteArray & buffer,
       industrial::shared_types::shared_int num_bytes,
-      industrial::shared_types::shared_int timeoutMs);
+      industrial::shared_types::shared_int timeout_ms);
 
   // Virtual
   virtual int rawSendBytes(char *buffer,

@@ -87,12 +87,12 @@ public:
    * \brief Receives a message using the data connection with a timeout.
    *
    * \param [out] message Populated with received message
-   * \param [in] timeoutMs The timeout for receiving a message, in milliseconds
+   * \param [in] timeout_ms The timeout for receiving a message, in milliseconds
    *
    * \return true if successful
    */
   virtual bool receiveMsg(industrial::simple_message::SimpleMessage & message,
-                          industrial::shared_types::shared_int timeoutMs);
+                          industrial::shared_types::shared_int timeout_ms);
 
   /**
    * \brief Performs a complete send and receive.  This is helpful when sending
@@ -114,14 +114,14 @@ public:
    *
    * \param [in] send The message to send
    * \param [out] recv Populated with received message
-   * \param [in] timeoutMs The timeout for receiving a message, in milliseconds
+   * \param [in] timeout_ms The timeout for receiving a message, in milliseconds
    * \param [in] verbose Turn on low level logging
    *
    * \return true if successful
    */
   bool sendAndReceiveMsg(industrial::simple_message::SimpleMessage & send,
                          industrial::simple_message::SimpleMessage & recv,
-                         industrial::shared_types::shared_int timeoutMs,
+                         industrial::shared_types::shared_int timeout_ms,
                          bool verbose = false);
 
   /**
@@ -157,14 +157,14 @@ private:
    *
    * \param data to receive.
    * \param size (in bytes) of data to receive
-   * \param timeoutMs Timeout to receive a message (in milliseconds). A negative timeout
+   * \param timeout_ms Timeout to receive a message (in milliseconds). A negative timeout
    * means that this function should wait indefinitely.
    *
    * \return true if successful
    */
   virtual bool receiveBytes(industrial::byte_array::ByteArray & buffer,
                             industrial::shared_types::shared_int num_bytes,
-                            industrial::shared_types::shared_int timeoutMs) = 0;
+                            industrial::shared_types::shared_int timeout_ms) = 0;
 };
 
 } //namespace message_connection

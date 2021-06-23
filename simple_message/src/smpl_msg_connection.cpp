@@ -83,7 +83,7 @@ bool SmplMsgConnection::receiveMsg(SimpleMessage & message)
 }
 
 
-bool SmplMsgConnection::receiveMsg(SimpleMessage & message, shared_int timeoutMs)
+bool SmplMsgConnection::receiveMsg(SimpleMessage & message, shared_int timeout_ms)
 {
   ByteArray lengthBuffer;
   ByteArray msgBuffer;
@@ -92,7 +92,7 @@ bool SmplMsgConnection::receiveMsg(SimpleMessage & message, shared_int timeoutMs
   bool rtn = false;
 
 
-  rtn = this->receiveBytes(lengthBuffer, message.getLengthSize(), timeoutMs);
+  rtn = this->receiveBytes(lengthBuffer, message.getLengthSize(), timeout_ms);
 
   if (rtn)
   {
@@ -101,7 +101,7 @@ bool SmplMsgConnection::receiveMsg(SimpleMessage & message, shared_int timeoutMs
 
     if (rtn)
     {
-      rtn = this->receiveBytes(msgBuffer, length, timeoutMs);
+      rtn = this->receiveBytes(msgBuffer, length, timeout_ms);
 
       if (rtn)
       {
@@ -136,7 +136,7 @@ bool SmplMsgConnection::sendAndReceiveMsg(SimpleMessage & send, SimpleMessage & 
 }
 
 bool SmplMsgConnection::sendAndReceiveMsg(SimpleMessage & send, SimpleMessage & recv,
-                                          shared_int timeoutMs, bool verbose)
+                                          shared_int timeout_ms, bool verbose)
 {
   bool rtn = false;
   rtn = this->sendMsg(send);
@@ -145,7 +145,7 @@ bool SmplMsgConnection::sendAndReceiveMsg(SimpleMessage & send, SimpleMessage & 
     if(verbose) {
       LOG_ERROR("Sent message");
     }
-    rtn = this->receiveMsg(recv, timeoutMs);
+    rtn = this->receiveMsg(recv, timeout_ms);
     if(verbose) {
       LOG_ERROR("Got message");
     }

@@ -266,9 +266,9 @@ class TestServer : public TcpServer
     return TcpServer::receiveBytes(buffer, num_bytes, -1);
   }
 
-  bool receiveBytes(ByteArray & buffer, shared_int num_bytes, shared_int timeoutMs)
+  bool receiveBytes(ByteArray & buffer, shared_int num_bytes, shared_int timeout_ms)
   {
-    return TcpServer::receiveBytes(buffer, num_bytes, timeoutMs);
+    return TcpServer::receiveBytes(buffer, num_bytes, timeout_ms);
   }
 };
 #else
@@ -288,9 +288,9 @@ class TestServer : public UdpServer
     return UdpServer::receiveBytes(buffer, num_bytes, -1);
   }
 
-  bool receiveBytes(ByteArray & buffer, shared_int num_bytes, shared_int timeoutMs)
+  bool receiveBytes(ByteArray & buffer, shared_int num_bytes, shared_int timeout_ms)
   {
-    return UdpServer::receiveBytes(buffer, num_bytes, timeoutMs);
+    return UdpServer::receiveBytes(buffer, num_bytes, timeout_ms);
   }
 };
 #endif
