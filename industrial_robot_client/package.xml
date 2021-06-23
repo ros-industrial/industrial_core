@@ -29,5 +29,6 @@
 
   <exec_depend>robot_state_publisher</exec_depend>
 
+  <test_depend>roslaunch</test_depend>
   <test_depend>rosunit</test_depend>
 </package>
