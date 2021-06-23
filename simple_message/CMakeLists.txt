@@ -46,6 +46,7 @@ include_directories(include
 set(ROS_BUILD_STATIC_LIBS true)
 set(ROS_BUILD_SHARED_LIBS false)
 
+#catkin_lint: ignore_once literal_project_name
 set(SRC_FILES src/byte_array.cpp
 	src/simple_message.cpp
 	src/smpl_msg_connection.cpp
