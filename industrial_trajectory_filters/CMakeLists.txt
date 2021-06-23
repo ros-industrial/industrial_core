@@ -12,6 +12,8 @@ find_package(catkin REQUIRED COMPONENTS
   trajectory_msgs
 )
 
+find_package(orocos_kdl REQUIRED)
+
 catkin_package(
     CATKIN_DEPENDS
       class_loader
@@ -21,10 +23,12 @@ catkin_package(
       trajectory_msgs
     INCLUDE_DIRS include
     LIBRARIES ${PROJECT_NAME}
+    DEPENDS orocos_kdl
 )
 
 include_directories(include
   ${catkin_INCLUDE_DIRS}
+  ${orocos_kdl_INCLUDE_DIRS}
 )
 
 
@@ -34,7 +38,7 @@ add_library(${PROJECT_NAME}
   src/smoothing_trajectory_filter.cpp
   src/uniform_sample_filter.cpp
 )
-target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${orocos_kdl_LIBRARIES})
 
 
 install(TARGETS ${PROJECT_NAME}
