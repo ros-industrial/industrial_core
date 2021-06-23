@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format2.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
-<package format="2">
+<package format="3">
   <name>industrial_trajectory_filters</name>
   <version>0.7.1</version>
   <description>
@@ -23,13 +23,16 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
-  <build_depend>liborocos-kdl-dev</build_depend>
+  <build_depend condition="$ROS_DISTRO == noetic">liborocos-kdl-dev</build_depend>
+  <build_export_depend condition="$ROS_DISTRO == noetic">liborocos-kdl-dev</build_export_depend>
+  <exec_depend condition="$ROS_DISTRO == noetic">liborocos-kdl</exec_depend>
 
-  <depend>trajectory_msgs</depend>
-  <depend>pluginlib</depend>
+  <depend>class_loader</depend>
   <depend>moveit_core</depend>
   <depend>moveit_ros_planning</depend>
-  <depend>liborocos-kdl</depend>
+  <depend condition="$ROS_DISTRO == melodic">orocos_kdl</depend>
+  <depend>pluginlib</depend>
+  <depend>trajectory_msgs</depend>
 
   <export>	
     <moveit_core plugin="${prefix}/planning_request_adapters_plugin_description.xml"/> 
