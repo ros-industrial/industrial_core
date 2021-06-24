@@ -21,6 +21,7 @@ jobs:
 
     env:
       CCACHE_DIR: "${{ github.workspace }}/.ccache"
+      CATKIN_LINT: pedantic
 
     steps:
       - name: Fetch repository

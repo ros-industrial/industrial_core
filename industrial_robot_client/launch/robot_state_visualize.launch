@@ -25,5 +25,6 @@
 	<node name="state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
 	<node name="robot_state" pkg="industrial_robot_client" type="robot_state"/>
 
+	<!-- catkin_lint: ignore_once launch_depend -->
 	<node name="rviz" pkg="rviz" type="rviz" args="-d $(find industrial_robot_client)/config/robot_state_visualize.rviz"/>
 </launch>
