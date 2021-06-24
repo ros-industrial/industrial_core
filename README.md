@@ -8,10 +8,6 @@
 | Status  | supported | supported |
 | Version | [version](http://repositories.ros.org/status_page/ros_kinetic_default.html?q=industrial_core) | [version](http://repositories.ros.org/status_page/ros_melodic_default.html?q=industrial_core) |
 
-## Travis - Continuous Integration
-
-Status: [![Build Status](https://travis-ci.com/ros-industrial/industrial_core.svg?branch=kinetic-devel)](https://travis-ci.com/ros-industrial/industrial_core)
-
 ## ROS Buildfarm
 
 |         | Kinetic Source | Kinetic Debian | Melodic Source | Melodic Debian |
