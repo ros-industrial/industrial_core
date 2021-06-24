@@ -227,6 +227,34 @@ void JointTrajectoryAction::controllerStateCB(const control_msgs::FollowJointTra
     return;
   }
 
+  // see if we need to abort the goal due to on-controller errors.
+  // NOTE: we do this *before* checking has_moved_once_, as otherwise we would not
+  // notice problems on the controller side unless the robot has already moved,
+  // which it may be unable to do.
+  if(last_robot_status_->error_code != 0
+    || last_robot_status_->in_error.val == industrial_msgs::TriState::ON
+    || last_robot_status_->e_stopped.val == industrial_msgs::TriState::ON)
+  {
+    std::stringstream ss;
+    ss << "Controller reported error (code: " << last_robot_status_->error_code
+       << "), aborting goal";
+
+    // mention e-stop specifically
+    if (last_robot_status_->e_stopped.val == industrial_msgs::TriState::ON)
+    {
+      ss.clear();
+      ss << "Controller reported e-stop, aborting goal";
+    }
+
+    // return abort to action client
+    control_msgs::FollowJointTrajectoryResult result;
+    result.error_code = control_msgs::FollowJointTrajectoryResult::INVALID_GOAL;
+    active_goal_.setAborted(result, ss.str());
+    has_active_goal_ = false;
+    ROS_ERROR_STREAM_NAMED(name_, ss.str());
+    return;
+  }
+
   if (!has_moved_once_ && (ros::Time::now() < time_to_check_))
   {
     ROS_INFO_NAMED(name_, "Waiting to check for goal completion until halfway through trajectory");
