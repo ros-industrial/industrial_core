@@ -380,7 +380,7 @@ void JointTrajectoryAction::controllerStateCB(const control_msgs::FollowJointTra
 
   if (!has_moved_once_ && (ros::Time::now() < time_to_check_))
   {
-    ROS_INFO_NAMED(name_, "Waiting to check for goal completion until halfway through trajectory");
+    ROS_DEBUG_NAMED(name_, "Waiting to check for goal completion until halfway through trajectory");
     return;
   }
 
