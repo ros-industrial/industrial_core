@@ -36,6 +36,9 @@
 #include <string>
 #include <map>
 
+#include <industrial_msgs/RobotStatus.h>
+
+
 namespace industrial_robot_client
 {
 namespace utils
@@ -115,6 +118,46 @@ bool isWithinRange(const std::vector<std::string> & keys, const std::map<std::st
 bool isWithinRange(const std::vector<std::string> & lhs_keys, const std::vector<double> & lhs_values,
                    const std::vector<std::string> & rhs_keys, const std::vector<double> & rhs_values,
                    double full_range);
+
+/**
+ * \brief Check whether the given TriState is set to UNKNOWN.
+ *
+ * \param[in] state to check
+ *
+ * \return true if the state is UNKNOWN
+ */
+bool is_unknown(industrial_msgs::TriState const& state)
+{
+  return state.val == industrial_msgs::TriState::UNKNOWN;
+}
+
+/**
+ * \brief Check whether the given TriState is set to ON (or HIGH or TRUE ..).
+ *
+ * \param[in] state the state to check
+ * \param[in] unknown_is_on should UNKNOWN be considered ON?
+ *
+ * \return true if the state is ON
+ */
+bool is_on(industrial_msgs::TriState const& state, bool unknown_is_on)
+{
+  return state.val == industrial_msgs::TriState::ON
+    || (unknown_is_on && is_unknown(state));
+}
+
+/**
+ * \brief Check whether the given TriState is set to OFF (or LOW or FALSE ..).
+ *
+ * \param[in] state the state to check
+ * \param[in] unknown_is_off should UNKNOWN be considered OFF?
+ *
+ * \return true if the state is OFF
+ */
+bool is_off(industrial_msgs::TriState const& state, bool unknown_is_off)
+{
+  return state.val == industrial_msgs::TriState::OFF
+    || (unknown_is_off && is_unknown(state));
+}
 
 } //utils
 } //industrial_robot_client

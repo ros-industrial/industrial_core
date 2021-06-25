@@ -123,46 +123,6 @@ void JointTrajectoryAction::watchdog(const ros::TimerEvent &e)
   }
 }
 
-/**
- * \brief Check whether the given TriState is set to UNKNOWN.
- *
- * \param[in] state to check
- *
- * \return true if the state is UNKNOWN
- */
-bool is_unknown(industrial_msgs::TriState const& state)
-{
-  return state.val == industrial_msgs::TriState::UNKNOWN;
-}
-
-/**
- * \brief Check whether the given TriState is set to ON (or HIGH or TRUE ..).
- *
- * \param[in] state the state to check
- * \param[in] unknown_is_on should UNKNOWN be considered ON?
- *
- * \return true if the state is ON
- */
-bool is_on(industrial_msgs::TriState const& state, bool unknown_is_on)
-{
-  return state.val == industrial_msgs::TriState::ON
-    || (unknown_is_on && is_unknown(state));
-}
-
-/**
- * \brief Check whether the given TriState is set to OFF (or LOW or FALSE ..).
- *
- * \param[in] state the state to check
- * \param[in] unknown_is_off should UNKNOWN be considered OFF?
- *
- * \return true if the state is OFF
- */
-bool is_off(industrial_msgs::TriState const& state, bool unknown_is_off)
-{
-  return state.val == industrial_msgs::TriState::OFF
-    || (unknown_is_off && is_unknown(state));
-}
-
 bool is_motion_server_ok(industrial_msgs::RobotStatusConstPtr& msg, bool unknown_is_ok = false)
 {
   // unless it's OK for values to be UNKNOWN, the state relay must report
@@ -170,10 +130,10 @@ bool is_motion_server_ok(industrial_msgs::RobotStatusConstPtr& msg, bool unknown
   //  - in_error == false
   //  - e_stopped == false
   //  - no error code
-  return is_on(msg->motion_possible, unknown_is_ok)
+  return utils::is_on(msg->motion_possible, unknown_is_ok)
     && msg->error_code == 0
-    && is_off(msg->in_error, unknown_is_ok)
-    && is_off(msg->e_stopped, unknown_is_ok);
+    && utils::is_off(msg->in_error, unknown_is_ok)
+    && utils::is_off(msg->e_stopped, unknown_is_ok);
 }
 
 std::string describe_robot_status_msg(industrial_msgs::RobotStatusConstPtr& msg, bool unknown_is_on = false)
@@ -181,13 +141,13 @@ std::string describe_robot_status_msg(industrial_msgs::RobotStatusConstPtr& msg,
   std::stringstream ss;
 
   // mention e-stop specifically
-  if (is_on(msg->e_stopped, unknown_is_on))
+  if (utils::is_on(msg->e_stopped, unknown_is_on))
   {
     ss.clear();
     ss << "controller reported e-stop";
   }
   // some (generic ?) other error
-  else if (msg->error_code != 0 || is_on(msg->in_error, unknown_is_on))
+  else if (msg->error_code != 0 || utils::is_on(msg->in_error, unknown_is_on))
   {
     ss.clear();
     ss << "controller reported (active) error";
@@ -206,7 +166,7 @@ std::string describe_robot_status_msg(industrial_msgs::RobotStatusConstPtr& msg,
   // the state server decides motion_possible == false. So we first
   // check the specific problems above, then fall back to this generic
   // "it doesn't work, don't know why" statement
-  else if (is_off(msg->motion_possible, unknown_is_on))
+  else if (utils::is_off(msg->motion_possible, unknown_is_on))
   {
     ss.clear();
     ss << "controller reported motion not possible (no further information)";
@@ -396,13 +356,13 @@ void JointTrajectoryAction::controllerStateCB(const control_msgs::FollowJointTra
       // be moving.  The current robot driver calls a motion stop if it receives
       // a new trajectory while it is still moving.  If the driver is not publishing
       // the motion state (i.e. old driver), this will still work, but it warns you.
-      if (is_off(last_robot_status_->in_motion, /*unknown_is_off=*/false))
+      if (utils::is_off(last_robot_status_->in_motion, /*unknown_is_off=*/false))
       {
         ROS_INFO_NAMED("joint_trajectory_action.controllerStateCB", "Inside goal constraints - stopped moving - return success for action");
         active_goal_.setSucceeded();
         has_active_goal_ = false;
       }
-      else if (is_unknown(last_robot_status_->in_motion))
+      else if (utils::is_unknown(last_robot_status_->in_motion))
       {
         ROS_INFO_NAMED(name_, "Inside goal constraints, return success for action");
         ROS_WARN_NAMED(name_, "Robot status in motion unknown, the robot driver node and controller code should be updated");
