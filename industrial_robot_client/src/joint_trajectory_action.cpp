@@ -396,13 +396,13 @@ void JointTrajectoryAction::controllerStateCB(const control_msgs::FollowJointTra
       // be moving.  The current robot driver calls a motion stop if it receives
       // a new trajectory while it is still moving.  If the driver is not publishing
       // the motion state (i.e. old driver), this will still work, but it warns you.
-      if (last_robot_status_->in_motion.val == industrial_msgs::TriState::FALSE)
+      if (is_off(last_robot_status_->in_motion, /*unknown_is_off=*/false))
       {
         ROS_INFO_NAMED("joint_trajectory_action.controllerStateCB", "Inside goal constraints - stopped moving-  return success for action");
         active_goal_.setSucceeded();
         has_active_goal_ = false;
       }
-      else if (last_robot_status_->in_motion.val == industrial_msgs::TriState::UNKNOWN)
+      else if (is_unknown(last_robot_status_->in_motion))
       {
         ROS_INFO_NAMED(name_, "Inside goal constraints, return success for action");
         ROS_WARN_NAMED(name_, "Robot status in motion unknown, the robot driver node and controller code should be updated");
