@@ -398,7 +398,7 @@ void JointTrajectoryAction::controllerStateCB(const control_msgs::FollowJointTra
       // the motion state (i.e. old driver), this will still work, but it warns you.
       if (is_off(last_robot_status_->in_motion, /*unknown_is_off=*/false))
       {
-        ROS_INFO_NAMED("joint_trajectory_action.controllerStateCB", "Inside goal constraints - stopped moving-  return success for action");
+        ROS_INFO_NAMED("joint_trajectory_action.controllerStateCB", "Inside goal constraints - stopped moving - return success for action");
         active_goal_.setSucceeded();
         has_active_goal_ = false;
       }
