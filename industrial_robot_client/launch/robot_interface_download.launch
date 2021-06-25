@@ -30,6 +30,9 @@
   <node pkg="industrial_robot_client" type="motion_download_interface" name="motion_download_interface"/>
   
   <!-- joint_trajectory_action: provides actionlib interface for high-level robot control -->
-  <node pkg="industrial_robot_client" type="joint_trajectory_action" name="joint_trajectory_action"/>
+  <node pkg="industrial_robot_client" type="joint_trajectory_action" name="joint_trajectory_action">
+    <param name="ignore_motion_server_error" type="bool" value="true" />
+    <param name="consider_status_unknowns_ok" type="bool" value="true" />
+  </node>
 
 </launch>
