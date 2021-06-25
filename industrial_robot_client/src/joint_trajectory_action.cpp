@@ -272,9 +272,7 @@ void JointTrajectoryAction::cancelCB(JointTractoryActionServer::GoalHandle gh)
   if (active_goal_ == gh)
   {
     // Stops the controller.
-    trajectory_msgs::JointTrajectory empty;
-    empty.joint_names = joint_names_;
-    pub_trajectory_command_.publish(empty);
+    stopRelay();
 
     // Marks the current goal as canceled.
     active_goal_.setCanceled();
@@ -323,9 +321,7 @@ void JointTrajectoryAction::controllerStateCB(const control_msgs::FollowJointTra
       + describe_robot_status_msg(last_robot_status_, consider_status_unknowns_ok_) };
 
     // Stop the relay
-    trajectory_msgs::JointTrajectory empty;
-    empty.joint_names = joint_names_;
-    pub_trajectory_command_.publish(empty);
+    stopRelay();
 
     // return abort to action client
     control_msgs::FollowJointTrajectoryResult result;
@@ -384,12 +380,16 @@ void JointTrajectoryAction::controllerStateCB(const control_msgs::FollowJointTra
   }
 }
 
-void JointTrajectoryAction::abortGoal()
+void JointTrajectoryAction::stopRelay()
 {
   // Stops the controller.
   trajectory_msgs::JointTrajectory empty;
   pub_trajectory_command_.publish(empty);
+}
 
+void JointTrajectoryAction::abortGoal()
+{
+  stopRelay();
   // Marks the current goal as aborted.
   active_goal_.setAborted();
   has_active_goal_ = false;

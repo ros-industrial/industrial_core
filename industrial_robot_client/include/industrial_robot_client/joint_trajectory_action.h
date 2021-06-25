@@ -246,6 +246,11 @@ private:
   void robotStatusCB(const industrial_msgs::RobotStatusConstPtr &msg);
 
   /**
+   * \brief Sends a stop command (empty message) to the robot driver.
+   */
+  void stopRelay();
+
+  /**
    * \brief Aborts the current action goal and sends a stop command
    * (empty message) to the robot driver.
    *
