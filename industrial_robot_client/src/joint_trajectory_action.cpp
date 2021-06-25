@@ -45,7 +45,8 @@ const double JointTrajectoryAction::DEFAULT_GOAL_THRESHOLD_ = 0.01;
 JointTrajectoryAction::JointTrajectoryAction() :
     action_server_(node_, "joint_trajectory_action", boost::bind(&JointTrajectoryAction::goalCB, this, _1),
                    boost::bind(&JointTrajectoryAction::cancelCB, this, _1), false), has_active_goal_(false),
-                   controller_alive_(false), has_moved_once_(false), name_("joint_trajectory_action")
+                   controller_alive_(false), has_moved_once_(false), name_("joint_trajectory_action"),
+                   ignore_motion_server_error_(false), consider_status_unknowns_ok_(false)
 {
   ros::NodeHandle pn("~");
 
@@ -107,6 +108,98 @@ void JointTrajectoryAction::watchdog(const ros::TimerEvent &e)
   }
 }
 
+/**
+ * \brief Check whether the given TriState is set to UNKNOWN.
+ *
+ * \param[in] state to check
+ *
+ * \return true if the state is UNKNOWN
+ */
+bool is_unknown(industrial_msgs::TriState const& state)
+{
+  return state.val == industrial_msgs::TriState::UNKNOWN;
+}
+
+/**
+ * \brief Check whether the given TriState is set to ON (or HIGH or TRUE ..).
+ *
+ * \param[in] state the state to check
+ * \param[in] unknown_is_on should UNKNOWN be considered ON?
+ *
+ * \return true if the state is ON
+ */
+bool is_on(industrial_msgs::TriState const& state, bool unknown_is_on)
+{
+  return state.val == industrial_msgs::TriState::ON
+    || (unknown_is_on && is_unknown(state));
+}
+
+/**
+ * \brief Check whether the given TriState is set to OFF (or LOW or FALSE ..).
+ *
+ * \param[in] state the state to check
+ * \param[in] unknown_is_off should UNKNOWN be considered OFF?
+ *
+ * \return true if the state is OFF
+ */
+bool is_off(industrial_msgs::TriState const& state, bool unknown_is_off)
+{
+  return state.val == industrial_msgs::TriState::OFF
+    || (unknown_is_off && is_unknown(state));
+}
+
+bool is_motion_server_ok(industrial_msgs::RobotStatusConstPtr& msg, bool unknown_is_ok = false)
+{
+  // unless it's OK for values to be UNKNOWN, the state relay must report
+  //  - motion_possible == true
+  //  - in_error == false
+  //  - e_stopped == false
+  //  - no error code
+  return is_on(msg->motion_possible, unknown_is_ok)
+    && msg->error_code == 0
+    && is_off(msg->in_error, unknown_is_ok)
+    && is_off(msg->e_stopped, unknown_is_ok);
+}
+
+std::string describe_robot_status_msg(industrial_msgs::RobotStatusConstPtr& msg, bool unknown_is_on = false)
+{
+  std::stringstream ss;
+
+  // mention e-stop specifically
+  if (is_on(msg->e_stopped, unknown_is_on))
+  {
+    ss.clear();
+    ss << "controller reported e-stop";
+  }
+  // some (generic ?) other error
+  else if (msg->error_code != 0 || is_on(msg->in_error, unknown_is_on))
+  {
+    ss.clear();
+    ss << "controller reported (active) error";
+
+    // it could be state server does not report specific error codes
+    if (msg->error_code != 0)
+    {
+      ss << " (OEM code: " << msg->error_code << ")";
+    }
+    else
+    {
+      ss << " (0 or no OEM error code communicated)";
+    }
+  }
+  // we use this last, as it could be we currently don't yet know *why*
+  // the state server decides motion_possible == false. So we first
+  // check the specific problems above, then fall back to this generic
+  // "it doesn't work, don't know why" statement
+  else if (is_off(msg->motion_possible, unknown_is_on))
+  {
+    ss.clear();
+    ss << "controller reported motion not possible (no further information)";
+  }
+
+  return ss.str();
+}
+
 void JointTrajectoryAction::goalCB(JointTractoryActionServer::GoalHandle gh)
 {
   ROS_INFO_STREAM_NAMED(name_, "Received new goal");
@@ -118,6 +211,24 @@ void JointTrajectoryAction::goalCB(JointTractoryActionServer::GoalHandle gh)
     control_msgs::FollowJointTrajectoryResult rslt;
     rslt.error_code = control_msgs::FollowJointTrajectoryResult::INVALID_GOAL;
     gh.setRejected(rslt, "Waiting for (initial) feedback from controller");
+
+    // no point in continuing: already rejected
+    return;
+  }
+
+  // check robot can actually execute trajectory, if not, refuse goal.
+  // no point in accepting the goal only to cancel it immediately later
+  if (!is_motion_server_ok(last_robot_status_, consider_status_unknowns_ok_) && !ignore_motion_server_error_)
+  {
+    // translate status into user readable description
+    const std::string reject_msg = {"Rejecting goal: "
+      + describe_robot_status_msg(last_robot_status_, consider_status_unknowns_ok_) };
+    ROS_ERROR_STREAM_NAMED(name_, reject_msg);
+    control_msgs::FollowJointTrajectoryResult rslt;
+    // the goal is actually probably OK, but we have to choose one of the existing
+    // constants, and this one comes closest
+    rslt.error_code = control_msgs::FollowJointTrajectoryResult::INVALID_GOAL;
+    gh.setRejected(rslt, reject_msg);
 
     // no point in continuing: already rejected
     return;
@@ -231,27 +342,24 @@ void JointTrajectoryAction::controllerStateCB(const control_msgs::FollowJointTra
   // NOTE: we do this *before* checking has_moved_once_, as otherwise we would not
   // notice problems on the controller side unless the robot has already moved,
   // which it may be unable to do.
-  if(last_robot_status_->error_code != 0
-    || last_robot_status_->in_error.val == industrial_msgs::TriState::ON
-    || last_robot_status_->e_stopped.val == industrial_msgs::TriState::ON)
+  if(!is_motion_server_ok(last_robot_status_, consider_status_unknowns_ok_) && !ignore_motion_server_error_)
   {
-    std::stringstream ss;
-    ss << "Controller reported error (code: " << last_robot_status_->error_code
-       << "), aborting goal";
+    const std::string abort_msg = {"Aborting goal: "
+      + describe_robot_status_msg(last_robot_status_, consider_status_unknowns_ok_) };
 
-    // mention e-stop specifically
-    if (last_robot_status_->e_stopped.val == industrial_msgs::TriState::ON)
-    {
-      ss.clear();
-      ss << "Controller reported e-stop, aborting goal";
-    }
+    // Stop the relay
+    trajectory_msgs::JointTrajectory empty;
+    empty.joint_names = joint_names_;
+    pub_trajectory_command_.publish(empty);
 
     // return abort to action client
     control_msgs::FollowJointTrajectoryResult result;
+    // would like to use a better error constant, but we have to choose one of the existing
+    // constants, and this one comes closest
     result.error_code = control_msgs::FollowJointTrajectoryResult::INVALID_GOAL;
-    active_goal_.setAborted(result, ss.str());
+    active_goal_.setAborted(result, abort_msg);
     has_active_goal_ = false;
-    ROS_ERROR_STREAM_NAMED(name_, ss.str());
+    ROS_ERROR_STREAM_NAMED(name_, abort_msg);
     return;
   }
 

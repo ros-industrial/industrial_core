@@ -177,6 +177,33 @@ private:
   static const double WATCHDOG_PERIOD_;// = 1.0;
 
   /**
+   * \brief Should the action server abort goals if the OEM server
+   * program reports a problem?
+   *
+   * This is a backwards compatibility 'tunable knob'.
+   *
+   * Set this to true to keep the old behaviour.
+   *
+   * This is configurable, as it's possible drivers for certain robots
+   * cannot accurately report controller status (ie: have UNKNOWNs in
+   * the RobotStatus messages they publish).
+   */
+  bool ignore_motion_server_error_;
+
+  /**
+   * \brief Should the action server consider UNKNOWN for TriStates in
+   * a RobotStatus message as OK?
+   *
+   * This is a backwards compatibility 'tunable knob'.
+   *
+   * Use this to effectively ignore UNKNOWN states for TriStates in
+   * RobotStatus messages. This can help with OEM server programs which
+   * are unable to accurately report controller status, by allowing
+   * the action server to assume UNKNOWN == OK.
+   */
+  bool consider_status_unknowns_ok_;
+
+  /**
    * \brief Watch dog callback, used to detect robot driver failures
    *
    * \param e time event information
