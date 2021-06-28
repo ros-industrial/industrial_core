@@ -68,7 +68,7 @@ These instructions build the `melodic-devel` branch on a ROS Melodic system:
 $ cd $HOME/catkin_ws
 
 # retrieve the latest development version of industrial_core. If you'd rather
-# use the latest released version, replace 'melodic-devel' with 'kinetic'
+# use the latest released version, replace 'melodic-devel' with 'melodic'
 $ git clone -b melodic-devel https://github.com/ros-industrial/industrial_core.git src/industrial_core
 
 # check build dependencies. Note: this may install additional packages,
