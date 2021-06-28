@@ -2,6 +2,16 @@
 Changelog for package industrial_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.7.2 (2021-06-28)
+------------------
+* target Melodic and newer.
+* catkin_lint all packages (`#266 <https://github.com/ros-industrial/industrial_core/issues/266>`_)
+* add Noetic compatibility (`#258 <https://github.com/ros-industrial/industrial_core/issues/258>`_)
+* mark as arch independent (`#248 <https://github.com/ros-industrial/industrial_core/issues/248>`_)
+* update maintainers (`#243 <https://github.com/ros-industrial/industrial_core/issues/243>`_)
+* for a complete list of changes see the `commit log for 0.7.2 <https://github.com/ros-industrial/industrial_core/compare/0.7.1...0.7.2>`_.
+* contributors: Felix Messmer, ipa-nhg, Simon Schmeisser, gavanderhoorn
+
 0.7.1 (2019-09-19)
 ------------------
 * Updated all package xml files to version 2 (`#232 <https://github.com/ros-industrial/industrial_core/issues/232>`_)

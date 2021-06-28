@@ -64,7 +64,7 @@ class SmplMsgConnection
 public:
 
   // Message
-  
+
   /**
    * \brief Sends a message using the data connection
    *
@@ -73,7 +73,7 @@ public:
    * \return true if successful
    */
   virtual bool sendMsg(industrial::simple_message::SimpleMessage & message);
-  
+
   /**
    * \brief Receives a message using the data connection
    *
@@ -82,7 +82,18 @@ public:
    * \return true if successful
    */
   virtual bool receiveMsg(industrial::simple_message::SimpleMessage & message);
-  
+
+  /**
+   * \brief Receives a message using the data connection with a timeout.
+   *
+   * \param [out] message Populated with received message
+   * \param [in] timeout_ms The timeout for receiving a message, in milliseconds
+   *
+   * \return true if successful
+   */
+  virtual bool receiveMsg(industrial::simple_message::SimpleMessage & message,
+                          industrial::shared_types::shared_int timeout_ms);
+
   /**
    * \brief Performs a complete send and receive.  This is helpful when sending
    * a message that requires and explicit reply
@@ -94,7 +105,23 @@ public:
    * \return true if successful
    */
   bool sendAndReceiveMsg(industrial::simple_message::SimpleMessage & send,
-                         industrial::simple_message::SimpleMessage & recv, 
+                         industrial::simple_message::SimpleMessage & recv,
+                         bool verbose = false);
+
+  /**
+   * \brief Performs a complete send and receive with a timeout.
+   * This is helpful when sending a message that requires and explicit reply.
+   *
+   * \param [in] send The message to send
+   * \param [out] recv Populated with received message
+   * \param [in] timeout_ms The timeout for receiving a message, in milliseconds
+   * \param [in] verbose Turn on low level logging
+   *
+   * \return true if successful
+   */
+  bool sendAndReceiveMsg(industrial::simple_message::SimpleMessage & send,
+                         industrial::simple_message::SimpleMessage & recv,
+                         industrial::shared_types::shared_int timeout_ms,
                          bool verbose = false);
 
   /**
@@ -123,19 +150,21 @@ private:
    * \return true if successful
    */
   virtual bool sendBytes(industrial::byte_array::ByteArray & buffer) =0;
-  
+
   /**
-   * \brief Method used by receive message interface method.  This should be overridden 
-   * for the specific connection type
+   * \brief Method used by receive message interface method.  This should be overridden
+   * for the specific connection type.
    *
    * \param data to receive.
-   * \param size (in bytes) of data to receive 
+   * \param size (in bytes) of data to receive
+   * \param timeout_ms Timeout to receive a message (in milliseconds). A negative timeout
+   * means that this function should wait indefinitely.
    *
    * \return true if successful
    */
   virtual bool receiveBytes(industrial::byte_array::ByteArray & buffer,
-                            industrial::shared_types::shared_int num_bytes) =0;
-
+                            industrial::shared_types::shared_int num_bytes,
+                            industrial::shared_types::shared_int timeout_ms) = 0;
 };
 
 } //namespace message_connection

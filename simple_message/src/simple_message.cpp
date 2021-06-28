@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Software License Agreement (BSD License)
  *
  * Copyright (c) 2011, Southwest Research Institute
@@ -37,7 +37,7 @@
 #include "log_wrapper.h"
 #endif
 
-#ifdef MOTOPLUS
+#ifdef SIMPLE_MESSAGE_MOTOPLUS
 #include "motoPlus.h"
 #endif
 

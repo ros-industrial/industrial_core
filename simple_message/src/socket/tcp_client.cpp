@@ -1,7 +1,8 @@
-﻿/*
+/*
  * Software License Agreement (BSD License)
  *
  * Copyright (c) 2011, Southwest Research Institute
+ * Copyright (c) 2019, READY Robotics Corporation
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -53,90 +54,99 @@ TcpClient::~TcpClient()
 
 bool TcpClient::init(char *buff, int port_num)
 {
-
-  int rc;
-  bool rtn;
-  int disableNodeDelay = 1;
   addrinfo *result;
   addrinfo hints = {};
 
-  rc = SOCKET(AF_INET, SOCK_STREAM, 0);
-  if (this->SOCKET_FAIL != rc)
+  if (!connectSocketHandle())
   {
-    this->setSockHandle(rc);
+    return false;
+  }
 
-    // The set no delay disables the NAGEL algorithm
-    rc = SET_NO_DELAY(this->getSockHandle(), disableNodeDelay);
-    if (this->SOCKET_FAIL == rc)
-    {
-      LOG_WARN("Failed to set no socket delay, sending data can be delayed by up to 250ms");
-    }
+  // Initialize address data structure
+  memset(&this->sockaddr_, 0, sizeof(this->sockaddr_));
+  this->sockaddr_.sin_family = AF_INET;
 
-    // Initialize address data structure
-    memset(&this->sockaddr_, 0, sizeof(this->sockaddr_));
-    this->sockaddr_.sin_family = AF_INET;
 
-    // Check for 'buff' as hostname, and use that, otherwise assume IP address
-    hints.ai_family = AF_INET;  // Allow IPv4
-    hints.ai_socktype = SOCK_STREAM;  // TCP socket
-    hints.ai_flags = 0;  // No flags
-    hints.ai_protocol = 0;  // Any protocol
-    hints.ai_canonname = NULL;
-    hints.ai_addr = NULL;
-    hints.ai_next = NULL;
-    if (0 == GETADDRINFO(buff, NULL, &hints, &result))
-    {
-      this->sockaddr_ = *((sockaddr_in *)result->ai_addr);
-    }
-    else 
-    {
-      this->sockaddr_.sin_addr.s_addr = INET_ADDR(buff);
-    }
-    this->sockaddr_.sin_port = HTONS(port_num);
-
-    rtn = true;
-
+  // Check for 'buff' as hostname, and use that, otherwise assume IP address
+  hints.ai_family = AF_INET;  // Allow IPv4
+  hints.ai_socktype = SOCK_STREAM;  // TCP socket
+  hints.ai_flags = 0;  // No flags
+  hints.ai_protocol = 0;  // Any protocol
+  hints.ai_canonname = NULL;
+  hints.ai_addr = NULL;
+  hints.ai_next = NULL;
+  if (0 == GETADDRINFO(buff, NULL, &hints, &result))
+  {
+    this->sockaddr_ = *((sockaddr_in *)result->ai_addr);
   }
   else
   {
-    LOG_ERROR("Failed to create socket, rc: %d", rc);
-    rtn = false;
+    this->sockaddr_.sin_addr.s_addr = INET_ADDR(buff);
   }
-  return rtn;
+  this->sockaddr_.sin_port = HTONS(port_num);
+
+  return true;
 }
 
 bool TcpClient::makeConnect()
 {
-  bool rtn = false;
-  int rc = this->SOCKET_FAIL;
-  SOCKLEN_T addrSize = 0;
-
-  if (!this->isConnected())
-  {
-    addrSize = sizeof(this->sockaddr_);
-    rc = CONNECT(this->getSockHandle(), (sockaddr *)&this->sockaddr_, addrSize);
-    if (this->SOCKET_FAIL != rc)
-    {
-      LOG_INFO("Connected to server");
-      this->setConnected(true);
-      rtn = true;
-    }
-    else
-    {
-      this->logSocketError("Failed to connect to server", rc, errno);
-      rtn = false;
-    }
-  }
-
-  else
+  if (isConnected())
   {
     LOG_WARN("Tried to connect when socket already in connected state");
+    return false;
   }
 
-  return rtn;
+  if (!connectSocketHandle())
+  {
+    // Logging handled by connectSocketHandle()
+    return false;
+  }
 
+  int rc = CONNECT(this->getSockHandle(), (sockaddr *)&sockaddr_, sizeof(sockaddr_));
+  if (SOCKET_FAIL == rc)
+  {
+    logSocketError("Failed to connect to server", rc, errno);
+    return false;
+  }
+
+  LOG_INFO("Connected to server");
+  setConnected(true);
+
+  return true;
 }
 
+bool TcpClient::connectSocketHandle()
+{
+  if (isConnected())
+  {
+    // Already connected, nothing to do
+    return true;
+  }
+
+  int sock_handle = getSockHandle();
+
+  if (sock_handle != SOCKET_FAIL)
+  {
+    // Handle is stale close old handle
+    CLOSE(sock_handle);
+  }
+
+  sock_handle = SOCKET(AF_INET, SOCK_STREAM, 0);
+  setSockHandle(sock_handle);
+  if (SOCKET_FAIL == sock_handle)
+  {
+    LOG_ERROR("Failed to create socket");
+    return false;
+  }
+
+  int disableNodeDelay = 1;
+  // The set no delay disables the NAGEL algorithm
+  if (SOCKET_FAIL == SET_NO_DELAY(sock_handle, disableNodeDelay))
+  {
+    LOG_WARN("Failed to set no socket delay, sending data can be delayed by up to 250ms");
+  }
+  return true;
+}
 } //tcp_client
 } //industrial
 

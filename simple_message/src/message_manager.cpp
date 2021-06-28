@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Software License Agreement (BSD License)
  *
  * Copyright (c) 2011, Southwest Research Institute
@@ -38,11 +38,14 @@
 #include "simple_message.h"
 #endif
 
-#ifdef ROS
+#ifdef SIMPLE_MESSAGE_USE_ROS
 #include "ros/ros.h"
 #else
 #include "unistd.h"
 #endif
+
+#include <thread>
+#include <chrono>
 
 using namespace industrial::smpl_msg_connection;
 using namespace industrial::message_handler;
@@ -171,20 +174,20 @@ void MessageManager::spinOnce()
 int ms_per_clock;
 void mySleep(int sec)
 {
-#ifdef MOTOPLUS
+#ifdef SIMPLE_MESSAGE_MOTOPLUS
   if (ms_per_clock <= 0)
     ms_per_clock = mpGetRtc();
 
   mpTaskDelay(sec * 1000 / ms_per_clock);
 #else
-  sleep(sec);
+  std::this_thread::sleep_for(std::chrono::seconds(sec));
 #endif
 }
 
 void MessageManager::spin()
 {
   LOG_INFO("Entering message manager spin loop");
-#ifdef ROS
+#ifdef SIMPLE_MESSAGE_USE_ROS
   while (ros::ok())
 #else
   while (true)

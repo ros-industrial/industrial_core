@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Software License Agreement (BSD License)
  *
  * Copyright (c) 2011, Southwest Research Institute
@@ -39,11 +39,12 @@
 #include "byte_array.h"
 #endif
 
-#ifdef MOTOPLUS
+#ifdef SIMPLE_MESSAGE_MOTOPLUS
 #include "motoPlus.h"
 #endif
 
 using namespace industrial::simple_message;
+using namespace industrial::shared_types;
 using namespace industrial::byte_array;
 
 namespace industrial
@@ -78,6 +79,12 @@ return rtn;
 
 bool SmplMsgConnection::receiveMsg(SimpleMessage & message)
 {
+  return receiveMsg(message, -1);
+}
+
+
+bool SmplMsgConnection::receiveMsg(SimpleMessage & message, shared_int timeout_ms)
+{
   ByteArray lengthBuffer;
   ByteArray msgBuffer;
   int length;
@@ -85,7 +92,7 @@ bool SmplMsgConnection::receiveMsg(SimpleMessage & message)
   bool rtn = false;
 
 
-  rtn = this->receiveBytes(lengthBuffer, message.getLengthSize());
+  rtn = this->receiveBytes(lengthBuffer, message.getLengthSize(), timeout_ms);
 
   if (rtn)
   {
@@ -94,7 +101,7 @@ bool SmplMsgConnection::receiveMsg(SimpleMessage & message)
 
     if (rtn)
     {
-      rtn = this->receiveBytes(msgBuffer, length);
+      rtn = this->receiveBytes(msgBuffer, length, timeout_ms);
 
       if (rtn)
       {
@@ -123,9 +130,14 @@ bool SmplMsgConnection::receiveMsg(SimpleMessage & message)
 }
 
 
-
 bool SmplMsgConnection::sendAndReceiveMsg(SimpleMessage & send, SimpleMessage & recv, bool verbose)
-{	
+{
+  return sendAndReceiveMsg(send, recv, -1, verbose);
+}
+
+bool SmplMsgConnection::sendAndReceiveMsg(SimpleMessage & send, SimpleMessage & recv,
+                                          shared_int timeout_ms, bool verbose)
+{
   bool rtn = false;
   rtn = this->sendMsg(send);
   if (rtn)
@@ -133,7 +145,7 @@ bool SmplMsgConnection::sendAndReceiveMsg(SimpleMessage & send, SimpleMessage & 
     if(verbose) {
       LOG_ERROR("Sent message");
     }
-    rtn = this->receiveMsg(recv);
+    rtn = this->receiveMsg(recv, timeout_ms);
     if(verbose) {
       LOG_ERROR("Got message");
     }

@@ -1,4 +1,4 @@
-﻿/*
+/*
 * Software License Agreement (BSD License)
 *
 * Copyright (c) 2011, Southwest Research Institute
@@ -32,11 +32,11 @@
 #ifndef LOG_WRAPPER_H_
 #define LOG_WRAPPER_H_
 
-#ifdef ROS
+#ifdef SIMPLE_MESSAGE_USE_ROS
 #include "ros/ros.h"
 #endif
 
-#ifdef MOTOPLUS
+#ifdef SIMPLE_MESSAGE_MOTOPLUS
 #include "motoPlus.h"
 #endif
 
@@ -55,11 +55,33 @@ namespace log_wrapper
     
 
 // Define ROS if this library will execute under ROS
-#ifdef ROS
+#ifdef SIMPLE_MESSAGE_USE_ROS
 
 // The LOG_COMM redirects to debug in ROS because ROS has
 // debug filtering tools that allow the communications messages
 // to be easily removed from the logs
+#ifdef _MSC_VER
+
+#define LOG_COMM(...)  \
+  ROS_DEBUG(__VA_ARGS__)
+  
+#define LOG_DEBUG(...)  \
+  ROS_DEBUG(__VA_ARGS__)
+
+#define LOG_INFO(...)  \
+  ROS_INFO(__VA_ARGS__)
+
+#define LOG_WARN(...)  \
+  ROS_WARN(__VA_ARGS__)
+
+#define LOG_ERROR(...)  \
+  ROS_ERROR(__VA_ARGS__)
+
+#define LOG_FATAL(...)  \
+  ROS_FATAL(__VA_ARGS__)
+
+#else
+
 #define LOG_COMM(format, ...)  \
   ROS_DEBUG(format, ##__VA_ARGS__)
   
@@ -77,6 +99,8 @@ namespace log_wrapper
 
 #define LOG_FATAL(format, ...)  \
   ROS_FATAL(FATAL, ##__VA_ARGS__)
+
+#endif
 
 #elif defined(STDIOLOG)
 

@@ -2,13 +2,14 @@
 <?xml-model href="http://download.ros.org/schema/package_format2.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="2">
   <name>industrial_msgs</name>
-  <version>0.7.1</version>
+  <version>0.7.2</version>
   <description>
 	The industrial message package containes industrial specific messages 
 	definitions. This package is part of the ROS-Industrial program.
   </description>
   <author>Shaun Edwards</author>
-  <maintainer email="shaun.edwards@gmail.com">Shaun Edwards</maintainer>
+  <maintainer email="g.a.vanderhoorn@tudelft.nl">G.A. vd. Hoorn (TU Delft Robotics Institute)</maintainer>
+  <maintainer email="levi.armstrong@swri.org">Levi Armstrong (Southwest Research Institute)</maintainer>
   <license>BSD</license>
   <url type="website">http://ros.org/wiki/industrial_msg</url>
 
@@ -22,4 +23,7 @@
   <depend>std_msgs</depend>
   <depend>trajectory_msgs</depend>
 
+  <export>
+    <architecture_independent />
+  </export>
 </package>

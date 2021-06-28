@@ -2,7 +2,7 @@
 <?xml-model href="http://download.ros.org/schema/package_format2.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="2">
   <name>simple_message</name>
-  <version>0.7.1</version>
+  <version>0.7.2</version>
   <description>
 	simple_message defines a simple messaging connection and protocol for communicating 
 	with an industrial robot controller.  Additional handler and manager classes are 
@@ -10,7 +10,8 @@
 	program.
   </description>
   <author>Shaun Edwards</author>
-  <maintainer email="shaun.edwards@gmail.com">Shaun Edwards</maintainer>
+  <maintainer email="g.a.vanderhoorn@tudelft.nl">G.A. vd. Hoorn (TU Delft Robotics Institute)</maintainer>
+  <maintainer email="levi.armstrong@swri.org">Levi Armstrong (Southwest Research Institute)</maintainer>
   <license>BSD</license>
   <url type="website">http://ros.org/wiki/simple_message</url>
 

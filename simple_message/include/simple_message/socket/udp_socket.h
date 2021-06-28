@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Software License Agreement (BSD License)
  *
  * Copyright (c) 2011, Yaskawa America, Inc.
@@ -42,15 +42,19 @@
 #include "smpl_msg_connection.h"
 #endif
 
-#ifdef LINUXSOCKETS
+#ifdef SIMPLE_MESSAGE_LINUX
+#ifndef WIN32
 #include "sys/socket.h"
-#include "arpa/inet.h"
-#include "string.h"
 #include "netdb.h"
+#include "arpa/inet.h"
 #include "unistd.h"
+#else
+#include <ws2tcpip.h>
+#endif
+#include "string.h"
 #endif
 
-#ifdef MOTOPLUS
+#ifdef SIMPLE_MESSAGE_MOTOPLUS
 #include "motoPlus.h"
 #endif
 

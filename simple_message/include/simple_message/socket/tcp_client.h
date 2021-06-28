@@ -1,7 +1,8 @@
-﻿/*
+/*
  * Software License Agreement (BSD License)
  *
  * Copyright (c) 2011, Southwest Research Institute
+ * Copyright (c) 2019, READY Robotics Corporation
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -75,6 +76,9 @@ public:
 
     // Overrides
     bool makeConnect();
+
+private:
+    bool connectSocketHandle();
 
 
 };

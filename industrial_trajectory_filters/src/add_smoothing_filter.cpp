@@ -35,6 +35,7 @@
 /* Author: Chris Lewis */
 
 #include <moveit/planning_request_adapter/planning_request_adapter.h>
+#include <moveit/version.h>
 #include <class_loader/class_loader.hpp>
 
 #include <industrial_trajectory_filters/smoothing_trajectory_filter.h>
@@ -56,6 +57,23 @@ public:
   */
   AddSmoothingFilter() : planning_request_adapter::PlanningRequestAdapter(), nh_("~")
   {
+    //in noetic and newer initialize will be called by external code
+#if MOVEIT_VERSION_MAJOR < 1 || (MOVEIT_VERSION_MAJOR == 1 && MOVEIT_VERSION_MINOR < 1)
+    initialize(nh_);
+#endif
+  }
+
+  /**
+  * \brief load parameters from a certain namespace
+  */
+#if MOVEIT_VERSION_MAJOR >= 1 && MOVEIT_VERSION_MINOR >= 1
+  virtual void initialize(const ros::NodeHandle& node_handle) override
+#else
+  virtual void initialize(const ros::NodeHandle& node_handle)
+#endif
+  {
+      nh_ = node_handle;
+      
       int num_coef;
 
       // set of default filter coefficients in case paramter, or its associated file, or its syntax is wrong

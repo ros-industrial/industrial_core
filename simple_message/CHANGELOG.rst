@@ -2,6 +2,21 @@
 Changelog for package simple_message
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.7.2 (2021-06-28)
+------------------
+* target Melodic and newer.
+* fix line-endings -- all files (`#268 <https://github.com/ros-industrial/industrial_core/issues/268>`_)
+* add receive timeouts for simple socket (`#267 <https://github.com/ros-industrial/industrial_core/issues/267>`_)
+* catkin_lint all packages (`#266 <https://github.com/ros-industrial/industrial_core/issues/266>`_)
+* add Windows compatibility (`#264 <https://github.com/ros-industrial/industrial_core/issues/264>`_)
+* improve TcpClient's connection re-establish behaviour (`#263 <https://github.com/ros-industrial/industrial_core/issues/263>`_)
+* export compiler flags (`#262 <https://github.com/ros-industrial/industrial_core/issues/262>`_)
+* remove exec permission on source files (`#259 <https://github.com/ros-industrial/industrial_core/issues/259>`_)
+* add Noetic compatibility (`#258 <https://github.com/ros-industrial/industrial_core/issues/258>`_)
+* update maintainers (`#243 <https://github.com/ros-industrial/industrial_core/issues/243>`_)
+* for a complete list of changes see the `commit log for 0.7.2 <https://github.com/ros-industrial/industrial_core/compare/0.7.1...0.7.2>`_.
+* contributors: Felix Messmer, Gaël Écorchard, Josh Langsfeld, Tim Perkins, ipa-nhg, Sean Yen, Paul Glaubitz, gavanderhoorn
+
 0.7.1 (2019-09-19)
 ------------------
 * Fix incorrect return value if deserializing duration fails on ``joint_traj_pt`` (`#226 <https://github.com/ros-industrial/industrial_core/issues/226>`_)

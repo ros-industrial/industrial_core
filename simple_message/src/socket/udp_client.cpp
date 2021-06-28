@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Software License Agreement (BSD License)
  *
  * Copyright (c) 2011, Yaskawa America, Inc.
@@ -122,15 +122,15 @@ bool UdpClient::makeConnect()
     // copy to local array, since ByteArray no longer supports
     // direct pointer-access to data values
     const int sendLen = send.getBufferSize();
-    char      localBuffer[sendLen];
-    send.unload(localBuffer, sendLen);
+    std::vector<char> localBuffer(sendLen);
+    send.unload(localBuffer.data(), sendLen);
 
     do
     {
       ByteArray recv;
       recvHS = 0;
       LOG_DEBUG("UDP client sending handshake");
-      this->rawSendBytes(localBuffer, sendLen);
+      this->rawSendBytes(localBuffer.data(), sendLen);
       if (this->isReadyReceive(timeout))
       {
         bytesRcvd = this->rawReceiveBytes(this->buffer_, 0);

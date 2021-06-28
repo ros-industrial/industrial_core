@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Software License Agreement (BSD License)
  *
  * Copyright (c) 2011, Southwest Research Institute
@@ -42,19 +42,23 @@
 #include "smpl_msg_connection.h"
 #endif
 
-#ifdef LINUXSOCKETS
+#ifdef SIMPLE_MESSAGE_LINUX
 
+#ifndef _WIN32
 #include "sys/socket.h"
 #include "arpa/inet.h"
-#include "string.h"
 #include "unistd.h"
 #include "netinet/tcp.h"
+#else
+#include <ws2tcpip.h>
+#endif
+#include "string.h"
 #include "errno.h"
 
 #define SOCKET(domain, type, protocol) socket(domain, type, protocol)
 #define BIND(sockfd, addr, addrlen) bind(sockfd, addr, addrlen)
-#define SET_NO_DELAY(sockfd, val) setsockopt(sockfd, IPPROTO_TCP, TCP_NODELAY, &(val), sizeof(val))
-#define SET_REUSE_ADDR(sockfd, val) setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &(val), sizeof(val))
+#define SET_NO_DELAY(sockfd, val) setsockopt(sockfd, IPPROTO_TCP, TCP_NODELAY, reinterpret_cast<const char*>(&(val)), sizeof(val))
+#define SET_REUSE_ADDR(sockfd, val) setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, reinterpret_cast<const char*>(&(val)), sizeof(val))
 #define LISTEN(sockfd, n) listen(sockfd, n)
 #define ACCEPT(sockfd, addr, addrlen) accept(sockfd, addr, addrlen)
 #define CONNECT(sockfd, dest_addr ,addrlen) connect(sockfd, dest_addr, addrlen)
@@ -63,7 +67,11 @@
 #define RECV_FROM(sockfd, buf, len, flags, src_addr, addrlen) recvfrom(sockfd, buf, len, flags, src_addr, addrlen)
 #define RECV(sockfd, buf, len, flags) recv(sockfd, buf, len, flags)
 #define SELECT(n, readfds, writefds, exceptfds, timeval) select(n, readfds, writefds, exceptfds, timeval)
+#ifdef _WIN32
+#define CLOSE(fd) closesocket(fd)
+#else
 #define CLOSE(fd) close(fd)
+#endif
 #ifndef HTONS // OSX defines HTONS
 #define HTONS(num) htons(num)
 #endif
@@ -73,7 +81,7 @@
 
 #endif
 
-#ifdef MOTOPLUS
+#ifdef SIMPLE_MESSAGE_MOTOPLUS
 
 #include "motoPlus.h"
 
@@ -214,7 +222,7 @@ protected:
   /**
    * \brief socket ready polling timeout (ms)
    */
-  static const int SOCKET_POLL_TO = 1000;
+  static const int SOCKET_POLL_TO = 10;
 
   /**
    * \brief internal data buffer for receiving
@@ -238,8 +246,10 @@ protected:
    * \param msg custom message prefixed to system error
    * \param rc return code from socket
    */
+#ifndef _MSC_VER
   __attribute__((deprecated(
                    "Please use: logSocketError(const char* msg, const int rc, const int error_no)")))
+#endif
   void logSocketError(const char* msg, int rc)
   {
     logSocketError(msg, rc, errno);
@@ -255,12 +265,14 @@ protected:
   {
     LOG_ERROR("%s, rc: %d. Error: '%s' (errno: %d)", msg, rc, strerror(error_no), error_no);
   }
-  
+
   // Send/Receive functions (inherited classes should override raw methods
   // Virtual
   bool sendBytes(industrial::byte_array::ByteArray & buffer);
   bool receiveBytes(industrial::byte_array::ByteArray & buffer,
-      industrial::shared_types::shared_int num_bytes);
+      industrial::shared_types::shared_int num_bytes,
+      industrial::shared_types::shared_int timeout_ms);
+
   // Virtual
   virtual int rawSendBytes(char *buffer,
       industrial::shared_types::shared_int num_bytes)=0;

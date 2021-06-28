@@ -1,0 +1,7 @@
+
+# industrial_robot_client doesn't have anything to add, but we must re-export
+# the definitions from simple_message, so consumers of industrial_robot_client
+# also get them.
+
+set(industrial_robot_client_DEFINITIONS @simple_message_DEFINITIONS@)
+set(industrial_robot_client_bswap_DEFINITIONS @simple_message_bswap_DEFINITIONS@)

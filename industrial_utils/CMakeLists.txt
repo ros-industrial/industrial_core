@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.12)
+cmake_minimum_required(VERSION 3.0.2)
 
 project(industrial_utils)
 
@@ -15,7 +15,7 @@ catkin_package(
 include_directories(include
   ${catkin_INCLUDE_DIRS})
 
-add_library(${PROJECT_NAME} src/utils.cpp src/param_utils.cpp)
+add_library(${PROJECT_NAME} src/param_utils.cpp src/utils.cpp)
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES})
 
 
@@ -28,7 +28,9 @@ endif()
 
 install(
     TARGETS ${PROJECT_NAME} 
-    LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION})
+    ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+    LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+    RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
 
 install(
     DIRECTORY include/${PROJECT_NAME}/

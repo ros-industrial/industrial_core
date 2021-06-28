@@ -49,11 +49,10 @@
 #include "simple_message/joint_traj.h"
 
 #include <gtest/gtest.h>
-// Use pthread instead of boost::thread so we can cancel the TCP/UDP server
-// threads 
-//#include <boost/thread/thread.hpp>
-#include <pthread.h>
+#include <thread>
+#include <chrono>
 #include <limits>
+#include <vector>
 
 using namespace industrial::simple_message;
 using namespace industrial::byte_array;
@@ -96,7 +95,7 @@ TEST(ByteArraySuite, init)
   if (bytes.getMaxBufferSize() < std::numeric_limits<shared_int>::max())
   {
       shared_int TOO_BIG = bytes.getMaxBufferSize()+1;
-      char bigBuffer[TOO_BIG];
+      std::vector<char> bigBuffer(TOO_BIG);
       EXPECT_FALSE(bytes.init(&bigBuffer[0], TOO_BIG));
   }
   else
@@ -237,7 +236,7 @@ TEST(ByteArraySuite, copy)
   if (tooBig.getMaxBufferSize()-1 <= std::numeric_limits<shared_int>::max())
   {
       shared_int TOO_BIG = tooBig.getMaxBufferSize()-1;
-      char bigBuffer[TOO_BIG];
+      std::vector<char> bigBuffer(TOO_BIG);
 
       EXPECT_TRUE(tooBig.init(&bigBuffer[0], TOO_BIG));
       EXPECT_FALSE(copyTo.load(tooBig));
@@ -264,7 +263,12 @@ class TestServer : public TcpServer
   public:
   bool receiveBytes(ByteArray & buffer, shared_int num_bytes)
   {
-    return TcpServer::receiveBytes(buffer, num_bytes);
+    return TcpServer::receiveBytes(buffer, num_bytes, -1);
+  }
+
+  bool receiveBytes(ByteArray & buffer, shared_int num_bytes, shared_int timeout_ms)
+  {
+    return TcpServer::receiveBytes(buffer, num_bytes, timeout_ms);
   }
 };
 #else
@@ -281,7 +285,12 @@ class TestServer : public UdpServer
   public:
   bool receiveBytes(ByteArray & buffer, shared_int num_bytes)
   {
-    return UdpServer::receiveBytes(buffer, num_bytes);
+    return UdpServer::receiveBytes(buffer, num_bytes, -1);
+  }
+
+  bool receiveBytes(ByteArray & buffer, shared_int num_bytes, shared_int timeout_ms)
+  {
+    return UdpServer::receiveBytes(buffer, num_bytes, timeout_ms);
   }
 };
 #endif
@@ -289,7 +298,7 @@ class TestServer : public UdpServer
 void*
 connectServerFunc(void* arg)
 {
-  TestServer* server = (TestServer*)arg;  
+  TestServer* server = (TestServer*)arg;
   server->makeConnect();
   return NULL;
 }
@@ -311,18 +320,18 @@ TEST(SocketSuite, read)
 
   // Construct a client
   ASSERT_TRUE(client.init(&ipAddr[0], port));
-  pthread_t serverConnectThrd;
-  pthread_create(&serverConnectThrd, NULL, connectServerFunc, &server);
+
+  std::thread serverConnectThrd(connectServerFunc, &server);
 
   ASSERT_TRUE(client.makeConnect());
-  pthread_join(serverConnectThrd, NULL);
+  serverConnectThrd.join();
 
   ASSERT_TRUE(send.load(DATA));
 
   // Send just right amount
   ASSERT_TRUE(client.sendBytes(send));
   ASSERT_TRUE(client.sendBytes(send));
-  sleep(2);
+  std::this_thread::sleep_for(std::chrono::seconds(2));
   ASSERT_TRUE(server.receiveBytes(recv, TWO_INTS));
   ASSERT_EQ(TWO_INTS, recv.getBufferSize());
 
@@ -336,21 +345,57 @@ TEST(SocketSuite, read)
   ASSERT_EQ(ONE_INTS, recv.getBufferSize());
 }
 
+TEST(SocketSuite, readTimeout)
+{
+  const int port = TEST_PORT_BASE;
+  char ipAddr[] = "127.0.0.1";
+
+  TestClient client;
+  TestServer server;
+  ByteArray send, recv;
+  shared_int DATA = 99;
+  shared_int TWO_INTS = 2 * sizeof(shared_int);
+  shared_int ONE_INTS = 1 * sizeof(shared_int);
+  shared_int TIMEOUT_MS = 100;
+
+  // Construct server
+  ASSERT_TRUE(server.init(port));
+
+  // Construct a client
+  ASSERT_TRUE(client.init(&ipAddr[0], port));
+  pthread_t serverConnectThrd;
+  pthread_create(&serverConnectThrd, NULL, connectServerFunc, &server);
+
+  ASSERT_TRUE(client.makeConnect());
+  pthread_join(serverConnectThrd, NULL);
+
+  ASSERT_TRUE(send.load(DATA));
+
+  // Try a read without sending anything
+  ASSERT_FALSE(server.receiveBytes(recv, TWO_INTS, TIMEOUT_MS));
+  ASSERT_EQ(0, recv.getBufferSize());
+
+  // Send too few bytes
+  ASSERT_TRUE(client.sendBytes(send));
+  sleep(2);
+  ASSERT_FALSE(server.receiveBytes(recv, TWO_INTS, TIMEOUT_MS));
+  ASSERT_EQ(ONE_INTS, recv.getBufferSize());
+}
 
 // Utility for running tcp client in sending loop
-void*
-spinSender(void* arg)
+void
+spinSender(void* arg, bool &running)
 {
-  TestClient* client = (TestClient*)arg;  
+  TestClient* client = (TestClient*)arg;
   ByteArray send;
   const int DATA = 256;
 
   send.load(DATA);
 
-  while(true)
+  while(running)
   {
     client->sendBytes(send);
-    sleep(0.1);
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
   }
 }
 
@@ -363,25 +408,24 @@ TEST(SocketSuite, splitPackets)
   TestClient client;
   TestServer server;
   ByteArray recv;
-// Construct server
+  // Construct server
   ASSERT_TRUE(server.init(port));
 
   // Construct a client
   ASSERT_TRUE(client.init(&ipAddr[0], port));
-  pthread_t serverConnectThrd;
-  pthread_create(&serverConnectThrd, NULL, connectServerFunc, &server);
+  std::thread serverConnectThrd(connectServerFunc, &server);
 
   ASSERT_TRUE(client.makeConnect());
-  pthread_join(serverConnectThrd, NULL);
+  serverConnectThrd.join();
 
-  pthread_t senderThrd;
-  pthread_create(&senderThrd, NULL, spinSender, &client);
+  bool senderRunning = true;
+  std::thread senderThrd(spinSender, &client, std::ref(senderRunning));
 
   ASSERT_TRUE(server.receiveBytes(recv, RECV_LENGTH));
   ASSERT_EQ(RECV_LENGTH, recv.getBufferSize());
 
-  pthread_cancel(senderThrd);
-  pthread_join(senderThrd, NULL);
+  senderRunning = false;
+  senderThrd.join();
 }
 
 
@@ -560,4 +604,3 @@ int main(int argc, char **argv)
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }
-

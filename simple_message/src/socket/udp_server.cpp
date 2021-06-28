@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Software License Agreement (BSD License)
  *
  * Copyright (c) 2011, Yaskawa America, Inc.
@@ -145,11 +145,11 @@ bool UdpServer::makeConnect()
     // copy to local array, since ByteArray no longer supports
     // direct pointer-access to data values
     const int sendLen = send.getBufferSize();
-    char      localBuffer[sendLen];
-    send.unload(localBuffer, sendLen);
+    std::vector<char> localBuffer(sendLen);
+    send.unload(localBuffer.data(), sendLen);
 
     // Send a reply handshake
-    this->rawSendBytes(localBuffer, sendLen);
+    this->rawSendBytes(localBuffer.data(), sendLen);
     this->setConnected(true);
     rtn = true;
     

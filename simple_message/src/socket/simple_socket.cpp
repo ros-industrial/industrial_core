@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Software License Agreement (BSD License)
  *
  * Copyright (c) 2011, Yaskawa America, Inc.
@@ -95,11 +95,12 @@ namespace industrial
 
     }
 
-    bool SimpleSocket::receiveBytes(ByteArray & buffer, shared_int num_bytes)
+    bool SimpleSocket::receiveBytes(ByteArray & buffer, shared_int num_bytes, shared_int timeout_ms)
     {
       int rc = this->SOCKET_FAIL;
       bool rtn = false;
       shared_int remainBytes = num_bytes;
+      shared_int remainTimeMs = timeout_ms;
       bool ready, error;
 
       // Reset the buffer (this is not required since the buffer length should
@@ -118,7 +119,7 @@ namespace industrial
       if (this->isConnected())
       {
         buffer.init();
-        while (remainBytes > 0)
+        while (remainBytes > 0 && (timeout_ms < 0 || remainTimeMs > 0))
         {
           // Polling the socket results in an "interruptable" socket read.  This
           // allows Control-C to break out of a socket read.  Without polling,
@@ -131,24 +132,27 @@ namespace industrial
               if (this->SOCKET_FAIL == rc)
               {
                 this->logSocketError("Socket received failed", rc, errno);
-		        remainBytes = 0;
+                remainBytes = 0;
                 rtn = false;
                 break;
               }
               else if (0 == rc)
               {
                 LOG_WARN("Recieved zero bytes: %u", rc);
-		        remainBytes = 0;
+                remainBytes = 0;
                 rtn = false;
                 break;
               }
               else
               {
                 remainBytes = remainBytes - rc;
+                remainTimeMs = timeout_ms;  // Reset the timeout on successful read
                 LOG_COMM("Byte array receive, bytes read: %u, bytes reqd: %u, bytes left: %u",
                     rc, num_bytes, remainBytes);
                 buffer.load(&this->buffer_, rc);
-                rtn = true;
+                if (remainBytes <= 0) {
+                  rtn = true;
+                }
               }
             }
             else if(error)
@@ -166,17 +170,19 @@ namespace industrial
           }
           else
           {
+            remainTimeMs = remainTimeMs - this->SOCKET_POLL_TO;
             LOG_COMM("Socket poll timeout, trying again");
           }
         }
       }
       else
       {
-        LOG_WARN("Not connected, bytes not sent");
+        LOG_WARN("Not connected, bytes not received");
         rtn = false;
       }
 
-      if (!rtn)
+      // Close the socket on all failures except timeouts
+      if (!rtn && (timeout_ms < 0 || remainTimeMs > 0))
       {
         this->setConnected(false);
       }
@@ -185,4 +191,3 @@ namespace industrial
 
   }  //simple_socket
 }  //industrial
-

@@ -1,8 +1,8 @@
-cmake_minimum_required(VERSION 2.8.12)
+cmake_minimum_required(VERSION 3.0.2)
 
 project(industrial_msgs)
 
-find_package(catkin REQUIRED COMPONENTS std_msgs trajectory_msgs message_generation)
+find_package(catkin REQUIRED COMPONENTS message_generation std_msgs trajectory_msgs)
 
 add_message_files(
   FILES
@@ -23,9 +23,9 @@ add_service_files(
   StopMotion.srv)
 
 generate_messages(
-  DEPENDENCIES trajectory_msgs std_msgs
+  DEPENDENCIES std_msgs trajectory_msgs
 )
 
 catkin_package(
-    CATKIN_DEPENDS message_runtime std_msgs trajectory_msgs
+  CATKIN_DEPENDS message_runtime std_msgs trajectory_msgs
 )
