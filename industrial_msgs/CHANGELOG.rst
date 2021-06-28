@@ -2,8 +2,8 @@
 Changelog for package industrial_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.7.2 (2021-06-28)
+------------------
 * target Melodic and newer.
 * catkin_lint all packages (`#266 <https://github.com/ros-industrial/industrial_core/issues/266>`_)
 * add Noetic compatibility (`#258 <https://github.com/ros-industrial/industrial_core/issues/258>`_)

@@ -2,8 +2,8 @@
 Changelog for package simple_message
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.7.2 (2021-06-28)
+------------------
 * target Melodic and newer.
 * fix line-endings -- all files (`#268 <https://github.com/ros-industrial/industrial_core/issues/268>`_)
 * add receive timeouts for simple socket (`#267 <https://github.com/ros-industrial/industrial_core/issues/267>`_)

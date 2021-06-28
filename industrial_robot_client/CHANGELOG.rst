@@ -2,8 +2,8 @@
 Changelog for package industrial_robot_client
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.7.2 (2021-06-28)
+------------------
 * target Melodic and newer.
 * fix line-endings -- all files (`#268 <https://github.com/ros-industrial/industrial_core/issues/268>`_)
 * catkin_lint all packages (`#266 <https://github.com/ros-industrial/industrial_core/issues/266>`_)

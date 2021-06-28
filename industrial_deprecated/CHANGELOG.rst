@@ -2,8 +2,8 @@
 Changelog for package industrial_deprecated
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.7.2 (2021-06-28)
+------------------
 * target Melodic and newer.
 * add Noetic compatibility (`#258 <https://github.com/ros-industrial/industrial_core/issues/258>`_)
 * update maintainers (`#243 <https://github.com/ros-industrial/industrial_core/issues/243>`_)

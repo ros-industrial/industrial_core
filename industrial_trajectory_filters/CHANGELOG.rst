@@ -2,8 +2,8 @@
 Changelog for package industrial_trajectory_filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.7.2 (2021-06-28)
+------------------
 * target Melodic and newer.
 * catkin_lint all packages (`#266 <https://github.com/ros-industrial/industrial_core/issues/266>`_)
 * add Windows compatibility (`#264 <https://github.com/ros-industrial/industrial_core/issues/264>`_)
