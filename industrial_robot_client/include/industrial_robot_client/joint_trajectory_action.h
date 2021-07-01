@@ -182,7 +182,8 @@ private:
    *
    * This is a backwards compatibility 'tunable knob'.
    *
-   * Set this to true to keep the old behaviour.
+   * The constructor overrides the default here with the value of the private
+   * parameter on the parameter server with the same name.
    *
    * This is configurable, as it's possible drivers for certain robots
    * cannot accurately report controller status (ie: have UNKNOWNs in
@@ -195,6 +196,9 @@ private:
    * a RobotStatus message as OK?
    *
    * This is a backwards compatibility 'tunable knob'.
+   *
+   * The constructor overrides the default here with the value of the private
+   * parameter on the parameter server with the same name.
    *
    * Use this to effectively ignore UNKNOWN states for TriStates in
    * RobotStatus messages. This can help with OEM server programs which
