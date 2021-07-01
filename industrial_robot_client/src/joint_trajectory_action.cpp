@@ -130,10 +130,10 @@ bool isMotionServerOK(industrial_msgs::RobotStatusConstPtr& msg, bool unknown_is
   //  - in_error == false
   //  - e_stopped == false
   //  - no error code
-  return utils::isOn(msg->motion_possible, unknown_is_ok)
+  return utils::tri_state::isOn(msg->motion_possible, unknown_is_ok)
     && msg->error_code == 0
-    && utils::isOff(msg->in_error, unknown_is_ok)
-    && utils::isOff(msg->e_stopped, unknown_is_ok);
+    && utils::tri_state::isOff(msg->in_error, unknown_is_ok)
+    && utils::tri_state::isOff(msg->e_stopped, unknown_is_ok);
 }
 
 std::string describeRobotStatusMsg(industrial_msgs::RobotStatusConstPtr& msg, bool unknown_is_on = false)
@@ -141,13 +141,13 @@ std::string describeRobotStatusMsg(industrial_msgs::RobotStatusConstPtr& msg, bo
   std::stringstream ss;
 
   // mention e-stop specifically
-  if (utils::isOn(msg->e_stopped, unknown_is_on))
+  if (utils::tri_state::isOn(msg->e_stopped, unknown_is_on))
   {
     ss.clear();
     ss << "controller reported e-stop";
   }
   // some (generic ?) other error
-  else if (msg->error_code != 0 || utils::isOn(msg->in_error, unknown_is_on))
+  else if (msg->error_code != 0 || utils::tri_state::isOn(msg->in_error, unknown_is_on))
   {
     ss.clear();
     ss << "controller reported (active) error";
@@ -166,7 +166,7 @@ std::string describeRobotStatusMsg(industrial_msgs::RobotStatusConstPtr& msg, bo
   // the state server decides motion_possible == false. So we first
   // check the specific problems above, then fall back to this generic
   // "it doesn't work, don't know why" statement
-  else if (utils::isOff(msg->motion_possible, unknown_is_on))
+  else if (utils::tri_state::isOff(msg->motion_possible, unknown_is_on))
   {
     ss.clear();
     ss << "controller reported motion not possible (no further information)";
@@ -352,13 +352,13 @@ void JointTrajectoryAction::controllerStateCB(const control_msgs::FollowJointTra
       // be moving.  The current robot driver calls a motion stop if it receives
       // a new trajectory while it is still moving.  If the driver is not publishing
       // the motion state (i.e. old driver), this will still work, but it warns you.
-      if (utils::isOff(last_robot_status_->in_motion, /*unknown_is_off=*/false))
+      if (utils::tri_state::isOff(last_robot_status_->in_motion, /*unknown_is_off=*/false))
       {
         ROS_INFO_NAMED("joint_trajectory_action.controllerStateCB", "Inside goal constraints - stopped moving - return success for action");
         active_goal_.setSucceeded();
         has_active_goal_ = false;
       }
-      else if (utils::isUnknown(last_robot_status_->in_motion))
+      else if (utils::tri_state::isUnknown(last_robot_status_->in_motion))
       {
         ROS_INFO_NAMED(name_, "Inside goal constraints, return success for action");
         ROS_WARN_NAMED(name_, "Robot status in motion unknown, the robot driver node and controller code should be updated");

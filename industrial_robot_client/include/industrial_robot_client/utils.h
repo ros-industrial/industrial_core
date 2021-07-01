@@ -119,6 +119,9 @@ bool isWithinRange(const std::vector<std::string> & lhs_keys, const std::vector<
                    const std::vector<std::string> & rhs_keys, const std::vector<double> & rhs_values,
                    double full_range);
 
+
+namespace tri_state {
+
 /**
  * \brief Check whether the given TriState is set to UNKNOWN.
  *
@@ -158,6 +161,8 @@ bool isOff(industrial_msgs::TriState const& state, bool unknown_is_off)
   return state.val == industrial_msgs::TriState::OFF
     || (unknown_is_off && isUnknown(state));
 }
+
+} //tri_state
 
 } //utils
 } //industrial_robot_client
