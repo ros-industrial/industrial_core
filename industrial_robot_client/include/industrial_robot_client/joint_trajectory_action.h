@@ -188,7 +188,7 @@ private:
    * cannot accurately report controller status (ie: have UNKNOWNs in
    * the RobotStatus messages they publish).
    */
-  bool ignore_motion_server_error_;
+  bool ignore_motion_server_error_ = false;
 
   /**
    * \brief Should the action server consider UNKNOWN for TriStates in
@@ -201,7 +201,7 @@ private:
    * are unable to accurately report controller status, by allowing
    * the action server to assume UNKNOWN == OK.
    */
-  bool consider_status_unknowns_ok_;
+  bool consider_status_unknowns_ok_ = false;
 
   /**
    * \brief Watch dog callback, used to detect robot driver failures
