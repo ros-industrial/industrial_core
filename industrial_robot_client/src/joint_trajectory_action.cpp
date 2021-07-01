@@ -123,31 +123,31 @@ void JointTrajectoryAction::watchdog(const ros::TimerEvent &e)
   }
 }
 
-bool is_motion_server_ok(industrial_msgs::RobotStatusConstPtr& msg, bool unknown_is_ok = false)
+bool isMotionServerOK(industrial_msgs::RobotStatusConstPtr& msg, bool unknown_is_ok = false)
 {
   // unless it's OK for values to be UNKNOWN, the state relay must report
   //  - motion_possible == true
   //  - in_error == false
   //  - e_stopped == false
   //  - no error code
-  return utils::is_on(msg->motion_possible, unknown_is_ok)
+  return utils::isOn(msg->motion_possible, unknown_is_ok)
     && msg->error_code == 0
-    && utils::is_off(msg->in_error, unknown_is_ok)
-    && utils::is_off(msg->e_stopped, unknown_is_ok);
+    && utils::isOff(msg->in_error, unknown_is_ok)
+    && utils::isOff(msg->e_stopped, unknown_is_ok);
 }
 
-std::string describe_robot_status_msg(industrial_msgs::RobotStatusConstPtr& msg, bool unknown_is_on = false)
+std::string describeRobotStatusMsg(industrial_msgs::RobotStatusConstPtr& msg, bool unknown_is_on = false)
 {
   std::stringstream ss;
 
   // mention e-stop specifically
-  if (utils::is_on(msg->e_stopped, unknown_is_on))
+  if (utils::isOn(msg->e_stopped, unknown_is_on))
   {
     ss.clear();
     ss << "controller reported e-stop";
   }
   // some (generic ?) other error
-  else if (msg->error_code != 0 || utils::is_on(msg->in_error, unknown_is_on))
+  else if (msg->error_code != 0 || utils::isOn(msg->in_error, unknown_is_on))
   {
     ss.clear();
     ss << "controller reported (active) error";
@@ -166,7 +166,7 @@ std::string describe_robot_status_msg(industrial_msgs::RobotStatusConstPtr& msg,
   // the state server decides motion_possible == false. So we first
   // check the specific problems above, then fall back to this generic
   // "it doesn't work, don't know why" statement
-  else if (utils::is_off(msg->motion_possible, unknown_is_on))
+  else if (utils::isOff(msg->motion_possible, unknown_is_on))
   {
     ss.clear();
     ss << "controller reported motion not possible (no further information)";
@@ -193,11 +193,11 @@ void JointTrajectoryAction::goalCB(JointTractoryActionServer::GoalHandle gh)
 
   // check robot can actually execute trajectory, if not, refuse goal.
   // no point in accepting the goal only to cancel it immediately later
-  if (!is_motion_server_ok(last_robot_status_, consider_status_unknowns_ok_) && !ignore_motion_server_error_)
+  if (!isMotionServerOK(last_robot_status_, consider_status_unknowns_ok_) && !ignore_motion_server_error_)
   {
     // translate status into user readable description
     const std::string reject_msg = {"Rejecting goal: "
-      + describe_robot_status_msg(last_robot_status_, consider_status_unknowns_ok_) };
+      + describeRobotStatusMsg(last_robot_status_, consider_status_unknowns_ok_) };
     ROS_ERROR_STREAM_NAMED(name_, reject_msg);
     control_msgs::FollowJointTrajectoryResult rslt;
     // the goal is actually probably OK, but we have to choose one of the existing
@@ -315,10 +315,10 @@ void JointTrajectoryAction::controllerStateCB(const control_msgs::FollowJointTra
   // NOTE: we do this *before* checking has_moved_once_, as otherwise we would not
   // notice problems on the controller side unless the robot has already moved,
   // which it may be unable to do.
-  if(!is_motion_server_ok(last_robot_status_, consider_status_unknowns_ok_) && !ignore_motion_server_error_)
+  if(!isMotionServerOK(last_robot_status_, consider_status_unknowns_ok_) && !ignore_motion_server_error_)
   {
     const std::string abort_msg = {"Aborting goal: "
-      + describe_robot_status_msg(last_robot_status_, consider_status_unknowns_ok_) };
+      + describeRobotStatusMsg(last_robot_status_, consider_status_unknowns_ok_) };
 
     // Stop the relay
     stopRelay();
@@ -352,13 +352,13 @@ void JointTrajectoryAction::controllerStateCB(const control_msgs::FollowJointTra
       // be moving.  The current robot driver calls a motion stop if it receives
       // a new trajectory while it is still moving.  If the driver is not publishing
       // the motion state (i.e. old driver), this will still work, but it warns you.
-      if (utils::is_off(last_robot_status_->in_motion, /*unknown_is_off=*/false))
+      if (utils::isOff(last_robot_status_->in_motion, /*unknown_is_off=*/false))
       {
         ROS_INFO_NAMED("joint_trajectory_action.controllerStateCB", "Inside goal constraints - stopped moving - return success for action");
         active_goal_.setSucceeded();
         has_active_goal_ = false;
       }
-      else if (utils::is_unknown(last_robot_status_->in_motion))
+      else if (utils::isUnknown(last_robot_status_->in_motion))
       {
         ROS_INFO_NAMED(name_, "Inside goal constraints, return success for action");
         ROS_WARN_NAMED(name_, "Robot status in motion unknown, the robot driver node and controller code should be updated");

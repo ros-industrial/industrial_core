@@ -126,7 +126,7 @@ bool isWithinRange(const std::vector<std::string> & lhs_keys, const std::vector<
  *
  * \return true if the state is UNKNOWN
  */
-bool is_unknown(industrial_msgs::TriState const& state)
+bool isUnknown(industrial_msgs::TriState const& state)
 {
   return state.val == industrial_msgs::TriState::UNKNOWN;
 }
@@ -139,10 +139,10 @@ bool is_unknown(industrial_msgs::TriState const& state)
  *
  * \return true if the state is ON
  */
-bool is_on(industrial_msgs::TriState const& state, bool unknown_is_on)
+bool isOn(industrial_msgs::TriState const& state, bool unknown_is_on)
 {
   return state.val == industrial_msgs::TriState::ON
-    || (unknown_is_on && is_unknown(state));
+    || (unknown_is_on && isUnknown(state));
 }
 
 /**
@@ -153,10 +153,10 @@ bool is_on(industrial_msgs::TriState const& state, bool unknown_is_on)
  *
  * \return true if the state is OFF
  */
-bool is_off(industrial_msgs::TriState const& state, bool unknown_is_off)
+bool isOff(industrial_msgs::TriState const& state, bool unknown_is_off)
 {
   return state.val == industrial_msgs::TriState::OFF
-    || (unknown_is_off && is_unknown(state));
+    || (unknown_is_off && isUnknown(state));
 }
 
 } //utils
