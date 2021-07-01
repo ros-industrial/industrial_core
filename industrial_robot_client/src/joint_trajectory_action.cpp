@@ -52,7 +52,6 @@ JointTrajectoryAction::JointTrajectoryAction() :
   pn.param("constraints/goal_threshold", goal_threshold_, DEFAULT_GOAL_THRESHOLD_);
 
   // Two parameters for bw-compatibility with the 'old' behaviour.
-  // Setting these by default to TRUE, to maintain the previous behaviour
   pn.param("ignore_motion_server_error", ignore_motion_server_error_, ignore_motion_server_error_);
   pn.param("consider_status_unknowns_ok", consider_status_unknowns_ok_, consider_status_unknowns_ok_);
   std::string log_msg = std::string("Ignoring motion server errors: ") + (ignore_motion_server_error_ ? "true" : "false");
@@ -60,7 +59,7 @@ JointTrajectoryAction::JointTrajectoryAction() :
     ROS_WARN_STREAM_NAMED(name_, log_msg);
   else
     ROS_INFO_STREAM_NAMED(name_, log_msg);
-  log_msg = std::string("Treating RobotStatus fields with UNKNOWNs as ok: ") + (consider_status_unknowns_ok_ ? "true" : "false");
+  log_msg = std::string("Treating RobotStatus fields with UNKNOWNs as OK: ") + (consider_status_unknowns_ok_ ? "true" : "false");
   if (consider_status_unknowns_ok_)
     ROS_WARN_STREAM_NAMED(name_, log_msg);
   else
