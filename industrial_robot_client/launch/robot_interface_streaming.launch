@@ -18,6 +18,12 @@
   <!-- robot_ip: IP-address of the robot's socket-messaging server -->
   <arg name="robot_ip" doc="IP of controller" />
   
+  <arg name="ignore_motion_server_error" default="false"
+    doc="Should OEM controller state be monitored while accepting goals and during execution?" />
+  
+  <arg name="consider_status_unknowns_ok" default="false"
+    doc="Should UNKNOWNs in RobotStatus messages be considered as OKs?" />
+  
   <!-- copy the specified IP address to the Parameter Server, for use by nodes below -->
   <param name="/robot_ip_address" type="str" value="$(arg robot_ip)"/>
   
@@ -31,8 +37,8 @@
   
   <!-- joint_trajectory_action: provides actionlib interface for high-level robot control -->
   <node pkg="industrial_robot_client" type="joint_trajectory_action" name="joint_trajectory_action">
-    <param name="ignore_motion_server_error" type="bool" value="true" />
-    <param name="consider_status_unknowns_ok" type="bool" value="true" />
+    <param name="ignore_motion_server_error" type="bool" value="$(arg ignore_motion_server_error)" />
+    <param name="consider_status_unknowns_ok" type="bool" value="$(arg consider_status_unknowns_ok)" />
   </node>
 
 </launch>
