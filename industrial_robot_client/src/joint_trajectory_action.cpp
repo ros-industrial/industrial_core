@@ -55,7 +55,7 @@ JointTrajectoryAction::JointTrajectoryAction() :
   // Two parameters for bw-compatibility with the 'old' behaviour.
   // Setting these by default to TRUE, to maintain the previous behaviour
   pn.param("ignore_motion_server_error", ignore_motion_server_error_, ignore_motion_server_error_);
-  pn.param("consider_status_unknowns_ok", consider_status_unknowns_ok_, true);
+  pn.param("consider_status_unknowns_ok", consider_status_unknowns_ok_, consider_status_unknowns_ok_);
   std::string log_msg = std::string("Ignoring motion server errors: ") + (ignore_motion_server_error_ ? "true" : "false");
   if (ignore_motion_server_error_)
     ROS_WARN_STREAM_NAMED(name_, log_msg);
