@@ -201,6 +201,7 @@ void JointTrajectoryAction::goalCB(JointTractoryActionServer::GoalHandle gh)
     // the goal is actually probably OK, but we have to choose one of the existing
     // constants, and this one comes closest
     rslt.error_code = control_msgs::FollowJointTrajectoryResult::INVALID_GOAL;
+    rslt.error_string = reject_msg;
     gh.setRejected(rslt, reject_msg);
 
     // no point in continuing: already rejected
