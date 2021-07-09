@@ -326,6 +326,7 @@ void JointTrajectoryAction::controllerStateCB(const control_msgs::FollowJointTra
     // would like to use a better error constant, but we have to choose one of the existing
     // constants, and this one comes closest
     result.error_code = control_msgs::FollowJointTrajectoryResult::INVALID_GOAL;
+    result.error_string = abort_msg;
     active_goal_.setAborted(result, abort_msg);
     has_active_goal_ = false;
     ROS_ERROR_STREAM_NAMED(name_, abort_msg);
