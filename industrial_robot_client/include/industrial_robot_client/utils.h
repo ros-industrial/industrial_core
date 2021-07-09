@@ -36,7 +36,7 @@
 #include <string>
 #include <map>
 
-#include <industrial_msgs/RobotStatus.h>
+#include <industrial_msgs/TriState.h>
 
 
 namespace industrial_robot_client
