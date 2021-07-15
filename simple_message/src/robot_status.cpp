@@ -38,7 +38,8 @@
 #include "log_wrapper.h"
 #endif
 
-#ifdef SIMPLE_MESSAGE_USE_ROS
+// remove ROS after Melodic (bw compat for #262)
+#if defined(SIMPLE_MESSAGE_USE_ROS) || defined(ROS)
 // Files below used to translate between ROS messages enums and
 // enums defined in this file
 #include "industrial_msgs/RobotMode.h"
@@ -55,7 +56,8 @@ namespace robot_status
 namespace RobotModes
 {
 
-#ifdef SIMPLE_MESSAGE_USE_ROS
+// remove ROS after Melodic (bw compat for #262)
+#if defined(SIMPLE_MESSAGE_USE_ROS) || defined(ROS)
 
 int toROSMsgEnum(RobotModes::RobotMode mode)
 {
@@ -83,7 +85,8 @@ int toROSMsgEnum(RobotModes::RobotMode mode)
 namespace TriStates
 {
 
-#ifdef SIMPLE_MESSAGE_USE_ROS
+// remove ROS after Melodic (bw compat for #262)
+#if defined(SIMPLE_MESSAGE_USE_ROS) || defined(ROS)
 
 int toROSMsgEnum(TriStates::TriState state)
 {
