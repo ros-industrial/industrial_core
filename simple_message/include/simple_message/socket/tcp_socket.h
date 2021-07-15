@@ -40,7 +40,8 @@
 #include "shared_types.h"
 #endif
 
-#ifdef SIMPLE_MESSAGE_LINUX
+// remove LINUXSOCKETS after Melodic (bw compat for #262)
+#if defined(SIMPLE_MESSAGE_LINUX) || defined(LINUXSOCKETS)
 #ifndef WIN32
 #include "sys/socket.h"
 #include "netdb.h"

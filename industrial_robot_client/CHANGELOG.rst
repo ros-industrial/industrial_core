@@ -2,6 +2,10 @@
 Changelog for package industrial_robot_client
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.7.3 (2021-07-15)
+------------------
+* No changes
+
 0.7.2 (2021-06-28)
 ------------------
 * target Melodic and newer.

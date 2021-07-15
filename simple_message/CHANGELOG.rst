@@ -2,6 +2,12 @@
 Changelog for package simple_message
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.7.3 (2021-07-15)
+------------------
+* accept old defines as well for now, bw-compatibility for (`#262 <https://github.com/ros-industrial/industrial_core/issues/262>`_) (`#275 <https://github.com/ros-industrial/industrial_core/issues/275>`_)
+* for a complete list of changes see the `commit log for 0.7.3 <https://github.com/ros-industrial/industrial_core/compare/0.7.2...0.7.3>`_.
+* contributors: gavanderhoorn
+
 0.7.2 (2021-06-28)
 ------------------
 * target Melodic and newer.
