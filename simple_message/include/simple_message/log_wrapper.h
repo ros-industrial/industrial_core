@@ -32,7 +32,8 @@
 #ifndef LOG_WRAPPER_H_
 #define LOG_WRAPPER_H_
 
-#ifdef SIMPLE_MESSAGE_USE_ROS
+// remove ROS after Melodic (bw compat for #262)
+#if defined(SIMPLE_MESSAGE_USE_ROS) || defined(ROS)
 #include "ros/ros.h"
 #endif
 
@@ -55,7 +56,8 @@ namespace log_wrapper
     
 
 // Define ROS if this library will execute under ROS
-#ifdef SIMPLE_MESSAGE_USE_ROS
+// remove ROS after Melodic (bw compat for #262)
+#if defined(SIMPLE_MESSAGE_USE_ROS) || defined(ROS)
 
 // The LOG_COMM redirects to debug in ROS because ROS has
 // debug filtering tools that allow the communications messages

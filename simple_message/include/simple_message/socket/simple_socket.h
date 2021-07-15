@@ -42,7 +42,8 @@
 #include "smpl_msg_connection.h"
 #endif
 
-#ifdef SIMPLE_MESSAGE_LINUX
+// remove LINUXSOCKETS after Melodic (bw compat for #262)
+#if defined(SIMPLE_MESSAGE_LINUX) || defined(LINUXSOCKETS)
 
 #ifndef _WIN32
 #include "sys/socket.h"

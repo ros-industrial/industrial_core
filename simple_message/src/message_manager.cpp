@@ -38,7 +38,8 @@
 #include "simple_message.h"
 #endif
 
-#ifdef SIMPLE_MESSAGE_USE_ROS
+// remove ROS after Melodic (bw compat for #262)
+#if defined(SIMPLE_MESSAGE_USE_ROS) || defined(ROS)
 #include "ros/ros.h"
 #else
 #include "unistd.h"
@@ -187,7 +188,8 @@ void mySleep(int sec)
 void MessageManager::spin()
 {
   LOG_INFO("Entering message manager spin loop");
-#ifdef SIMPLE_MESSAGE_USE_ROS
+// remove ROS after Melodic (bw compat for #262)
+#if defined(SIMPLE_MESSAGE_USE_ROS) || defined(ROS)
   while (ros::ok())
 #else
   while (true)
