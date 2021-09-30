@@ -167,7 +167,7 @@ std::string describeRobotStatusMsg(industrial_msgs::RobotStatusConstPtr& msg, bo
   else if (utils::tri_state::isOff(msg->motion_possible, unknown_is_on))
   {
     ss.clear();
-    ss << "controller reported motion not possible (no further information)";
+    ss << "robot controller reported motion not possible (no further information)";
   }
 
   return ss.str();
