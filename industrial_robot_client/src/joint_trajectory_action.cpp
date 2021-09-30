@@ -142,7 +142,7 @@ std::string describeRobotStatusMsg(industrial_msgs::RobotStatusConstPtr& msg, bo
   if (utils::tri_state::isOn(msg->e_stopped, unknown_is_on))
   {
     ss.clear();
-    ss << "controller reported e-stop";
+    ss << "robot controller reported e-stop";
   }
   // some (generic ?) other error
   else if (msg->error_code != 0 || utils::tri_state::isOn(msg->in_error, unknown_is_on))
