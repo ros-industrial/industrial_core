@@ -148,7 +148,7 @@ std::string describeRobotStatusMsg(industrial_msgs::RobotStatusConstPtr& msg, bo
   else if (msg->error_code != 0 || utils::tri_state::isOn(msg->in_error, unknown_is_on))
   {
     ss.clear();
-    ss << "controller reported (active) error";
+    ss << "robot controller reported (active) error";
 
     // it could be state server does not report specific error codes
     if (msg->error_code != 0)
