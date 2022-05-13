@@ -11,7 +11,7 @@
   <maintainer email="g.a.vanderhoorn@tudelft.nl">G.A. vd. Hoorn (TU Delft Robotics Institute)</maintainer>
   <maintainer email="levi.armstrong@swri.org">Levi Armstrong (Southwest Research Institute)</maintainer>
   <license>BSD</license>
-  <url type="website">http://ros.org/wiki/industrial_msg</url>
+  <url type="website">http://ros.org/wiki/industrial_msgs</url>
 
   <buildtool_depend>catkin</buildtool_depend>
 
