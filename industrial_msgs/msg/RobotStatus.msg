@@ -2,7 +2,7 @@
 # that is specific to an industrial robot controller
 
 # The header frame ID is not used
-Header header
+std_msgs/Header header
 
 # The robot mode captures the operating mode of the robot.  When in
 # manual, remote motion is not possible.
