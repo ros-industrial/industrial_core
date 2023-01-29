@@ -18,6 +18,37 @@
   <!-- robot_ip: IP-address of the robot's socket-messaging server -->
   <arg name="robot_ip" doc="IP of the controller" />
   
+  <!-- Prior to https://github.com/ros-industrial/industrial_core/pull/271, the
+       joint_trajectory_action server ignored the state of the OEM server program
+       and essentially open-loop forwarded incoming trajectories to the other
+       nodes in industrial_robot_client.
+
+       The new behaviour is to monitor the OEM server programs and reject
+       incoming goals and abort active ones when needed.
+
+       Set this argument to true to revert back to the old behaviour.
+       If this argument is set to false, the new behaviour will be used.
+  -->
+  <arg name="ignore_motion_server_error" default="false"
+    doc="Should OEM controller state be monitored while accepting goals and during execution?" />
+  
+  <!-- Some OEM server programs (state relays running on the OEM controller)
+       cannot (reliably) determine values for certain fields in RobotStatus
+       messages. Those fields should then be set to TriState::UNKNOWN by those
+       servers.
+
+       UNKNOWN is essentially treated like OFF (or FALSE) by the code which
+       monitors the OEM server program, so for those server programs which must
+       send UNKNOWN, the monitoring code will always detect errors and refuse to
+       execute any trajectories.
+
+       Set this parameter to true to avoid this with such OEM server programs,
+       at the cost of potentially accepting goals and attempting to execute them
+       even if the server program would not be able to actually do that.
+  -->
+  <arg name="consider_status_unknowns_ok" default="false"
+    doc="Should UNKNOWNs in RobotStatus messages be considered as OKs?" />
+  
   <!-- copy the specified IP address to the Parameter Server, for use by nodes below -->
   <param name="/robot_ip_address" type="str" value="$(arg robot_ip)"/>
   
@@ -30,6 +61,9 @@
   <node pkg="industrial_robot_client" type="motion_download_interface" name="motion_download_interface"/>
   
   <!-- joint_trajectory_action: provides actionlib interface for high-level robot control -->
-  <node pkg="industrial_robot_client" type="joint_trajectory_action" name="joint_trajectory_action"/>
+  <node pkg="industrial_robot_client" type="joint_trajectory_action" name="joint_trajectory_action">
+    <param name="ignore_motion_server_error" type="bool" value="$(arg ignore_motion_server_error)" />
+    <param name="consider_status_unknowns_ok" type="bool" value="$(arg consider_status_unknowns_ok)" />
+  </node>
 
 </launch>
