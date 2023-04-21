@@ -28,5 +28,8 @@ industrial_msgs/TriState in_motion
 # or may not be affected (see motion_possible)
 industrial_msgs/TriState in_error
 
-# Error code: Vendor specific error code (non zero indicates error)
-int32 error_code
+# Error code: Vendor specific error codes. If this list is empty, there are
+# no active errors on the controller. Order of entries in this list does
+# not necessarily encode for any specific severity or priority of active
+# errors.
+int32[] error_codes
