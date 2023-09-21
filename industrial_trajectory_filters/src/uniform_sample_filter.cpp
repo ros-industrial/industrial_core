@@ -77,6 +77,12 @@ template<typename T>
 
     trajectory_out = trajectory_in;
 
+    if(size_in <= 1)
+    {
+      ROS_WARN("A minimal trajectory of 2 points is required to apply a uniform sampling filter");
+      return false;
+    }
+
     // Clear out the trajectory points
     trajectory_out.request.trajectory.points.clear();
 
