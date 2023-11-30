@@ -224,10 +224,10 @@ template<typename T>
      *  from the old FilterBase interface class.  The filtered trajectory is finally
      *  saved in the MotionPlanResponse object.
      */
-    virtual bool adaptAndPlan(const PlannerFn &planner, const planning_scene::PlanningSceneConstPtr &planning_scene,
+    bool adaptAndPlan(const PlannerFn &planner, const planning_scene::PlanningSceneConstPtr &planning_scene,
                               const planning_interface::MotionPlanRequest &req,
                               planning_interface::MotionPlanResponse &res,
-                              std::vector<std::size_t> &added_path_index) const
+                              std::vector<std::size_t> &added_path_index) const override
     {
 
       // non const pointer to this
@@ -272,7 +272,7 @@ template<typename T>
      * @brief Return description string
      * @return description (as a string)
      */
-    virtual std::string getDescription() const
+    std::string getDescription() const override
     {
       // non const pointer to this
       FilterBase<MessageAdapter> *p = const_cast<FilterBase<MessageAdapter>*>(this);
