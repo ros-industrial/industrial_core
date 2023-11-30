@@ -2,9 +2,6 @@ cmake_minimum_required(VERSION 3.0.2)
 
 project(simple_message)
 
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
 find_package(catkin REQUIRED COMPONENTS industrial_msgs roscpp)
 
 # The simple message make file builds three libraries: simple_message,
