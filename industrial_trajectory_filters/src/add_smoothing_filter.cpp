@@ -102,14 +102,14 @@ public:
     }
     if(!smoothing_filter_.init(filter_coef_))
       ROS_ERROR("Initialization error on smoothing filter. Requires an odd number of coeficients");
-    
+
   };
 
   /*!  \brief Destructor */
   ~AddSmoothingFilter(){ };
 
   /*!  \brief Returns a short description of this plugin */
-  virtual std::string getDescription() const { return "Add Smoothing Trajectory Filter"; }
+  std::string getDescription() const override { return "Add Smoothing Trajectory Filter"; }
 
   /*!  \brief The work hourse of planning request adapters
    *   \param planner A function called somewhere within this subroutine
@@ -118,11 +118,11 @@ public:
    *   \param res    the response, includes the robot trajectory and other info
    *   \param added_path_index, a index of the points added by this adapter, which in this case will be empty
    */
-  virtual bool adaptAndPlan(const PlannerFn &planner,
+  bool adaptAndPlan(const PlannerFn &planner,
                             const planning_scene::PlanningSceneConstPtr& planning_scene,
                             const planning_interface::MotionPlanRequest &req,
                             planning_interface::MotionPlanResponse &res,
-                            std::vector<std::size_t> &added_path_index) const
+                            std::vector<std::size_t> &added_path_index) const override
   {
     // do anything prior to calling the planner here
     // ....
