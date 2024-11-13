@@ -76,7 +76,7 @@ protected:
   /**
    * \brief udp socket connect handshake value
    */
-  static const char CONNECT_HANDSHAKE = 142;
+  static const unsigned char CONNECT_HANDSHAKE = 142;
 
   char udp_read_buffer_[MAX_BUFFER_SIZE + 1];
   char* udp_read_head_;

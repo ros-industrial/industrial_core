@@ -56,7 +56,7 @@ JointTrajectoryAction::JointTrajectoryAction() :
 
   // The controller joint names parameter includes empty joint names for those joints not supported
   // by the controller.  These are removed since the trajectory action should ignore these.
-  std::remove(joint_names_.begin(), joint_names_.end(), std::string());
+  joint_names_.erase(std::remove(joint_names_.begin(), joint_names_.end(), std::string()), joint_names_.end());
   ROS_INFO_STREAM_NAMED(name_, "Filtered joint names to " << joint_names_.size() << " joints");
 
   pub_trajectory_command_ = node_.advertise<trajectory_msgs::JointTrajectory>("joint_path_command", 1);
